@@ -100,7 +100,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
-        telemetry.addData("Status", "Initialized");1
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
