@@ -23,4 +23,8 @@ public abstract class TaskOpMode extends LinearOpMode {
         }
         sleep(Task.TICK_MS);
     }
+
+    public void registerTask(Task task) {
+        tasks.add(task);
+    }
 }
