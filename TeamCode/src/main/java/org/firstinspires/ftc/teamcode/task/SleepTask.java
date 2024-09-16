@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.task;
 
 public class SleepTask implements Task {
-    int remainingSleepTicks;
+    protected int remainingSleepTicks;
 
     public SleepTask(int sleepTicks) {
         remainingSleepTicks = sleepTicks;

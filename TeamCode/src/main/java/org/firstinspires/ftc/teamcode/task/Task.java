@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.task;
 
 public interface Task {
     int TICK_MS = 50;

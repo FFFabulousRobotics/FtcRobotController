@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+import org.firstinspires.ftc.teamcode.task.Task;
+
 public class TimedServo {
-    Servo servo;
+    protected Servo servo;
 
     public TimedServo(Servo servo) {
         this.servo = servo;
