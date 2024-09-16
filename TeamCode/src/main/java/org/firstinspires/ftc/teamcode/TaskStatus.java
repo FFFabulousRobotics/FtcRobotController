@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+//TODO:The class theoretically can be deleted if my changes in TaskOp are correct
 public class TaskStatus {
     int delayTicks;
     int loopTicks;

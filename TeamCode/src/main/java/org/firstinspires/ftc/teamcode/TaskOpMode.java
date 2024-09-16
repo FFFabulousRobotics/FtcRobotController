@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.Map;
 
+//TODO: make it into a parent class,and the other two TaskOp will extend it
 public abstract class TaskOpMode extends LinearOpMode {
 
     Map<Integer, Task> tasks;
@@ -22,8 +23,7 @@ public abstract class TaskOpMode extends LinearOpMode {
 
     public abstract void linearInit();
 
-    public void linearStart() {
-    }
+    public abstract void linearStart();
 
     public abstract void linearLoop();
 
