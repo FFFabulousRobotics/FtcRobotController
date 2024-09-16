@@ -6,16 +6,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class RobotTop {
     TimedServo armServo;
+    TaskOpMode opMode;
 
     public RobotTop(TaskOpMode opMode) {
+        this.opMode = opMode;
         this.armServo = new TimedServo(opMode.hardwareMap.get(Servo.class, Resources.getSystem().getString(R.string.armServo)));
     }
 
-    public Task stretchArm() {
-        return armServo.setPosition(1, 500);
+    public void stretchArm() {
+        opMode.scheduleTask(armServo.setPosition(1, 500));
     }
 
-    public Task retractArm() {
-        return armServo.setPosition(0, 500);
+    public void retractArm() {
+        opMode.scheduleTask(armServo.setPosition(0, 500));
     }
 }
