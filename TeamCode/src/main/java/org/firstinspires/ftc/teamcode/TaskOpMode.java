@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode;
 import android.util.ArrayMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.task.Task;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class TaskOpMode extends LinearOpMode {
 
-    Map<Integer, Task> tasks;
-    Map<Integer, TaskStatus> taskStatuses;
-    int minimumFreeTaskId = 0;
-    Gamepad gamepad1Snapshot;
-    Gamepad gamepad2Snapshot;
+    protected Map<Integer, Task> tasks;
+    protected Map<Integer, Integer> taskLinks;
 
     public TaskOpMode() {
         tasks = new ArrayMap<>();
-        taskStatuses = new ArrayMap<>();
+        taskLinks = new ArrayMap<>();
     }
 
     public abstract void linearInit();
@@ -36,20 +36,17 @@ public abstract class TaskOpMode extends LinearOpMode {
         waitForStart();
         linearStart();
         while (opModeIsActive()) {
-            for (Map.Entry<Integer, Task> taskEntry: tasks.entrySet()) {
+            for (Map.Entry<Integer, Task> taskEntry : tasks.entrySet()) {
                 int taskId = taskEntry.getKey();
                 Task task = taskEntry.getValue();
                 if (!task.hasNext()) {
                     task.finish();
                     tasks.remove(taskId, task);
-                    taskStatuses.remove(taskId);
+                    taskLinks.remove(taskId);
                     continue;
                 }
-                TaskStatus taskStatus = taskStatuses.get(taskId);
-                assert taskStatus != null;
-                if (tasks.containsKey(taskStatus.afterTaskId)) continue;
-                boolean shouldRunTask = taskStatus.tickDown();
-                if (!shouldRunTask) continue;
+                Integer linkedTaskId = taskLinks.get(taskId);
+                if (tasks.containsKey(linkedTaskId)) continue;
                 task.iterate();
             }
             linearLoop();
@@ -58,38 +55,50 @@ public abstract class TaskOpMode extends LinearOpMode {
         linearStop();
     }
 
-    public int scheduleTask(Task task) {
-        return scheduleTask(task, 0);
+    public int registerTask(Task task) {
+        return registerTask(task, -1);
     }
 
-    public int scheduleTask(Task task, int delayTicks) {
-        return scheduleTask(task, delayTicks, 1);
-    }
-
-    public int scheduleTask(Task task, int delayTicks, int loopTicks) {
-        return scheduleTask(task, delayTicks, loopTicks, -1);
-    }
-
-    public int scheduleTask(Task task, int delayTicks, int loopTicks, int afterTaskId) {
+    /**
+     * Register a task in the task map. All the tasks in the map will be iterated in
+     * the main loop when it's the right time to do.
+     *
+     * @param task         the task that need registering.
+     * @param linkedTaskId the taskId of the linked task. The task being registered will
+     *                     be run after the linked task is finished. If nothing provided,
+     *                     the registered task will start to run immediately.
+     * @return the taskId of the registered task.
+     */
+    public int registerTask(Task task, int linkedTaskId) {
         task.init();
-        int taskId = minimumFreeTaskId;
-        TaskStatus taskStatus = new TaskStatus(delayTicks, loopTicks, afterTaskId);
+        int taskId = findMinFreeTaskId();
         tasks.put(taskId, task);
-        taskStatuses.put(taskId, taskStatus);
-        minimumFreeTaskId++;
+        taskLinks.put(taskId, linkedTaskId);
         return taskId;
     }
 
-    public void cancelTask(int taskId, boolean chained) {
+    /**
+     * Cancel the task and all the linked-after tasks if necessary.
+     *
+     * @param taskId the taskId of the task needs canceling.
+     */
+    public void cancelTask(int taskId) {
         Task task = tasks.get(taskId);
         if (task == null) return;
         task.cancel();
         tasks.remove(taskId, task);
-        taskStatuses.remove(taskId);
-        if (chained) {
-            taskStatuses.entrySet().stream()
-                    .filter(e -> e.getValue().afterTaskId == taskId)
-                    .forEach(e -> cancelTask(e.getKey(), true));
+        taskLinks.remove(taskId);
+        taskLinks.entrySet().stream()
+                .filter(e -> e.getValue() == taskId)
+                .forEach(e -> cancelTask(e.getKey()));
+    }
+
+    protected int findMinFreeTaskId() {
+        List<Integer> taskIdList = tasks.keySet().stream().sorted().collect(Collectors.toList());
+        int maxTaskId = taskIdList.get(taskIdList.size() - 1);
+        for (int i = 0; i <= maxTaskId; i++) {
+            if (taskIdList.contains(i)) return 1;
         }
+        return maxTaskId + 1;
     }
 }
