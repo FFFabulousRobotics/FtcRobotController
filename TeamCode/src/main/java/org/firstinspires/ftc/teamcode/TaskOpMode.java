@@ -43,6 +43,9 @@ public abstract class TaskOpMode extends LinearOpMode {
                     task.finish();
                     tasks.remove(taskId, task);
                     taskLinks.remove(taskId);
+                    taskLinks.entrySet().stream()
+                            .filter(e -> e.getValue() == taskId)
+                            .forEach(e -> tasks.get(e).init());
                     continue;
                 }
                 Integer linkedTaskId = taskLinks.get(taskId);
@@ -70,7 +73,6 @@ public abstract class TaskOpMode extends LinearOpMode {
      * @return the taskId of the registered task.
      */
     public int registerTask(Task task, int linkedTaskId) {
-        task.init();
         int taskId = findMinFreeTaskId();
         tasks.put(taskId, task);
         taskLinks.put(taskId, linkedTaskId);

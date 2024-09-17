@@ -16,7 +16,7 @@ public interface Task {
     boolean hasNext();
 
     /**
-     * This method is called when the task is registered in the TaskOpMode.
+     * This method is called once when the task starts looping in the TaskOpMode.
      */
     default void init() {
     }
