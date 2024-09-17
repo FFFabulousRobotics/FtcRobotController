@@ -89,6 +89,15 @@ public class TimedServo {
         servo.scaleRange(min, max);
     }
 
+    /**
+     * Sets the current position of the servo in a fixed time, expressed as a fraction of
+     * its available range. If PWM power is enabled for the servo, the servo will attempt
+     * to move to the indicated position.
+     *
+     * @param position the position to which the servo should move, a value in the range [0.0, 1.0]
+     * @param timeMs   the time that the servo will take to move.
+     * @return a Task object
+     */
     public Task setPosition(double position, long timeMs) {
         final double delta = position - servo.getPosition();
         final long iterationCount = timeMs / Task.TICK_MS;

@@ -59,6 +59,16 @@ public abstract class TaskOpMode extends LinearOpMode {
         return registerTask(task, -1);
     }
 
+    /**
+     * Register a task in the task map. All the tasks in the map will be iterated in
+     * the main loop when it's the right time to do.
+     *
+     * @param task         the task that need registering.
+     * @param linkedTaskId the taskId of the linked task. The task being registered will
+     *                     be run after the linked task is finished. If nothing provided,
+     *                     the registered task will start to run immediately.
+     * @return the taskId of the registered task.
+     */
     public int registerTask(Task task, int linkedTaskId) {
         task.init();
         int taskId = findMinFreeTaskId();
@@ -67,6 +77,11 @@ public abstract class TaskOpMode extends LinearOpMode {
         return taskId;
     }
 
+    /**
+     * Cancel the task and all the linked-after tasks if necessary.
+     *
+     * @param taskId the taskId of the task needs canceling.
+     */
     public void cancelTask(int taskId) {
         Task task = tasks.get(taskId);
         if (task == null) return;
