@@ -45,7 +45,10 @@ public abstract class TaskOpMode extends LinearOpMode {
                     taskLinks.remove(taskId);
                     taskLinks.entrySet().stream()
                             .filter(e -> e.getValue() == taskId)
-                            .forEach(e -> tasks.get(e).init());
+                            .forEach(e -> {
+                                Task nextTask = tasks.get(e.getKey());
+                                if (nextTask != null) nextTask.init();
+                            });
                     continue;
                 }
                 Integer linkedTaskId = taskLinks.get(taskId);
