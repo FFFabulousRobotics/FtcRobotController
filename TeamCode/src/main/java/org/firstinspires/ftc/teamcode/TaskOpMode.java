@@ -59,6 +59,7 @@ public abstract class TaskOpMode extends LinearOpMode {
     }
 
     public int registerTask(Task task) {
+        task.init();
         return registerTask(task, -1);
     }
 
