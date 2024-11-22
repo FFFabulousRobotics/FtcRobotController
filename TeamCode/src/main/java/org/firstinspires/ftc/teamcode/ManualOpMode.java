@@ -25,18 +25,25 @@ public class ManualOpMode extends LinearOpMode {
             if(liftState == LiftState.BOTTOM){
                 if(gamepad1.y && liftPosition <= 1100){
                     robotTop.setLeftPower(0.7);
-                } else if (liftPosition >= 1100) {
+                }else if (liftPosition >= 1250) {
                     robotTop.setLeftPower(0);
                     liftState = LiftState.TOP;
+                } else if (liftPosition >= 1100) {
+                    robotTop.setLeftPower(0.3);
                 }
             } else if (liftState == LiftState.TOP) {
-                if(gamepad1.y && liftPosition >= 100){
-                    robotTop.setLeftPower(-0.5);
-                } else if (liftPosition <= 100) {
+                if(gamepad1.y && liftPosition >= 200){
+                    robotTop.setLeftPower(-0.6);
+                } else if (liftPosition <= 50) {
                     robotTop.setLeftPower(0);
                     liftState = LiftState.BOTTOM;
+                }else if (liftPosition <= 200) {
+                    robotTop.setLeftPower(-0.2);
                 }
             }
+            telemetry.addData("pos", liftPosition);
+            telemetry.addData("state", liftState);
+            telemetry.update();
             sleep(10);
         }
     }

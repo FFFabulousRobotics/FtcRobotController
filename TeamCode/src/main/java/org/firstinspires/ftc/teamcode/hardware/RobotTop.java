@@ -27,7 +27,7 @@ public class RobotTop {
     public void init() {
         leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLift");
         rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLift");
-        armStretchServo = hardwareMap.get(Servo.class, "armStretch");
+        //armStretchServo = hardwareMap.get(Servo.class, "armStretch");
 
         leftLiftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightLiftMotor.setDirection(DcMotor.Direction.REVERSE);
