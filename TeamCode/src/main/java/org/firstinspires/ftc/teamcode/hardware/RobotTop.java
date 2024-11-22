@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@SuppressWarnings(value = "unused")
 public class RobotTop {
     OpMode opMode;
     HardwareMap hardwareMap;
