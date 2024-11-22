@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import com.qualcomm.robotcore.util.Range;
 
 @SuppressWarnings(value = "unused")
 public class RobotAuto {
@@ -68,17 +71,41 @@ public class RobotAuto {
         }
         return this;
     }
-//    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-//        double targetHeading = desiredHeading;  // Save for telemetry
-//
-//        // Determine the heading current error
-//        headingError = targetHeading - getHeading();
-//
-//        // Normalize the error to be within +/- 180 degrees
-//        while (headingError > 180) headingError -= 360;
-//        while (headingError <= -180) headingError += 360;
-//
-//        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-//        return Range.clip(headingError * proportionalGain, -1, 1);
-//    }
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
+        double targetHeading = desiredHeading;  // Save for telemetry
+
+        // Determine the heading current error
+        double headingError = targetHeading - getHeading();
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
+    /**
+     * Read the robot heading directly from the IMU.
+     *
+     * @return The heading of the robot in degrees.
+     */
+    public double getHeading() {
+        return getHeading(AngleUnit.DEGREES);
+    }
+
+    /**
+     * read the Robot heading directly from the IMU
+     *
+     * @param unit The desired angle unit (degrees or radians)
+     * @return The heading of the robot in desired units.
+     */
+    public double getHeading(AngleUnit unit) {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        telemetry.addData("Yaw/Pitch/Roll", orientation.toString());
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+        return orientation.getYaw(unit);
+    }
+
 }
