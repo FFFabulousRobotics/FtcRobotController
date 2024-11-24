@@ -1,6 +1,6 @@
 //这是第一版视觉识别,可以识别摄像头中心的颜色
 //robotVision.getDetectedColor()返回的是一个字符串然后这个字符串是三个类型Unknown,Red，Blue
-//是这样的
+
 
 package org.firstinspires.ftc.teamcode.hardware;
 
