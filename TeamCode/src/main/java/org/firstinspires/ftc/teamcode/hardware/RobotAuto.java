@@ -92,7 +92,6 @@ public class RobotAuto {
     public double getHeading() {
         return getHeading(AngleUnit.DEGREES);
     }
-
     /**
      * read the Robot heading directly from the IMU
      *
