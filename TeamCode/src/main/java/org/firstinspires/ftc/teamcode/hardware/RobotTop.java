@@ -17,6 +17,10 @@ public class RobotTop {
     private DcMotor leftLiftMotor;
     private DcMotor rightLiftMotor;
     private Servo armStretchServo;
+    private Servo armTurnServo;
+    private Servo armSpinXServo;
+    private Servo armSpinYServo;
+    private Servo armGrabServo;
 
     public RobotTop(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -28,7 +32,12 @@ public class RobotTop {
     public void init() {
         leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLift");
         rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLift");
-        //armStretchServo = hardwareMap.get(Servo.class, "armStretch");
+        armStretchServo = hardwareMap.get(Servo.class, "Stretch");
+        armTurnServo = hardwareMap.get(Servo.class, "Turn");
+        armSpinXServo = hardwareMap.get(Servo.class,"SpinX");
+        armSpinYServo = hardwareMap.get(Servo.class,"SpinY");
+        armGrabServo = hardwareMap.get(Servo.class,"Grab");
+
 
         leftLiftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightLiftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -46,7 +55,6 @@ public class RobotTop {
         leftLiftMotor.setPower(power);
         rightLiftMotor.setPower(power);
     }
-
     public int getLiftPosition() {
         return leftLiftMotor.getCurrentPosition();
     }
@@ -54,8 +62,35 @@ public class RobotTop {
     public void setArmStretchPosition(double position){
         armStretchServo.setPosition(position);
     }
-
-    public double getArmStretchPosition() {
+    public double getarmStretchPosition() {
         return armStretchServo.getPosition();
+    }
+
+    public void setArmTurnPosition(double position){
+        armTurnServo.setPosition(position);
+    }
+    public double getArmTurnPosition() {
+        return armTurnServo.getPosition();
+    }
+
+    public void setArmSpinXServoPosition(double position){
+        armTurnServo.setPosition(position);
+    }
+    public double getArmSpinXServoPosition() {
+        return armTurnServo.getPosition();
+    }
+
+    public void setArmSpinYServoPosition(double position){
+        armTurnServo.setPosition(position);
+    }
+    public double getArmSpinYServoPosition() {
+        return armTurnServo.getPosition();
+    }
+
+    public void setArmGrabServoPosition(double position){
+        armTurnServo.setPosition(position);
+    }
+    public double getArmGrabServoPosition() {
+        return armTurnServo.getPosition();
     }
 }
