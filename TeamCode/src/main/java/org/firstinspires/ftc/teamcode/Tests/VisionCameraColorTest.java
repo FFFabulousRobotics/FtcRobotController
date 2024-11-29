@@ -3,18 +3,18 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.hardware.RobotVision;
+import org.firstinspires.ftc.teamcode.hardware.RobotVisionColor;
 
 @TeleOp
 
 public class VisionCameraColorTest extends LinearOpMode {
-    private RobotVision robotVision;
+    private RobotVisionColor robotVisionColor;
 
     @Override
     public void runOpMode() {
-        robotVision = new RobotVision();
+        robotVisionColor = new RobotVisionColor();
 
-        robotVision.initialize(hardwareMap); // 初始化摄像头
+        robotVisionColor.initialize(hardwareMap); // 初始化摄像头
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -23,7 +23,7 @@ public class VisionCameraColorTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             // 显示颜色检测结果
-            telemetry.addData("Center Color", robotVision.getDetectedColor());
+            telemetry.addData("Center Color", robotVisionColor.getDetectedColor());
             telemetry.update();
 
             sleep(100);

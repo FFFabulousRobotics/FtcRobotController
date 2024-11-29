@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
-//
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.opencv.core.Core;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-public class RobotVision2 {
+public class RobotVisionAngle {
     private OpenCvCamera webcam;
     private double detectedAngle = 0;  // 角度变量
 

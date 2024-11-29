@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-public class RobotVision {
+public class RobotVisionColor {
     private OpenCvCamera webcam;
     private String detectedColor = "Unknown";
 
