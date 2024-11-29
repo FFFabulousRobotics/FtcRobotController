@@ -55,16 +55,16 @@ public class ManualOpMode extends LinearOpMode {
             //robotArm
             if(gamepad1.x && !previousGamepad1.x){
                 if(armState == ArmState.IDLE){
-                    robotTop.setArmStretchPosition(0.71);
+                    robotTop.setArmStretchPosition(0.3);
                 }else if(armState == ArmState.STRETCHED){
-                    robotTop.setArmStretchPosition(0.38);
+                    robotTop.setArmStretchPosition(0);
                 }
             }
             if(gamepad1.a && !previousGamepad1.a){
                 if(armState == ArmState.STRETCHED){
-                    //TODO
+                    robotTop.setArmTurnPosition(0.71);
                 }else if(armState == ArmState.TURNED){
-                    //TODO
+                    robotTop.setArmTurnPosition(0.38);
                 }
             }
             if(gamepad1.b && !previousGamepad1.b){
