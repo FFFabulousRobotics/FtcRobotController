@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Servo armServo = hardwareMap.get(Servo.class , "armGrab");
+        Servo armServo = hardwareMap.get(Servo.class , "arm");
         //stretch(1): [0, 0.3]
         //turn(3): [0.38-back, 0.71-out]
         //grab(5): [0-open, 0.53-close]
