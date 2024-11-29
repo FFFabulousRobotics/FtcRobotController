@@ -20,6 +20,8 @@ public class ManualOpMode extends LinearOpMode {
         previousGamepad1.copy(gamepad1);
 
         int liftPosition;
+        double armStretchPos = 0;
+        double armTurnPos = 0;
         double armSpinXPos = 0.5;
         double armSpinYPos = 0.07;
         boolean armGrabbing = false;
@@ -55,23 +57,55 @@ public class ManualOpMode extends LinearOpMode {
             //robotArm
             if(gamepad1.x && !previousGamepad1.x){
                 if(armState == ArmState.IDLE){
-                    robotTop.setArmStretchPosition(0.3);
+                    armStretchPos = 0.3;
+                    armState = ArmState.STRETCHED;
+                    robotTop.setArmStretchPosition(armStretchPos);
                 }else if(armState == ArmState.STRETCHED){
-                    robotTop.setArmStretchPosition(0);
+                    armState = ArmState.WITHDRAWING;
+                }
+            }
+            if(armState == ArmState.WITHDRAWING){
+                if(armStretchPos <= 0){
+                    armState = ArmState.IDLE;
+                }else{
+                    armStretchPos -= 0.04;
+                    robotTop.setArmStretchPosition(armStretchPos);
                 }
             }
             if(gamepad1.a && !previousGamepad1.a){
                 if(armState == ArmState.STRETCHED){
-                    robotTop.setArmTurnPosition(0.71);
+                    armState = ArmState.TURNING_OUT;
                 }else if(armState == ArmState.TURNED){
-                    robotTop.setArmTurnPosition(0.38);
+                    armState = ArmState.TURNING_BACK;
+                }
+            }
+            if(armState == ArmState.TURNING_OUT){
+                if(armTurnPos >= 0.68){
+                    armTurnPos = 0.71;
+                    robotTop.setArmTurnPosition(armTurnPos);
+                    armState = ArmState.TURNED;
+                }else{
+                    armTurnPos += 0.03;
+                    robotTop.setArmTurnPosition(armTurnPos);
+                }
+            }
+            if(armState == ArmState.TURNING_BACK){
+                if(armTurnPos <= 0.42){
+                    armTurnPos = 0.38;
+                    robotTop.setArmTurnPosition(armTurnPos);
+                    armState = ArmState.STRETCHED;
+                }else{
+                    armTurnPos -= 0.03;
+                    robotTop.setArmTurnPosition(armTurnPos);
                 }
             }
             if(gamepad1.b && !previousGamepad1.b){
                 if(armGrabbing){
-                    robotTop.setArmGrabPosition(0);
+                    robotTop.setArmGrabPosition(0.73);
+                    armGrabbing = false;
                 }else{
-                    robotTop.setArmGrabPosition(0.53);
+                    robotTop.setArmGrabPosition(0.2);
+                    armGrabbing = true;
                 }
             }
             if (gamepad1.dpad_up) {
@@ -90,8 +124,12 @@ public class ManualOpMode extends LinearOpMode {
             }
 
             //telemetry
-            telemetry.addData("pos", liftPosition);
+            telemetry.addData("liftPos", liftPosition);
             telemetry.addData("state", liftState);
+            telemetry.addData("ArmState", armState);
+            telemetry.addData("XPos", armSpinXPos);
+            telemetry.addData("YPos", armSpinYPos);
+            telemetry.addData("grab", armGrabbing);
             telemetry.update();
             previousGamepad1.copy(gamepad1);
             sleep(50);
@@ -102,5 +140,5 @@ enum LiftState{
     BOTTOM,TOP
 }
 enum ArmState{
-    IDLE,STRETCHED,TURNED
+    IDLE,WITHDRAWING,STRETCHED,TURNING_OUT,TURNED,TURNING_BACK
 }
