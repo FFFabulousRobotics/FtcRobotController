@@ -72,10 +72,9 @@ public class RobotAuto {
         return this;
     }
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-        double targetHeading = desiredHeading;  // Save for telemetry
 
         // Determine the heading current error
-        double headingError = targetHeading - getHeading();
+        double headingError = desiredHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees
         while (headingError > 180) headingError -= 360;
