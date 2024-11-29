@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotVision2;
 
 
 
-public class TEST3 extends LinearOpMode {
+public class VisionCameraAngleTest extends LinearOpMode {
     private RobotVision2 robotVision2;
 
     @Override

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotVision;
 
 @TeleOp
 
-public class TEST2 extends LinearOpMode {
+public class VisionCameraColorTest extends LinearOpMode {
     private RobotVision robotVision;
 
     @Override
