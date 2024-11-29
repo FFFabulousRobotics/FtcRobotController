@@ -101,7 +101,7 @@ public class ManualOpMode extends LinearOpMode {
             }
             if(gamepad1.b && !previousGamepad1.b){
                 if(armGrabbing){
-                    robotTop.setArmGrabPosition(0.73);
+                    robotTop.setArmGrabPosition(0.83);
                     armGrabbing = false;
                 }else{
                     robotTop.setArmGrabPosition(0.2);
