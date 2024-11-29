@@ -16,12 +16,14 @@ public class RobotChassis {
     private DcMotor leftBackDrive;
     private DcMotor rightFrontDrive;
     private DcMotor rightBackDrive;
+
     public RobotChassis(LinearOpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
         this.initMovement();
     }
+
     public void initMovement() {
         // init motors and servos
         leftFrontDrive = hardwareMap.get(DcMotor.class, "FL");
