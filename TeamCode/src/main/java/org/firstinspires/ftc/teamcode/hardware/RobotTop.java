@@ -59,37 +59,42 @@ public class RobotTop {
         return leftLiftMotor.getCurrentPosition();
     }
 
-    public void setArmStretchPosition(double position){
+    public void setArmStretchPosition(double position) {
         armStretchServo.setPosition(position);
     }
+
     public double getArmStretchPosition() {
         return armStretchServo.getPosition();
     }
 
-    public void setArmTurnPosition(double position){
+    public void setArmTurnPosition(double position) {
         armTurnServo.setPosition(position);
     }
+
     public double getArmTurnPosition() {
         return armTurnServo.getPosition();
     }
 
-    public void setArmSpinXPosition(double position){
+    public void setArmSpinXPosition(double position) {
         armSpinXServo.setPosition(position);
     }
+
     public double getArmSpinXPosition() {
         return armSpinXServo.getPosition();
     }
 
-    public void setArmSpinYPosition(double position){
+    public void setArmSpinYPosition(double position) {
         armSpinYServo.setPosition(position);
     }
+
     public double getArmSpinYPosition() {
         return armSpinYServo.getPosition();
     }
 
-    public void setArmGrabPosition(double position){
+    public void setArmGrabPosition(double position) {
         armGrabServo.setPosition(position);
     }
+
     public double getArmGrabPosition() {
         return armGrabServo.getPosition();
     }
