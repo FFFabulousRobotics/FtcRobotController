@@ -70,10 +70,14 @@ public class RobotVisionAngle {
                     double dx = line[2] - line[0];
                     double dy = line[3] - line[1];
                     angle = Math.toDegrees(Math.atan2(dy, dx));
+
+                    // 调整角度方向：向左为正，向右为负
                     if (angle < 0) {
-                        angle += 180;
+                        angle += 360;
                     }
-                    angle = Math.abs(angle - 90);
+                    if (angle > 180) {
+                        angle -= 360;
+                    }
                     break; // 考虑简单起见只取第一条检测到的线条
                 }
             }
