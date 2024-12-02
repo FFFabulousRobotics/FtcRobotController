@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -12,9 +15,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RobotVisionAngle {
     private OpenCvCamera webcam;
-    private double detectedAngle = 0;  //  角度变量
+    private double detectedAngle = 0;  // 角度变量
 
     public void initialize(HardwareMap hardwareMap) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
@@ -43,7 +49,8 @@ public class RobotVisionAngle {
         Mat gray = new Mat();
         Mat blurred = new Mat();
         Mat edges = new Mat();
-        Mat lines = new Mat();
+        Mat hierarchy = new Mat();
+        MatOfPoint2f approxCurve = new MatOfPoint2f();
 
         @Override
         public Mat processFrame(Mat input) {
@@ -53,36 +60,51 @@ public class RobotVisionAngle {
             // 高斯模糊，减少噪声
             Imgproc.GaussianBlur(gray, blurred, new Size(5, 5), 0);
 
-            // 获取图像中心区域 (3/4的画面)
-            Rect centerRect = new Rect(input.width() / 8, input.height() / 8, input.width() * 3 / 4, input.height() * 3 / 4);
-            Mat centerMat = blurred.submat(centerRect);
-
             // 边缘检测
-            Imgproc.Canny(centerMat, edges, 50, 150);
+            Imgproc.Canny(blurred, edges, 50, 150);
 
-            // 霍夫直线变换检测线条
-            Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180, 50, 50, 10);
+            // 轮廓检测
+            List<MatOfPoint> contours = new ArrayList<>();
+            Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            double angle = 0;
-            if (lines.rows() > 0) {
-                for (int i = 0; i < lines.rows(); i++) {
-                    double[] line = lines.get(i, 0);
-                    double dx = line[2] - line[0];
-                    double dy = line[3] - line[1];
-                    angle = Math.toDegrees(Math.atan2(dy, dx));
+            // 查找最大矩形
+            double maxArea = 0;
+            Rect largestRect = null;
+            for (MatOfPoint contour : contours) {
+                MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+                double peri = Imgproc.arcLength(contour2f, true);
+                Imgproc.approxPolyDP(contour2f, approxCurve, 0.02 * peri, true);
 
-                    // 调整角度方向：向左为正，向右为负
-                    if (angle < 0) {
-                        angle += 360;
+                if (approxCurve.total() == 4) {
+                    Rect rect = Imgproc.boundingRect(contour);
+                    double area = rect.area();
+                    if (area > maxArea) {
+                        maxArea = area;
+                        largestRect = rect;
                     }
-                    if (angle > 180) {
-                        angle -= 360;
-                    }
-                    break; // 考虑简单起见只取第一条检测到的线条
                 }
             }
 
-            detectedAngle = angle;
+            // 计算偏角
+            if (largestRect != null) {
+                Point rectCenter = new Point(largestRect.x + largestRect.width / 2.0, largestRect.y + largestRect.height / 2.0);
+                Point imageCenter = new Point(input.width() / 2.0, input.height() / 2.0);
+                double angle = Math.toDegrees(Math.atan2(rectCenter.y - imageCenter.y, rectCenter.x - imageCenter.x));
+
+                // 调整角度方向：竖直为0度，向左为正，向右为负
+                if (angle < -90) {
+                    angle = 90;
+                } else if (angle > 90) {
+                    angle = -90;
+                }
+
+                // 四舍五入到最近的15度区间
+                int roundedAngle = (int) Math.round(angle / 15.0) * 15;
+                if (roundedAngle == -90) {
+                    roundedAngle = 90;
+                }
+                detectedAngle = roundedAngle;
+            }
 
             return input;
         }
