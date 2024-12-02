@@ -24,15 +24,23 @@ public class RRTest extends LinearOpMode {
 
         // 构建轨迹序列
         TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(24.67, -33.13), Math.toRadians(87.72))
-                .splineTo(new Vector2d(51.86, -26.28), Math.toRadians(14.14))
-                .splineTo(new Vector2d(57.10, -48.64), Math.toRadians(-76.82))
+                .splineTo(new Vector2d(26.79, 64.23), Math.toRadians(182.66))
+                .splineTo(new Vector2d(16.43, 44.71), Math.toRadians(242.05))
+                .splineTo(new Vector2d(45.31, 35.15), Math.toRadians(-18.32))
+                .splineTo(new Vector2d(46.90, 62.44), Math.toRadians(-33.69))
                 .build();
+
         // 等待开始命令
         waitForStart();
         // 开始跟踪轨迹
         if (opModeIsActive()) {
             drive.followTrajectorySequence(trajectory0);
+
+            while (opModeIsActive()) {
+                drive.update();
+                telemetry.addData("Current Pose", drive.getPoseEstimate());
+                telemetry.update();
+            }
         }
     }
 }

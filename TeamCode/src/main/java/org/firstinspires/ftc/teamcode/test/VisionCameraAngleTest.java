@@ -6,8 +6,6 @@ import org.firstinspires.ftc.teamcode.hardware.RobotVisionAngle;
 
 @TeleOp
 
-
-
 public class VisionCameraAngleTest extends LinearOpMode {
     private RobotVisionAngle robotVisionAngle;
 
