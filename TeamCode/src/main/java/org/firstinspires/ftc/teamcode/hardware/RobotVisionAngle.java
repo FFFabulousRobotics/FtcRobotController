@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 public class RobotVisionAngle {
     private OpenCvCamera webcam;
-    private double detectedAngle = 0;  // 角度变量
+    private double detectedAngle = 0;  //  角度变量
 
     public void initialize(HardwareMap hardwareMap) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
