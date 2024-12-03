@@ -7,7 +7,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,6 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RobotCameraDistance {
+
+    // 常量定义
+    private static final Scalar LOWER_BOUND_RED = new Scalar(0, 100, 100);
+    private static final Scalar UPPER_BOUND_RED = new Scalar(10, 255, 255);
+    private static final Scalar LOWER_BOUND_YELLOW = new Scalar(20, 100, 100);
+    private static final Scalar UPPER_BOUND_YELLOW = new Scalar(30, 255, 255);
+    private static final Scalar LOWER_BOUND_BLUE = new Scalar(110, 100, 100);
+    private static final Scalar UPPER_BOUND_BLUE = new Scalar(130, 255, 255);
+
     private OpenCvCamera webcam;
     private String detectedColor;
     private double[] polarCoordinates = new double[2];  // 数组形式，0为距离，1为角度
@@ -57,16 +65,16 @@ public class RobotCameraDistance {
     private void setColorBounds(String color) {
         switch (color.toLowerCase()) {
             case "red":
-                lowerBound = new Scalar(0, 100, 100);
-                upperBound = new Scalar(10, 255, 255);
+                lowerBound = LOWER_BOUND_RED;
+                upperBound = UPPER_BOUND_RED;
                 break;
             case "yellow":
-                lowerBound = new Scalar(20, 100, 100);
-                upperBound = new Scalar(30, 255, 255);
+                lowerBound = LOWER_BOUND_YELLOW;
+                upperBound = UPPER_BOUND_YELLOW;
                 break;
             case "blue":
-                lowerBound = new Scalar(110, 100, 100);
-                upperBound = new Scalar(130, 255, 255);
+                lowerBound = LOWER_BOUND_BLUE;
+                upperBound = UPPER_BOUND_BLUE;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported color: " + color);
@@ -107,6 +115,12 @@ public class RobotCameraDistance {
 
                 polarCoordinates[0] = distance;
                 polarCoordinates[1] = angle;
+
+                // 在图像上绘制最大矩形和中心点
+                Imgproc.rectangle(input, largestRect, new Scalar(0, 255, 0), 2);
+                Imgproc.circle(input, rectCenter, 5, new Scalar(0, 255, 0), -1);
+                Imgproc.putText(input, "Distance: " + distance, new Point(10, 30), Imgproc.FONT_HERSHEY_SIMPLEX, 0.8, new Scalar(255, 255, 255), 2);
+                Imgproc.putText(input, "Angle: " + angle, new Point(10, 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.8, new Scalar(255, 255, 255), 2);
             }
 
             return input;

@@ -12,7 +12,7 @@ public class VisionCameraDistanceTest extends LinearOpMode {
     public void runOpMode() {
         robotCameraDistance = new RobotCameraDistance();
 
-        robotCameraDistance.initialize(hardwareMap, "red"); // 初始化摄像头，并设置颜色参数为红色
+        robotCameraDistance.initialize(hardwareMap, "blue"); // 初始化摄像头，并设置颜色参数为红色
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
