@@ -32,3 +32,11 @@ repositories {
 //    maven { url "https://maven.aliyun.com/repository/central" }
     mavenCentral()
 }
+
+repositories {
+    mavenCentral()
+    // 你可以添加其他需要的仓库，例如：
+    maven { url "https://jitpack.io" }
+    maven { url "https://repo.sparkfun.com/artifactory/sparkfun-repo" } // 假设这是SparkFun的仓库URL
+}
+
