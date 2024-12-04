@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.test;//测试摄像头距离和角度识�
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.hardware.RobotCameraDistance;
+import org.firstinspires.ftc.teamcode.hardware.RobotVision.RobotCameraDistance;
 
 @TeleOp(name = "VisionCameraDistanceTest", group = "Test")
 public class VisionCameraDistanceTest extends LinearOpMode {

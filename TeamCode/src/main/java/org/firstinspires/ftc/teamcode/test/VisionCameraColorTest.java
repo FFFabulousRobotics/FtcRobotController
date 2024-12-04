@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.test;//测试摄像头颜色识别功能
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.hardware.RobotVision;
+import org.firstinspires.ftc.teamcode.hardware.RobotVision.RobotVisionColor;
 
 @TeleOp
 public class VisionCameraColorTest extends LinearOpMode {
-    private RobotVision robotVisionColor;
+    private RobotVisionColor robotVisionColor;
 
     @Override
     public void runOpMode() {
-        robotVisionColor = new RobotVision();
+        robotVisionColor = new RobotVisionColor();
 
         robotVisionColor.initialize(hardwareMap); // 初始化摄像头
 
