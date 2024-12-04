@@ -5,18 +5,19 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.SparkFunOTOS;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "RRTest")
 
 public class RRTest extends LinearOpMode {
 
-    private SparkFunOTOSTest sparkFunOTOS;
+    private SparkFunOTOS sparkFunOTOS;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // 初始化SparkFun OTOS传感器
-        sparkFunOTOS = new SparkFunOTOSTest(hardwareMap);
+        sparkFunOTOS = new SparkFunOTOS(hardwareMap);
 
         // 初始化驱动对象
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
