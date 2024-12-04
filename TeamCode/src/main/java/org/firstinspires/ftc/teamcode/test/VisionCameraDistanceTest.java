@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.test;//测试摄像头距离和角度识别功能
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +12,7 @@ public class VisionCameraDistanceTest extends LinearOpMode {
     public void runOpMode() {
         robotCameraDistance = new RobotCameraDistance();
 
-        robotCameraDistance.initialize(hardwareMap, "blue"); // 初始化摄像头，并设置颜色参数为红色
+        robotCameraDistance.initialize(hardwareMap, "blue");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -20,10 +20,12 @@ public class VisionCameraDistanceTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // 获取极坐标
             double[] polarCoordinates = robotCameraDistance.getPolarCoordinates();
 
-            // 显示距离和角度检测结果
+            if (gamepad1.a) {
+                robotCameraDistance.updateCurrentRectExcludingCurrent();
+            }
+
             telemetry.addData("Distance from Center", polarCoordinates[0]);
             telemetry.addData("Angle from Center", polarCoordinates[1]);
             telemetry.update();
