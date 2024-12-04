@@ -21,6 +21,7 @@ public class RobotTop {
     private Servo armSpinXServo;
     private Servo armSpinYServo;
     private Servo armGrabServo;
+    private Servo liftServo;
 
     public RobotTop(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -37,6 +38,7 @@ public class RobotTop {
         armSpinXServo = hardwareMap.get(Servo.class, "armSpinX");
         armSpinYServo = hardwareMap.get(Servo.class, "armSpinY");
         armGrabServo = hardwareMap.get(Servo.class, "armGrab");
+        liftServo = hardwareMap.get(Servo.class, "liftServo");
 
         leftLiftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightLiftMotor.setDirection(DcMotor.Direction.REVERSE);

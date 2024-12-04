@@ -13,7 +13,12 @@ public class ManualOpMode extends LinearOpMode {
     RobotTop robotTop;
 
     // servoName(port): positionRange[a, b]; defaultPos
+    // control hub:
+    // top(3):
+    // container(4): [0.35-open, 1-close]; default: 1
+    // lift(5): [0.2-open, 0.6-close];default: 0.6
     // --------------------------------------------
+    // expansion hub:
     // stretch(1): [0-back, 0.3-out]; default: 0
     // spinX(2): [0, 1]; default: 0.5
     // turn(3): [0.38-back, 0.71-out]; default: 0.38
@@ -22,14 +27,21 @@ public class ManualOpMode extends LinearOpMode {
 
     final int LIFT_TOP_POSITION = 1250;
     final int LIFT_BOTTOM_POSITION = 50;
-    final double STRETCH_BACK_POSITION = 0;
+    final double STRETCH_BACK_POSITION = 0.03;
     final double STRETCH_OUT_POSITION = 0.3;
     final double SPIN_X_DEFAULT_POSITION = 0.5;
-    final double SPIN_Y_DEFAULT_POSITION = 0.07;
+    //TODO: test spinX hovering position
+    final double SPIN_X_HOVERING_POSITION = 0.53;
+    //TODO: test the spinX down position
+    final double SPIN_X_DOWN_POSITION = 0.58;
+    final double SPIN_Y_DEFAULT_POSITION = 0.1;
     final double TURN_BACK_POSITION = 0.38;
-    final double TURN_OUT_POSITION = 0.71;
+    //TODO: test the hovering position
+    final double TURN_OUT_HOVERING_POSITION = 0.64;
+    //TODO: test the grabbing down position
+    final double TURN_OUT_DOWN_POSITION = 0.71;
     final double GRAB_OPEN_POSITION = 0.2;
-    final double GRAB_CLOSE_POSITION = 0.83;
+    final double GRAB_CLOSE_POSITION = 0.9;
 
     @Override
     public void runOpMode() {
@@ -99,9 +111,10 @@ public class ManualOpMode extends LinearOpMode {
                 }
             }
             if (armState == ArmState.TURNING_OUT) {
-                if (armTurnPos >= TURN_OUT_POSITION - 0.05) {
-                    armTurnPos = TURN_OUT_POSITION;
+                if (armTurnPos >= TURN_OUT_HOVERING_POSITION - 0.05) {
+                    armTurnPos = TURN_OUT_HOVERING_POSITION;
                     robotTop.setArmTurnPosition(armTurnPos);
+                    robotTop.setArmSpinXPosition(SPIN_X_HOVERING_POSITION);
                     armState = ArmState.TURNED;
                 } else {
                     armTurnPos += 0.03;
@@ -119,19 +132,27 @@ public class ManualOpMode extends LinearOpMode {
                 }
             }
             if (gamepad1.b && !previousGamepad1.b) {
-                if (armGrabbing) {
+                robotTop.setArmGrabPosition(GRAB_OPEN_POSITION);
+                sleep(500);
+                if (!armGrabbing) {
+                    robotTop.setArmTurnPosition(TURN_OUT_DOWN_POSITION);
+                    robotTop.setArmSpinXPosition(SPIN_X_DOWN_POSITION);
+                    sleep(200);
+                    robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
+                    sleep(500);
+                    robotTop.setArmTurnPosition(TURN_OUT_HOVERING_POSITION);
+                    armGrabbing = true;
+                    telemetry.addData("grab", 1);
+                } else {
                     robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
                     armGrabbing = false;
-                } else {
-                    robotTop.setArmGrabPosition(GRAB_OPEN_POSITION);
-                    armGrabbing = true;
                 }
             }
             if (gamepad1.dpad_up) {
-                armSpinXPos = Math.min(1, armSpinXPos + 0.05);
+                armSpinXPos = Math.min(1, armSpinXPos + 0.02);
                 robotTop.setArmSpinXPosition(armSpinXPos);
             } else if (gamepad1.dpad_down) {
-                armSpinXPos = Math.max(0, armSpinXPos - 0.05);
+                armSpinXPos = Math.max(0, armSpinXPos - 0.02);
                 robotTop.setArmSpinXPosition(armSpinXPos);
             }
             if (gamepad1.dpad_right) {
