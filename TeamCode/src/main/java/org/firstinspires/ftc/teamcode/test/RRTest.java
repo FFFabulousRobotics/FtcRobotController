@@ -2,22 +2,21 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.test.SparkFunOTOS;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "SparkFunRoadRunnerAuto")
+@Autonomous(name = "RRTest")
+
 public class RRTest extends LinearOpMode {
 
-    private SparkFunOTOS sparkFunOTOS;
+    private SparkFunOTOSTest sparkFunOTOS;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // 初始化SparkFun OTOS传感器
-        sparkFunOTOS = new SparkFunOTOS(hardwareMap);
+        sparkFunOTOS = new SparkFunOTOSTest(hardwareMap);
 
         // 初始化驱动对象
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -27,9 +26,13 @@ public class RRTest extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         // 构建轨迹序列
-        TrajectorySequence trajectory = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(30, 30), Math.toRadians(45.0))
-                .splineTo(new Vector2d(60, 0), Math.toRadians(0.0))
+        TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(new Pose2d(43.40, 49.04, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(47.83, -32.93), Math.toRadians(-86.91))
+                .splineTo(new Vector2d(18.43, -53.47), Math.toRadians(214.94))
+                .splineTo(new Vector2d(-48.23, -41.99), Math.toRadians(170.23))
+                .splineTo(new Vector2d(-46.22, 3.52), Math.toRadians(87.47))
+                .splineTo(new Vector2d(-35.55, 47.03), Math.toRadians(76.21))
+                .splineTo(new Vector2d(11.98, 52.67), Math.toRadians(6.77))
                 .build();
 
         // 等待开始命令
@@ -37,7 +40,7 @@ public class RRTest extends LinearOpMode {
 
         // 开始跟踪轨迹
         if (opModeIsActive()) {
-            drive.followTrajectorySequence(trajectory);
+            drive.followTrajectorySequence(trajectory0);
 
             while (opModeIsActive()) {
                 // 更新位置信息
