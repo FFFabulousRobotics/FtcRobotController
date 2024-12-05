@@ -233,16 +233,21 @@ public class ManualOpMode extends LinearOpMode {
         }
     }
 
-    protected double calculateSpinY(double angle){
-        if(angle <= 0){
-            angle =  -angle/360 + 0.1;
-        }
-        else if(angle >= 0){
-            angle = 0.6 - angle/360;
-        }
-        return Math.min(angle,1);
+protected double calculateSpinY(double angle) {
+    if (angle < -180 || angle > 180) {
+        throw new IllegalArgumentException("Angle must be between -180 and 180 degrees");
     }
+
+    double adjustedAngle;
+    if (angle <= 0) {
+        adjustedAngle = -angle / 360.0 + 0.1;
+    } else {
+        adjustedAngle = 0.6 - angle / 360.0;
+    }
+
+    return Math.max(0, Math.min(adjustedAngle, 1)); // 确保值在0到1之间
 }
+
 
 enum LiftState {
     BOTTOM,GOING_UP, TOP, GOING_DOWN
