@@ -106,11 +106,11 @@ public class ManualOpMode extends LinearOpMode {
                     armStretchPos = STRETCH_OUT_POSITION;
                     robotTop.setArmStretchPosition(armStretchPos);
                     robotTop.setArmSpinXPosition(SPIN_X_DEFAULT_POSITION + 0.2);
-                    sleep(1000);
+                    sleep(1500);
                     armState = ArmState.LOCKED;
                 }else if(armState == ArmState.LOCKED){
                     robotChassis.stopMotor();
-                    sleep(1000);
+                    sleep(1500);
                     armStretchPos = STRETCH_BACK_POSITION;
                     armState = ArmState.WITHDRAWING;
                 }
