@@ -30,7 +30,7 @@ public class ManualOpMode extends LinearOpMode {
     final int LIFT_BOTTOM_POSITION = 50;
     final double STRETCH_BACK_POSITION = 0.03;
     final double STRETCH_OUT_POSITION = 0.3;
-    final double SPIN_X_DEFAULT_POSITION = 0.5;
+    final double SPIN_X_DEFAULT_POSITION = 0.22;
     final double SPIN_X_HOVERING_POSITION = 0.53;
     final double SPIN_X_DOWN_POSITION = 0.58;
     final double SPIN_Y_DEFAULT_POSITION = 0.1;
@@ -45,7 +45,7 @@ public class ManualOpMode extends LinearOpMode {
         robotChassis = new RobotChassis(this);
         robotTop = new RobotTop(this);
         RobotVisionAngle robotVisionAngle = new RobotVisionAngle();
-        robotVisionAngle.initialize(hardwareMap); // 初始化摄像头
+        robotVisionAngle.initialize(hardwareMap);
         Gamepad previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
 
@@ -63,6 +63,8 @@ public class ManualOpMode extends LinearOpMode {
         ArmState armState = ArmState.IDLE;
 
         waitForStart();
+        robotTop.setArmStretchPosition(armStretchPos);
+        robotTop.setArmTurnPosition(armTurnPos);
         while (opModeIsActive()) {
             robotChassis.driveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
 
@@ -72,7 +74,10 @@ public class ManualOpMode extends LinearOpMode {
                 if (gamepad1.y && liftPosition <= LIFT_TOP_POSITION - 150) {
                     robotTop.setTopServoPosition(0.05);
                     robotTop.setLeftPower(0.7);
-                } else if (liftPosition >= LIFT_TOP_POSITION) {
+                    liftState = LiftState.GOING_UP;
+                }
+            } else if (liftState == LiftState.GOING_UP) {
+                if (liftPosition >= LIFT_TOP_POSITION) {
                     robotTop.setLeftPower(0);
                     liftState = LiftState.TOP;
                 } else if (liftPosition >= LIFT_TOP_POSITION - 150) {
@@ -81,7 +86,13 @@ public class ManualOpMode extends LinearOpMode {
             } else if (liftState == LiftState.TOP) {
                 if (gamepad1.y && liftPosition >= LIFT_BOTTOM_POSITION + 150) {
                     robotTop.setLeftPower(-0.6);
-                } else if (liftPosition <= LIFT_BOTTOM_POSITION) {
+                    liftState = LiftState.GOING_DOWN;
+                }
+                if (liftPosition <= LIFT_TOP_POSITION) {
+                    robotTop.setLeftPower(0.3);
+                }
+            }else if(liftState == LiftState.GOING_DOWN){
+                if (liftPosition <= LIFT_BOTTOM_POSITION) {
                     robotTop.setLeftPower(0);
                     robotTop.setTopServoPosition(0.05);
                     liftState = LiftState.BOTTOM;
@@ -89,12 +100,20 @@ public class ManualOpMode extends LinearOpMode {
                     robotTop.setLeftPower(-0.2);
                 }
             }
-            if(gamepad1.y && !previousGamepad1.y && armState == ArmState.IDLE){
-                armStretchPos = STRETCH_OUT_POSITION;
-                armState = ArmState.TURNING_OUT;
-                robotTop.setArmStretchPosition(armStretchPos);
-                robotChassis.stopMotor();
-                sleep(500);
+            if(gamepad1.y && !previousGamepad1.y){
+                if(armState == ArmState.IDLE){
+                    robotChassis.stopMotor();
+                    armStretchPos = STRETCH_OUT_POSITION;
+                    robotTop.setArmStretchPosition(armStretchPos);
+                    robotTop.setArmSpinXPosition(SPIN_X_DEFAULT_POSITION + 0.2);
+                    sleep(1000);
+                    armState = ArmState.LOCKED;
+                }else if(armState == ArmState.LOCKED){
+                    robotChassis.stopMotor();
+                    sleep(1000);
+                    armStretchPos = STRETCH_BACK_POSITION;
+                    armState = ArmState.WITHDRAWING;
+                }
             }
             if(gamepad1.left_bumper && !previousGamepad1.left_bumper
                     && liftState == LiftState.TOP && armState != ArmState.IDLE){
@@ -118,28 +137,23 @@ public class ManualOpMode extends LinearOpMode {
             if (gamepad1.x && !previousGamepad1.x) {
                 if (armState == ArmState.IDLE) {
                     armStretchPos = STRETCH_OUT_POSITION;
-                    armState = ArmState.STRETCHED;
+                    armState = ArmState.TURNING_OUT;
                     robotTop.setArmStretchPosition(armStretchPos);
                 }
-//                else if (armState == ArmState.STRETCHED) {
-//                    armState = ArmState.WITHDRAWING;
-//                }
+                else if (armState == ArmState.TURNED) {
+                    armState = ArmState.TURNING_BACK;
+                    robotTop.setArmSpinYPosition(SPIN_Y_DEFAULT_POSITION);
+                }
             }
             if (armState == ArmState.WITHDRAWING) {
                 if (armStretchPos <= STRETCH_BACK_POSITION) {
                     armState = ArmState.IDLE;
+                    robotTop.setArmSpinXPosition(SPIN_X_DEFAULT_POSITION);
                 } else {
                     armStretchPos -= 0.03;
                     robotTop.setArmStretchPosition(armStretchPos);
                 }
             }
-//            if (gamepad1.a && !previousGamepad1.a) {
-//                if (armState == ArmState.STRETCHED) {
-//                    armState = ArmState.TURNING_OUT;
-//                } else if (armState == ArmState.TURNED) {
-//                    armState = ArmState.TURNING_BACK;
-//                }
-//            }
             if (armState == ArmState.TURNING_OUT) {
                 if (armTurnPos >= TURN_OUT_HOVERING_POSITION - 0.05) {
                     armTurnPos = TURN_OUT_HOVERING_POSITION;
@@ -167,19 +181,21 @@ public class ManualOpMode extends LinearOpMode {
                 if (!armGrabbing && armState == ArmState.TURNED) {
                     robotTop.setArmTurnPosition(TURN_OUT_DOWN_POSITION);
                     robotTop.setArmSpinXPosition(SPIN_X_DOWN_POSITION);
-                    sleep(200);
-                    robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
                     grabbingFlag = true;
                 } else {
                     robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
                     armGrabbing = false;
                 }
             }
-            if(grabbingFlag && !gamepad1.b && previousGamepad1.b){
+            if(grabbingFlag && !gamepad1.b){
+                robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
+                sleep(500);
                 robotTop.setArmTurnPosition(TURN_OUT_HOVERING_POSITION);
+                robotTop.setArmSpinXPosition(SPIN_X_HOVERING_POSITION);
                 armGrabbing = true;
                 grabbingFlag = false;
             }
+            robotTop.setArmStretchPosition(armStretchPos);
             if (gamepad1.dpad_up) {
                 armSpinXPos = Math.min(1, armSpinXPos + 0.02);
                 robotTop.setArmSpinXPosition(armSpinXPos);
@@ -196,8 +212,9 @@ public class ManualOpMode extends LinearOpMode {
             }
 
             //vision
-            if(armState == ArmState.TURNED){
+            if(gamepad1.a && !previousGamepad1.a){
                 recognitionAngle = robotVisionAngle.getDetectedAngle();
+                robotTop.setArmSpinYPosition(calculateSpinY(recognitionAngle));
             }
 
             // telemetry
@@ -207,18 +224,30 @@ public class ManualOpMode extends LinearOpMode {
             telemetry.addData("XPos", armSpinXPos);
             telemetry.addData("YPos", armSpinYPos);
             telemetry.addData("grab", armGrabbing);
+            telemetry.addData("grabFlag", grabbingFlag);
+            telemetry.addData("stretch", armStretchPos);
             telemetry.addData("angle", recognitionAngle);
             telemetry.update();
             previousGamepad1.copy(gamepad1);
             sleep(50);
         }
     }
+
+    protected double calculateSpinY(double angle){
+        if(angle <= 0){
+            angle =  -angle/360 + 0.1;
+        }
+        else if(angle >= 0){
+            angle = 0.6 - angle/360;
+        }
+        return Math.min(angle,1);
+    }
 }
 
 enum LiftState {
-    BOTTOM, TOP
+    BOTTOM,GOING_UP, TOP, GOING_DOWN
 }
 
 enum ArmState {
-    IDLE, WITHDRAWING, STRETCHED, TURNING_OUT, TURNED, TURNING_BACK
+    IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK, LOCKED
 }

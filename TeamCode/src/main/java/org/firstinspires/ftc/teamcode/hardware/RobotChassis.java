@@ -12,10 +12,10 @@ public class RobotChassis {
     LinearOpMode opMode;
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    private DcMotor leftFrontDrive;
-    private DcMotor leftBackDrive;
-    private DcMotor rightFrontDrive;
-    private DcMotor rightBackDrive;
+    protected DcMotor leftFrontDrive;
+    protected DcMotor leftBackDrive;
+    protected DcMotor rightFrontDrive;
+    protected DcMotor rightBackDrive;
 
     public RobotChassis(LinearOpMode opMode) {
         this.opMode = opMode;

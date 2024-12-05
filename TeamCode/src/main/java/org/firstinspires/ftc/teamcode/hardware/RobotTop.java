@@ -14,17 +14,16 @@ public class RobotTop {
     OpMode opMode;
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    private DcMotor leftLiftMotor;
-    private DcMotor rightLiftMotor;
-    private Servo armStretchServo;
-    private Servo armTurnServo;
-    private Servo armSpinXServo;
-    private Servo armSpinYServo;
-    private Servo armGrabServo;
-    private Servo liftServo;
-    private Servo topServo;
-    private Servo containerServo;
-
+    protected DcMotor leftLiftMotor;
+    protected DcMotor rightLiftMotor;
+    protected Servo armStretchServo;
+    protected Servo armTurnServo;
+    protected Servo armSpinXServo;
+    protected Servo armSpinYServo;
+    protected Servo armGrabServo;
+    protected Servo liftServo;
+    protected Servo topServo;
+    protected Servo containerServo;
     public RobotTop(LinearOpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
