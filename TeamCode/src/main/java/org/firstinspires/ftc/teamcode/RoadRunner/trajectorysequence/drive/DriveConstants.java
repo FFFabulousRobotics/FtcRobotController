@@ -21,8 +21,8 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 312.5;
+    public static final double TICKS_PER_REV = 500;
+    public static final double MAX_RPM = 300;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -45,8 +45,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 3; // in (轮子半径 单位：英寸)
-    public static double GEAR_RATIO = 1.0/15.0; // (齿轮比) output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 33.9/2.54; // (轮距 单位：英寸) in
+    public static double GEAR_RATIO = 15.0; // (齿轮比) output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 339/2.54; // (轮距 单位：英寸) in
 
     /*     * These are the feedforward parameters used to model the drive motor behavior. If you are using
      * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
@@ -54,8 +54,8 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kA = 0.01;
+    public static double kStatic = 0.05;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -65,8 +65,8 @@ public class DriveConstants {
      * inches.
      */
     //TODO:ADJUST THESE NUMBERS.
-    public static double MAX_VEL = MAX_RPM*GEAR_RATIO*WHEEL_RADIUS*2*Math.PI/60;
-    public static double MAX_ACCEL = MAX_RPM*GEAR_RATIO*WHEEL_RADIUS*2*Math.PI/60;
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(MAX_VEL/TRACK_WIDTH);
     public static double MAX_ANG_ACCEL = Math.toRadians(MAX_VEL/TRACK_WIDTH);
 
@@ -92,3 +92,4 @@ public class DriveConstants {
         return 32767 / ticksPerSecond;
     }
 }
+

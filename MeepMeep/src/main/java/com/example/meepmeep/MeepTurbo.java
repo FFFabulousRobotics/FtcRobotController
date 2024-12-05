@@ -16,11 +16,11 @@ public class MeepTurbo {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(500, 60, Math.toRadians(1000), Math.toRadians(1000), 339/2.54)
                 // Option: Set theme. Default = ColorSchemeRedDark()
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 90))
                                 .forward(30)
                                 .turn(Math.toRadians(90))
                                 .forward(30)
@@ -31,7 +31,7 @@ public class MeepTurbo {
                                     // bot.wobbleArm.lower()
                                 })
                                 .turn(Math.toRadians(90))
-                                .splineTo(new Vector2d(10, 15), 0)
+                                .splineTo(new Vector2d(50, 15), 0)
                                 .turn(Math.toRadians(90))
                                 .build()
                 );

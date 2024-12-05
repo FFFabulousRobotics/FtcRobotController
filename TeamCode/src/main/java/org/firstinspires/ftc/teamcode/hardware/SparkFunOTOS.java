@@ -38,4 +38,10 @@ public class SparkFunOTOS {
         this.y = newY;
         this.heading = newHeading;
     }
+
+    public double getDistance() {
+
+        return 0;
+    }
 }
+

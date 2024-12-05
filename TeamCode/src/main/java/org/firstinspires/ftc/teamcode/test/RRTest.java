@@ -2,59 +2,47 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.SparkFunOTOS;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RRTest")
-
+@Autonomous
 public class RRTest extends LinearOpMode {
 
-    private SparkFunOTOS sparkFunOTOS;
+    private SampleMecanumDrive drive;
+    private SparkFunOTOS otosSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // 初始化SparkFun OTOS传感器
-        sparkFunOTOS = new SparkFunOTOS(hardwareMap);
+        // 初始化驱动器和传感器
+        drive = new SampleMecanumDrive(hardwareMap);
+        otosSensor = hardwareMap.get(SparkFunOTOS.class, "otos");
 
-        // 初始化驱动对象
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        // 定义目标位置
+        Pose2d targetPosition = new Pose2d(30, 30, Math.toRadians(0)); // 示例目标位置
 
-        // 定义机器人起始位置
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(90.0));
-        drive.setPoseEstimate(startPose);
-
-        // 构建轨迹序列
-        TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(new Pose2d(43.40, 49.04, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(47.83, -32.93), Math.toRadians(-86.91))
-                .splineTo(new Vector2d(18.43, -53.47), Math.toRadians(214.94))
-                .splineTo(new Vector2d(-48.23, -41.99), Math.toRadians(170.23))
-                .splineTo(new Vector2d(-46.22, 3.52), Math.toRadians(87.47))
-                .splineTo(new Vector2d(-35.55, 47.03), Math.toRadians(76.21))
-                .splineTo(new Vector2d(11.98, 52.67), Math.toRadians(6.77))
+        // 创建轨迹
+        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                .lineTo(new Vector2d(targetPosition.getX(), targetPosition.getY()))
                 .build();
 
-        // 等待开始命令
+        // 等待开始指令
         waitForStart();
 
-        // 开始跟踪轨迹
-        if (opModeIsActive()) {
-            drive.followTrajectorySequence(trajectory0);
+        if (isStopRequested()) return;
 
-            while (opModeIsActive()) {
-                // 更新位置信息
-                drive.update();
+        // 执行轨迹移动
+        drive.followTrajectory(trajectory);
 
-                // 输出当前位置信息到Telemetry
-                telemetry.addData("Current Pose", drive.getPoseEstimate());
-                telemetry.addData("SparkFun OTOS X", sparkFunOTOS.getX());
-                telemetry.addData("SparkFun OTOS Y", sparkFunOTOS.getY());
-                telemetry.addData("SparkFun OTOS Heading", sparkFunOTOS.getHeading());
-                telemetry.update();
-            }
+        while (opModeIsActive()) {
+            double distance = otosSensor.getDistance();
+            telemetry.addData("Distance", distance);
+            telemetry.update();
+            // 实时调整逻辑
         }
+
     }
 }
-
