@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.SparkFunOTOS;
 
@@ -20,13 +21,24 @@ public class RRTest extends LinearOpMode {
         // 初始化驱动器和传感器
         drive = new SampleMecanumDrive(hardwareMap);
         otosSensor = hardwareMap.get(SparkFunOTOS.class, "otos");
-
-        // 定义目标位置
-        Pose2d targetPosition = new Pose2d(30, 30, Math.toRadians(0)); // 示例目标位置
-
-        // 创建轨迹
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .lineTo(new Vector2d(targetPosition.getX(), targetPosition.getY()))
+        // 创建轨迹序列
+//        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d(0, 0, 90))
+//                .forward(100)
+//                .turn(Math.toRadians(90))
+//                .forward(100)
+//                .addDisplacementMarker(() -> {
+//                    // 在这里添加要执行的操作，如发射器射击或手臂放下
+//                    // bot.shooter.shoot();
+//                    // bot.wobbleArm.lower();
+//                })
+//                .turn(Math.toRadians(90))
+//                .splineTo(new Vector2d(50, 15), Math.toRadians(0))
+//                .turn(Math.toRadians(90))
+//                .build();
+        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d(-33.53, -65.35, Math.toRadians(15.81)))
+                .splineTo(new Vector2d(46.62, -45.21), Math.toRadians(56.31))
+                .splineTo(new Vector2d(56.29, 38.97), Math.toRadians(104.04))
+                .splineTo(new Vector2d(-25.07, 57.90), Math.toRadians(186.77))
                 .build();
 
         // 等待开始指令
@@ -35,7 +47,7 @@ public class RRTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         // 执行轨迹移动
-        drive.followTrajectory(trajectory);
+        drive.followTrajectorySequence(trajectorySequence);
 
         while (opModeIsActive()) {
             double distance = otosSensor.getDistance();
