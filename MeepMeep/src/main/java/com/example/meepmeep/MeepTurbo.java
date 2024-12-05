@@ -20,7 +20,7 @@ public class MeepTurbo {
                 // Option: Set theme. Default = ColorSchemeRedDark()
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-33.53, -65.35, Math.toRadians(15.81)))
+                        drive.trajectorySequenceBuilder(new Pose2d(36.35, -62.84, Math.toRadians(47.22)))
 //                                .forward(50)
 //                                .turn(Math.toRadians(90))
 //                                .forward(50)
@@ -34,12 +34,12 @@ public class MeepTurbo {
 //                                .splineTo(new Vector2d(50, 15), 0)
 //                                .turn(Math.toRadians(90))
 //                                .build()
-                        //TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(new Pose2d(13.33, -60.10, Math.toRadians(24.60)))
-                       //TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(new Pose2d(-33.53, -65.35, Math.toRadians(15.81)))
-                                .splineTo(new Vector2d(46.62, -45.21), Math.toRadians(56.31))
-                                .splineTo(new Vector2d(56.29, 38.97), Math.toRadians(104.04))
-                                .splineTo(new Vector2d(-25.07, 57.90), Math.toRadians(186.77))
-                                .build());
+                        //TrajectorySequence trajectory0 = drive.trajectorySequenceBuilder(new Pose2d(36.35, -62.84, Math.toRadians(47.22)))
+                        .splineTo(new Vector2d(60.65, -35.75), Math.toRadians(90.00))
+                        .splineTo(new Vector2d(61.24, 37.15), Math.toRadians(90.00))
+                        .splineTo(new Vector2d(35.95, 60.05), Math.toRadians(180.00))
+                        .build());
+
 
 
 
