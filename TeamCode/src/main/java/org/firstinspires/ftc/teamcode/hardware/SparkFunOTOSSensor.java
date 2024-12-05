@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class SparkFunOTOS {
-    private com.qualcomm.hardware.sparkfun.SparkFunOTOS otosDevice;
+public class SparkFunOTOSSensor {
+    private SparkFunOTOS otosDevice;
     private double x;
     private double y;
     private double heading;
 
-    public SparkFunOTOS(HardwareMap hardwareMap) {
+    public SparkFunOTOSSensor(HardwareMap hardwareMap) {
         // 假设 OTOS 传感器连接到 I2C 端口
-        otosDevice = hardwareMap.get(com.qualcomm.hardware.sparkfun.SparkFunOTOS.class, "otos");
+        otosDevice = hardwareMap.get(SparkFunOTOS.class, "otos");
         // 初始化传感器（具体初始化代码取决于 OTOS 库的实现）
         this.x = 0.0;
         this.y = 0.0;
