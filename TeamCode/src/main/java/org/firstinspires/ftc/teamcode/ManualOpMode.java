@@ -48,6 +48,8 @@ public class ManualOpMode extends LinearOpMode {
         robotVisionAngle.initialize(hardwareMap);
         Gamepad previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
+        Gamepad previousGamepad2 = new Gamepad();
+        previousGamepad2.copy(gamepad2);
 
         int liftPosition;
         double armStretchPos = STRETCH_BACK_POSITION;
@@ -60,7 +62,6 @@ public class ManualOpMode extends LinearOpMode {
         boolean containerRelease = true;
         boolean backGrabOpen = false;
         double recognitionAngle = 0;
-        double timePoint = 0;
         LiftState liftState = LiftState.BOTTOM;
         ArmState armState = ArmState.IDLE;
 
@@ -85,9 +86,9 @@ public class ManualOpMode extends LinearOpMode {
                     liftState = LiftState.TOP;
                 } else if (liftPosition >= LIFT_TOP_POSITION - 150) {
                     robotTop.setLeftPower(0.3);
-                } else if (liftPosition <= LIFT_TOP_POSITION -150) {
+                } else if (liftPosition <= LIFT_TOP_POSITION - 150) {
                     //TODO
-                    robotTop.setLeftPower(0.5);
+                    robotTop.setLeftPower(0.3);
                 }
             } else if (liftState == LiftState.TOP) {
                 if (gamepad1.y && liftPosition >= LIFT_BOTTOM_POSITION + 150) {
@@ -122,24 +123,25 @@ public class ManualOpMode extends LinearOpMode {
                     armState = ArmState.WITHDRAWING;
                 }
             }
-            if(liftState == LiftState.BOTTOM && armState == ArmState.IDLE){
-                if(gamepad1.left_trigger != 0){
-                    armStretchPos = STRETCH_OUT_POSITION;
-                    robotTop.setArmStretchPosition(armStretchPos);
-                    armState = ArmState.STRETCHED;
-                    sleep(1500);
-                }if(gamepad1.right_trigger != 0){
+            if (liftState == LiftState.BOTTOM && armState == ArmState.IDLE) {
+                if (gamepad1.left_trigger != 0) {
                     armStretchPos = STRETCH_OUT_POSITION;
                     robotTop.setArmStretchPosition(armStretchPos);
                     armState = ArmState.STRETCHED;
                     sleep(1500);
                 }
-            }else{
-                if(gamepad1.left_trigger != 0){
+                if (gamepad1.right_trigger != 0) {
+                    armStretchPos = STRETCH_OUT_POSITION;
+                    robotTop.setArmStretchPosition(armStretchPos);
+                    armState = ArmState.STRETCHED;
+                    sleep(1500);
+                }
+            } else {
+                if (gamepad1.left_trigger != 0) {
                     robotTop.setLeftPower(-0.5);
                 } else if (gamepad1.right_trigger != 0) {
                     robotTop.setLeftPower(0.5);
-                }else{
+                } else {
                     robotTop.setLeftPower(0);
                 }
             }
@@ -202,8 +204,8 @@ public class ManualOpMode extends LinearOpMode {
                     robotTop.setArmTurnPosition(armTurnPos);
                 }
             }
-            if(armState == ArmState.STRETCHED){
-                if(gamepad1.x && !previousGamepad1.x){
+            if (armState == ArmState.STRETCHED) {
+                if (gamepad1.x && !previousGamepad1.x) {
                     armState = ArmState.WITHDRAWING;
                 }
             }
@@ -242,18 +244,18 @@ public class ManualOpMode extends LinearOpMode {
                 armSpinYPos = Math.max(0, armSpinYPos - 0.05);
                 robotTop.setArmSpinYPosition(armSpinYPos);
             }
-            if(gamepad1.a && !previousGamepad1.a){
-                if(backGrabOpen){
+            if (gamepad1.a && !previousGamepad1.a) {
+                if (backGrabOpen) {
                     robotTop.setLiftServoPosition(0.2);
-                }else{
+                } else {
                     robotTop.setLiftServoPosition(0.6);
                 }
                 backGrabOpen = !backGrabOpen;
             }
 
             //vision
-            if (getRuntime() - timePoint >= 1) {
-                timePoint = getRuntime();
+            if ((gamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0
+            ) || (gamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0)) {
                 recognitionAngle = robotVisionAngle.getDetectedAngle();
                 robotTop.setArmSpinYPosition(calculateSpinY(recognitionAngle));
             }
@@ -264,12 +266,10 @@ public class ManualOpMode extends LinearOpMode {
             telemetry.addData("ArmState", armState);
             telemetry.addData("XPos", armSpinXPos);
             telemetry.addData("YPos", armSpinYPos);
-            telemetry.addData("grab", armGrabbing);
-            telemetry.addData("grabFlag", grabbingFlag);
-            telemetry.addData("stretch", armStretchPos);
             telemetry.addData("angle", recognitionAngle);
             telemetry.update();
             previousGamepad1.copy(gamepad1);
+            previousGamepad2.copy(gamepad2);
             sleep(50);
         }
     }

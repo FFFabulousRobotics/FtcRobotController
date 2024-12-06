@@ -336,56 +336,20 @@ public class RobotAuto {
         return gotoPosition2(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
     }
 
-    public RobotAuto strafeToPosition(double targetX, double targetY, double maxSpeed, double heading) {
-        // Ensure the OpMode is still active
-        if (opMode.opModeIsActive()) {
-            // 获取当前坐标（需要提供机器人当前的位置，可以由传感器或编码器计算得到）
-            double currentX = getCurrentX();
-            double currentY = getCurrentY();
-
-            // 计算目标位置与当前坐标的差值
-            double deltaX = targetX - currentX;
-            double deltaY = targetY - currentY;
-
-            // 计算移动的总距离
-            double distance = Math.hypot(deltaX, deltaY);
-
-            // 计算移动的方向角（相对于正前方）
-            double angle = Math.atan2(deltaY, deltaX);
-
-            // 转换方向角为机器人坐标系的方向（可能需要调整角度）
-            double robotAngle = angle - Math.toRadians(getHeading());
-
-            // 将方向和速度分解为麦轮需要的前后左右分量
-            double strafeX = Math.cos(robotAngle) * maxSpeed;
-            double strafeY = Math.sin(robotAngle) * maxSpeed;
-
-            // 设置目标位置并启动移动
-            setStraightTargetPosition((int) (distance * COUNTS_PER_INCH));
-            robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            while (opMode.opModeIsActive() && robotChassis.isAllBusy()) {
-                // 调整麦轮的速度分量并修正方向
-                double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
-                robotChassis.driveRobot(strafeY, strafeX, -turnSpeed);
-                telemetry.addData("Target", "X: %.2f, Y: %.2f", targetX, targetY);
-                telemetry.addData("Current", "X: %.2f, Y: %.2f", currentX, currentY);
-                telemetry.update();
-            }
-
-            // 停止所有运动并重置模式
-            robotChassis.stopMotor();
-            robotChassis.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+    public RobotAuto stretchArm(){
+        robotTop.setArmStretchPosition(0.3);
         return this;
     }
-    public double getCurrentX() {
-        // 根据编码器的读数计算当前X坐标
-        return 0; // 示例返回值，需要实际实现
+    public RobotAuto setLiftPower(double power){
+        robotTop.setLeftPower(power);
+        return this;
     }
-
-    public double getCurrentY() {
-        // 根据编码器的读数计算当前Y坐标
-        return 0; // 示例返回值，需要实际实现
+    public RobotAuto grab(){
+        robotTop.setLiftServoPosition(0.6);
+        return this;
+    }
+    public RobotAuto release(){
+        robotTop.setLiftServoPosition(0.2);
+        return this;
     }
 }
