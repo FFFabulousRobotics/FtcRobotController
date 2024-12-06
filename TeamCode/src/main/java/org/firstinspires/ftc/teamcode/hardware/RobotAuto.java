@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.robotcore.util.Range;
 
@@ -17,23 +20,40 @@ public class RobotAuto {
     Telemetry telemetry;
     RobotChassis robotChassis;
     RobotTop robotTop;
+    private double headingError = 0;
+    @SuppressWarnings("FieldCanBeLocal")
+    private double targetHeading = 0;
+    @SuppressWarnings("FieldMayBeFinal")
+    private double driveSpeed = 0;
+    private double turnSpeed = 0;
 
     IMU imu;
+    SparkFunOTOS otos;
+    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+    RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+    RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
     public RobotAuto(LinearOpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
         this.robotChassis = new RobotChassis(opMode);
         this.robotTop = new RobotTop(opMode);
+        otos = opMode.hardwareMap.get(SparkFunOTOS.class, "otos");
+        configureOtos();
+        imu = opMode.hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
     }
 
     final double COUNTS_PER_INCH = 0;
     final double P_DRIVE_GAIN = 0;
+    static final double HEADING_THRESHOLD = 0.5;
+    static final double P_TURN_GAIN = 0.1;
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
         // Determine the heading current error
-        double headingError = desiredHeading - getHeading();
+        headingError = desiredHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees
         while (headingError > 180) headingError -= 360;
@@ -162,6 +182,160 @@ public class RobotAuto {
         motorPos[3] = motorPos[3] + moveCounts;
         robotChassis.setTargetPosition(motorPos);
     }
+    public RobotAuto turnToHeading(double maxTurnSpeed, double heading) {
+
+        // Run getSteeringCorrection() once to pre-calculate the current error
+        getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+        // keep looping while we are still active, and not on heading.
+        //绝对值的问题？
+        while (opMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
+
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            robotChassis.driveRobot(0, 0, -turnSpeed);
+            //            telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f",maxTurnSpeed,turnSpeed,heading,getHeading());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        robotChassis.stopMotor();
+        return this;
+    }
+
+    private void configureOtos() {
+        otos.setLinearUnit(DistanceUnit.INCH);
+        otos.setAngularUnit(AngleUnit.DEGREES);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otos.setOffset(offset);
+
+        otos.setLinearScalar(1.0);
+        otos.setAngularScalar(1.0);
+
+        otos.calibrateImu();
+
+        otos.resetTracking();
+
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otos.setPosition(currentPosition);
+
+        // Get the hardware and firmware version
+        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+        otos.getVersionInfo(hwVersion, fwVersion);
+
+        telemetry.addLine("OTOS configured! Press start to get position data!");
+        telemetry.addLine();
+        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+        telemetry.update();
+    }
+
+    public SparkFunOTOS.Pose2D getPosition() {
+        return otos.getPosition();
+    }
+
+    public RobotAuto forward(double d) {
+        return driveStraight(0.6, d, getHeading());
+    }
+
+    public RobotAuto fastForward(double d) {
+        return driveStraight(0.9, d, getHeading());
+    }
+
+
+    public RobotAuto backward(double d) {
+        return driveStraight(0.6, -d, getHeading());
+    }
+
+    public RobotAuto fastBackward(double d) {
+        return driveStraight(0.9, -d, getHeading());
+    }
+
+    public RobotAuto rightShift(double d) {
+        return driveStrafe(0.9, d, getHeading());
+    }
+
+    public RobotAuto leftShift(double d) {
+        return driveStrafe(0.9, -d, getHeading());
+    }
+
+    public RobotAuto spin(double h) {
+        return turnToHeading(0.6, h);
+    }
+
+    public RobotAuto fastSpin(double h) {
+        return turnToHeading(0.7, h);
+    }
+
+    public RobotAuto sleep(long milliseconds) {
+        opMode.sleep(milliseconds);
+        return this;
+    }
+
+    protected double[] SpinVector(double[] vector, double angle) {
+        double x = vector[0] * Math.cos(Math.toRadians(angle)) - vector[1] * Math.sin(Math.toRadians(angle));
+        double y = vector[0] * Math.sin(Math.toRadians(angle)) + vector[1] * Math.cos(Math.toRadians(angle));
+        return new double[]{x, y};
+    }
+    protected double[] getDisplacement(double[] CurrentPos, double[] DesiredPos) {
+        double CurrentX = CurrentPos[0];
+        double CurrentY = CurrentPos[1];
+        double CurrentHeading = CurrentPos[2];
+        double DesiredX = DesiredPos[0];
+        double DesiredY = DesiredPos[1];
+        double DesiredHeading = DesiredPos[2];
+        double[] Displacement = {DesiredX - CurrentX, DesiredY - CurrentY, CurrentHeading};
+        Displacement = SpinVector(Displacement, -CurrentHeading);
+        return Displacement;
+    }
+    /**
+     * Go to the position given (track only include left/right and forward/backward)
+     * Go forward/backward first,then move left/right.
+     *
+     * @param CurrentPos The current position.(position{axial,lateral,heading})
+     * @param DesiredPos The desired position.(position{axial,lateral,heading})
+     * @return RobotHardware class.
+     */
+    public RobotAuto gotoPosition(double[] CurrentPos, double[] DesiredPos) {
+        double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
+        double DesiredHeading = DesiredPos[2];
+        return fastForward(-Displacement[0])
+                .leftShift(-Displacement[1])
+                .fastSpin(DesiredHeading);
+    }
+    public RobotAuto gotoPosition(double x, double y, double h) {
+        SparkFunOTOS.Pose2D CurrentPos = getPosition();
+        double[] DesiredPos = {x, y, h};
+        return gotoPosition(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
+    }
+
+    /**
+     * Go to the position given (track only include left/right and forward/backward)
+     * Move left/right first,then go forward/backward.
+     *
+     * @param CurrentPos The current position.(position{axial,lateral,heading})
+     * @param DesiredPos The desired position.(position{axial,lateral,heading})
+     * @return RobotHardware class.
+     */
+    public RobotAuto gotoPosition2(double[] CurrentPos, double[] DesiredPos) {
+        double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
+        double DesiredHeading = DesiredPos[2];
+        return leftShift(-Displacement[1])
+                .fastForward(-Displacement[0])
+                .fastSpin(DesiredHeading);
+    }
+    public RobotAuto gotoPosition2(double x, double y, double h) {
+        SparkFunOTOS.Pose2D CurrentPos = getPosition();
+        double[] DesiredPos = {x, y, h};
+        return gotoPosition2(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
+    }
+
     public RobotAuto strafeToPosition(double targetX, double targetY, double maxSpeed, double heading) {
         // Ensure the OpMode is still active
         if (opMode.opModeIsActive()) {

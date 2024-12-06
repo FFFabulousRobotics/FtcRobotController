@@ -75,9 +75,8 @@ public class ManualOpMode extends LinearOpMode {
             // robotLift
             liftPosition = robotTop.getLiftPosition();
             if (liftState == LiftState.BOTTOM) {
-                if (gamepad1.y && liftPosition <= LIFT_TOP_POSITION - 150) {
+                if (gamepad1.y) {
                     robotTop.setTopServoPosition(0.05);
-                    robotTop.setLeftPower(0.7);
                     liftState = LiftState.GOING_UP;
                 }
             } else if (liftState == LiftState.GOING_UP) {
@@ -86,6 +85,9 @@ public class ManualOpMode extends LinearOpMode {
                     liftState = LiftState.TOP;
                 } else if (liftPosition >= LIFT_TOP_POSITION - 150) {
                     robotTop.setLeftPower(0.3);
+                } else if (liftPosition <= LIFT_TOP_POSITION -150) {
+                    //TODO
+                    robotTop.setLeftPower(0.5);
                 }
             } else if (liftState == LiftState.TOP) {
                 if (gamepad1.y && liftPosition >= LIFT_BOTTOM_POSITION + 150) {
@@ -112,7 +114,7 @@ public class ManualOpMode extends LinearOpMode {
                     robotTop.setArmSpinXPosition(SPIN_X_DEFAULT_POSITION + 0.2);
                     sleep(1500);
                     armState = ArmState.LOCKED;
-                    robotTop.setLeftPower(0.3);
+                    liftState = LiftState.GOING_UP;
                 } else if (armState == ArmState.LOCKED) {
                     robotChassis.stopMotor();
                     sleep(1500);
