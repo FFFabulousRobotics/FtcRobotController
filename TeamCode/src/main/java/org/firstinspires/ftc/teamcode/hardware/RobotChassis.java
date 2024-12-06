@@ -130,12 +130,21 @@ public class RobotChassis {
      *
      * @param moveCounts The desired increment/decrement.
      */
-    public void setTargetPosition(int moveCounts) {
+    public void setTargetPosition(int[] moveCounts) {
         // Set Target FIRST, then turn on RUN_TO_POSITION
-        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + moveCounts);
-        rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + moveCounts);
-        leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
-        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
+        leftFrontDrive.setTargetPosition(moveCounts[0]);
+        rightFrontDrive.setTargetPosition(moveCounts[1]);
+        leftBackDrive.setTargetPosition(moveCounts[2]);
+        rightBackDrive.setTargetPosition(moveCounts[3]);
+    }
+
+    public int[] getTargetPosition() {
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        int lf = leftFrontDrive.getTargetPosition();
+        int rf = rightFrontDrive.getTargetPosition();
+        int lb = leftBackDrive.getTargetPosition();
+        int rb = rightBackDrive.getTargetPosition();
+        return new int[]{lf, lb, lb, rb};
     }
 
 }

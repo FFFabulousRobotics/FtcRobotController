@@ -30,47 +30,6 @@ public class RobotAuto {
     final double COUNTS_PER_INCH = 0;
     final double P_DRIVE_GAIN = 0;
 
-    public RobotAuto driveStraight(double maxDriveSpeed,
-                                       double distance,
-                                       double heading) {
-
-        // Ensure that the OpMode is still active
-        if (opMode.opModeIsActive()) {
-            double turnSpeed;
-
-            // Determine new target position, and pass to motor controller
-            int moveCounts = (int) (distance * COUNTS_PER_INCH);
-            robotChassis.setTargetPosition(moveCounts);
-
-            robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-            // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
-            robotChassis.driveRobot(maxDriveSpeed, 0, 0);
-
-            // keep looping while we are still active, and BOTH motors are running.
-            while (opMode.opModeIsActive() && robotChassis.isAllBusy()) {
-
-                // Determine required steering to keep on heading
-                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    turnSpeed *= -1.0;
-
-                // Apply the turning correction to the current driving speed.
-                robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
-                //                telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f, %4d",maxDriveSpeed,distance,heading,turnSpeed,moveCounts);
-                telemetry.update();
-            }
-
-            // Stop all motion & Turn off RUN_TO_POSITION
-            robotChassis.stopMotor();
-            robotChassis.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        return this;
-    }
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
         // Determine the heading current error
@@ -106,4 +65,153 @@ public class RobotAuto {
         return orientation.getYaw(unit);
     }
 
+    public RobotAuto driveStraight(double maxDriveSpeed,
+                                       double distance,
+                                       double heading) {
+
+        // Ensure that the OpMode is still active
+        if (opMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int) (distance * COUNTS_PER_INCH);
+            setStraightTargetPosition(moveCounts);
+
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            robotChassis.driveRobot(maxDriveSpeed, 0, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opMode.opModeIsActive() && robotChassis.isAllBusy()) {
+
+                // Determine required steering to keep on heading
+                double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
+                //                telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f, %4d",maxDriveSpeed,distance,heading,turnSpeed,moveCounts);
+                telemetry.update();
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            robotChassis.stopMotor();
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        return this;
+    }
+
+    public RobotAuto driveStrafe(double maxDriveSpeed,
+                                     double distance,
+                                     double heading
+    ) {
+
+        // Ensure that the OpMode is still active
+        if (opMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int) (distance * COUNTS_PER_INCH);
+            setStrafeTargetPosition(moveCounts);
+
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            robotChassis.driveRobot(0, maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opMode.opModeIsActive() && robotChassis.isAllBusy()) {
+
+                // Determine required steering to keep on heading
+                double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                robotChassis.driveRobot(0, maxDriveSpeed, -turnSpeed);
+                //                telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f, %4d",maxDriveSpeed,distance,heading,turnSpeed,moveCounts);
+                telemetry.update();
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            robotChassis.stopMotor();
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        return this;
+    }
+    public void setStraightTargetPosition(int moveCounts) {
+        int[] motorPos = robotChassis.getTargetPosition();
+        for (int i = 0; i < motorPos.length; i++) {
+            motorPos[i] += moveCounts;
+        }
+        robotChassis.setTargetPosition(motorPos);
+    }
+    public void setStrafeTargetPosition(int moveCounts) {
+        int[] motorPos = robotChassis.getTargetPosition();
+        motorPos[0] = motorPos[0] + moveCounts;
+        motorPos[1] = motorPos[1] - moveCounts;
+        motorPos[2] = motorPos[2] - moveCounts;
+        motorPos[3] = motorPos[3] + moveCounts;
+        robotChassis.setTargetPosition(motorPos);
+    }
+    public RobotAuto strafeToPosition(double targetX, double targetY, double maxSpeed, double heading) {
+        // Ensure the OpMode is still active
+        if (opMode.opModeIsActive()) {
+            // 获取当前坐标（需要提供机器人当前的位置，可以由传感器或编码器计算得到）
+            double currentX = getCurrentX();
+            double currentY = getCurrentY();
+
+            // 计算目标位置与当前坐标的差值
+            double deltaX = targetX - currentX;
+            double deltaY = targetY - currentY;
+
+            // 计算移动的总距离
+            double distance = Math.hypot(deltaX, deltaY);
+
+            // 计算移动的方向角（相对于正前方）
+            double angle = Math.atan2(deltaY, deltaX);
+
+            // 转换方向角为机器人坐标系的方向（可能需要调整角度）
+            double robotAngle = angle - Math.toRadians(getHeading());
+
+            // 将方向和速度分解为麦轮需要的前后左右分量
+            double strafeX = Math.cos(robotAngle) * maxSpeed;
+            double strafeY = Math.sin(robotAngle) * maxSpeed;
+
+            // 设置目标位置并启动移动
+            setStraightTargetPosition((int) (distance * COUNTS_PER_INCH));
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            while (opMode.opModeIsActive() && robotChassis.isAllBusy()) {
+                // 调整麦轮的速度分量并修正方向
+                double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+                robotChassis.driveRobot(strafeY, strafeX, -turnSpeed);
+                telemetry.addData("Target", "X: %.2f, Y: %.2f", targetX, targetY);
+                telemetry.addData("Current", "X: %.2f, Y: %.2f", currentX, currentY);
+                telemetry.update();
+            }
+
+            // 停止所有运动并重置模式
+            robotChassis.stopMotor();
+            robotChassis.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        return this;
+    }
+    public double getCurrentX() {
+        // 根据编码器的读数计算当前X坐标
+        return 0; // 示例返回值，需要实际实现
+    }
+
+    public double getCurrentY() {
+        // 根据编码器的读数计算当前Y坐标
+        return 0; // 示例返回值，需要实际实现
+    }
 }
