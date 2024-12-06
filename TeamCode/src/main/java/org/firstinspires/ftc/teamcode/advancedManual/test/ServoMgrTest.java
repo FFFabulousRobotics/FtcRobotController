@@ -1,18 +1,31 @@
-package org.firstinspires.ftc.teamcode.advancedManual;
+package org.firstinspires.ftc.teamcode.advancedManual.test;
 
 import android.util.ArrayMap;
 
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.advancedManual.ServoTask;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ServoManager {
+class ServoStimulator{
+    double position = 0;
+
+    public void setPosition(double position) {
+        this.position = position;
+        System.out.println(this.position);
+    }
+
+    public double getPosition() {
+        return position;
+    }
+}
+
+class ServoMgrTest {
     protected Map<Integer, ServoTask> tasks;
     protected Map<Integer, Boolean> taskState;
 
-    public ServoManager() {
+    public ServoMgrTest() {
         tasks = new ArrayMap<>();
     }
 
@@ -30,16 +43,7 @@ public class ServoManager {
         }
     }
 
-    /**
-     * Sets the current position of the servo in a fixed time, expressed as a fraction of
-     * its available range. If PWM power is enabled for the servo, the servo will attempt
-     * to move to the indicated position.
-     *
-     * @param position the position to which the servo should move, a value in the range [0.0, 1.0]
-     * @param timeMs   the time that the servo will take to move.
-     * @return a Task object
-     */
-    private ServoTask timedSetPosition(Servo servo, double position, long timeMs) {
+    private ServoTask timedSetPosition(ServoStimulator servo, double position, long timeMs) {
         final double deltaPos = position - servo.getPosition();
         final long iterationCount = timeMs / ServoTask.TICK_MS;
         final double positionPerIteration = deltaPos / iterationCount;
@@ -64,7 +68,7 @@ public class ServoManager {
             }
         };
     }
-    public int setTimedServoPosition(Servo servo, double position, long timeMs){
+    public int setTimedServoPosition(ServoStimulator servo, double position, long timeMs){
         ServoTask task = timedSetPosition(servo, position, timeMs);
         int taskId = findMinFreeTaskId();
         tasks.put(taskId, task);
@@ -77,5 +81,20 @@ public class ServoManager {
             if (taskIdList.contains(i)) return 1;
         }
         return maxTaskId + 1;
+    }
+}
+
+class Main{
+    public static void main(String[] args) {
+        ServoMgrTest servoMgr = new ServoMgrTest();
+        ServoStimulator servo1 = new ServoStimulator();
+        ServoStimulator servo2 = new ServoStimulator();
+        ServoStimulator servo3 = new ServoStimulator();
+        servoMgr.setTimedServoPosition(servo1, 0.7, 1000);
+        servoMgr.setTimedServoPosition(servo2, 0.2, 5000);
+        servoMgr.setTimedServoPosition(servo3, 1, 10000);
+        while (true){
+            servoMgr.updateServos();
+        }
     }
 }

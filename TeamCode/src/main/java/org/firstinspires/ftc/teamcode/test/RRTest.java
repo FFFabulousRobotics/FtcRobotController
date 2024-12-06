@@ -4,13 +4,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.SparkFunOTOSSensor;
 
-@Autonomous
+@Disabled
+@Autonomous(group = "Test")
 public class RRTest extends LinearOpMode {
 
     private SampleMecanumDrive drive;
