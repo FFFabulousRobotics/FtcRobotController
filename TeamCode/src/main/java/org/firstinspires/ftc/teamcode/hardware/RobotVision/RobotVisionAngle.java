@@ -51,13 +51,22 @@ public class RobotVisionAngle {
         @Override
         public Mat processFrame(Mat input) {
             Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
+
+            // 应用高斯模糊减少噪声
             Imgproc.GaussianBlur(gray, blurred, new Size(5, 5), 0);
+
+            // 增强图像锐度
             kernel.put(0, 0, 0, -1, 0);
             kernel.put(1, 0, -1, 5, -1);
             kernel.put(2, 0, 0, -1, 0);
             Imgproc.filter2D(blurred, sharp, gray.depth(), kernel);
+
+            // 优化亮度和对比度
+            Mat brightened = new Mat();
+            sharp.convertTo(brightened, -1, 1.2, 10);
+
             Rect centerRect = new Rect(input.width() / 8, input.height() / 8, input.width() * 3 / 4, input.height() * 3 / 4);
-            Mat centerMat = sharp.submat(centerRect);
+            Mat centerMat = brightened.submat(centerRect);
             Imgproc.Canny(centerMat, edges, 50, 150);
             Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180, 50, 50, 10);
 

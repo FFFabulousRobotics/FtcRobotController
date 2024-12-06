@@ -36,11 +36,15 @@ public class RRTest extends LinearOpMode {
 //                .splineTo(new Vector2d(50, 15), Math.toRadians(0))
 //                .turn(Math.toRadians(90))
 //                .build();
-        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d(36.35, -62.84, Math.toRadians(47.22)))
-                .splineTo(new Vector2d(60.65, -35.75), Math.toRadians(90.00))
-                .splineTo(new Vector2d(61.24, 37.15), Math.toRadians(90.00))
-                .splineTo(new Vector2d(35.95, 60.05), Math.toRadians(180.00))
+        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d(35.75, -58.91, Math.toRadians(56.65)))
+                .splineTo(new Vector2d(61.33, -19.84), Math.toRadians(91.97))
+                .splineTo(new Vector2d(54.08, 43.80), Math.toRadians(116.57))
+                .splineTo(new Vector2d(-6.95, 53.87), Math.toRadians(189.13))
+                .splineTo(new Vector2d(-49.44, 28.70), Math.toRadians(243.43))
+                .splineTo(new Vector2d(-45.62, -36.15), Math.toRadians(-58.39))
                 .build();
+
+
         // 等待开始指令
         waitForStart();
 
