@@ -36,7 +36,7 @@ public class ManualOpMode extends LinearOpMode {
     final double SPIN_Y_DEFAULT_POSITION = 0.1;
     final double TURN_BACK_POSITION = 0.38;
     final double TURN_OUT_HOVERING_POSITION = 0.64;
-    final double TURN_OUT_DOWN_POSITION = 0.71;
+    final double TURN_OUT_DOWN_POSITION = 0.68;
     final double GRAB_OPEN_POSITION = 0.2;
     final double GRAB_CLOSE_POSITION = 0.9;
 
@@ -58,7 +58,7 @@ public class ManualOpMode extends LinearOpMode {
         double armSpinYPos = SPIN_Y_DEFAULT_POSITION;
         boolean armGrabbing = false;
         boolean grabbingFlag = false;
-        boolean topServoState = false;
+        boolean topServoOut = false;
         boolean containerRelease = true;
         boolean backGrabOpen = false;
         double recognitionAngle = 0;
@@ -138,22 +138,30 @@ public class ManualOpMode extends LinearOpMode {
                 }
             } else {
                 if (gamepad1.left_trigger != 0) {
-                    robotTop.setTopServoPosition(0.05);
+                    if(!topServoOut){
+                        robotTop.setTopServoPosition(0.05);
+                    }
                     robotTop.setLeftPower(-0.5);
                 } else if (gamepad1.right_trigger != 0) {
+                    if(!topServoOut){
+                        robotTop.setTopServoPosition(0.05);
+                    }
                     robotTop.setLeftPower(0.5);
-                    robotTop.setTopServoPosition(0.05);
                 } else {
-                    robotTop.setLeftPower(0);
+                    if(LIFT_TOP_POSITION - 150 <= liftPosition && liftPosition <= LIFT_TOP_POSITION){
+                        robotTop.setLeftPower(0.2);
+                    }else{
+                        robotTop.setLeftPower(0);
+                    }
                 }
             }
             if (gamepad1.left_bumper && !previousGamepad1.left_bumper && liftPosition > 1100) {
-                if (topServoState) {
+                if (topServoOut) {
                     robotTop.setTopServoPosition(0.05);
                 } else {
                     robotTop.setTopServoPosition(0.6);
                 }
-                topServoState = !topServoState;
+                topServoOut = !topServoOut;
             }
             if (gamepad1.right_bumper && !previousGamepad1.right_bumper) {
                 if (containerRelease) {
