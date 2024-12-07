@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -45,10 +46,22 @@ public class RobotAuto {
         imu.resetYaw();
     }
 
-    final double COUNTS_PER_INCH = 0;
-    final double P_DRIVE_GAIN = 0;
+    static final double COUNTS_PER_MOTOR_REV = 560;
+
+    // gearing UP (will affect the direction of wheel rotation) < 1 < gearing DOWN
+    // eg. for a 12-tooth driving a 24-tooth, the value is 24/12=2.0
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+
+    // wheel diameter in inches
+    static final double WHEEL_DIAMETER_INCHES = 5.31;
+
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+
+    static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
+    static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
+    static final double P_TURN_GAIN = 0.1;     // Larger is more responsive, but also less stable
     static final double HEADING_THRESHOLD = 0.5;
-    static final double P_TURN_GAIN = 0.1;
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
