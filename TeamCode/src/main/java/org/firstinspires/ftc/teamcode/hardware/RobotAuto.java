@@ -254,11 +254,11 @@ public class RobotAuto {
     }
 
     public RobotAuto forward(double d) {
-        return driveStraight(0.6, d, getHeading());
+        return driveStraight(0.6, -d, getHeading());
     }
 
     public RobotAuto fastForward(double d) {
-        return driveStraight(0.9, d, getHeading());
+        return driveStraight(0.9, -d, getHeading());
     }
 
 
@@ -271,11 +271,11 @@ public class RobotAuto {
     }
 
     public RobotAuto rightShift(double d) {
-        return driveStrafe(0.9, d, getHeading());
+        return driveStrafe(0.9, -d, getHeading());
     }
 
     public RobotAuto leftShift(double d) {
-        return driveStrafe(0.9, -d, getHeading());
+        return driveStrafe(0.9, d, getHeading());
     }
 
     public RobotAuto spin(double h) {
@@ -283,7 +283,7 @@ public class RobotAuto {
     }
 
     public RobotAuto fastSpin(double h) {
-        return turnToHeading(0.7, h);
+        return turnToHeading(0.9, h);
     }
 
     public RobotAuto sleep(long milliseconds) {
@@ -339,8 +339,8 @@ public class RobotAuto {
     public RobotAuto gotoPosition2(double[] CurrentPos, double[] DesiredPos) {
         double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
         double DesiredHeading = DesiredPos[2];
-        return leftShift(-Displacement[1])
-                .fastForward(-Displacement[0])
+        return leftShift(Displacement[1])
+                .fastForward(Displacement[0])
                 .fastSpin(DesiredHeading);
     }
     public RobotAuto gotoPosition2(double x, double y, double h) {

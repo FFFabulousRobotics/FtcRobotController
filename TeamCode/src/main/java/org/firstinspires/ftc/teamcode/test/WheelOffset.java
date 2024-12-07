@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Disabled
 @TeleOp(group = "Test")
 public class WheelOffset extends LinearOpMode {
     @Override
@@ -16,7 +15,7 @@ public class WheelOffset extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("BR");
         waitForStart();
 
-        double k1=1,k2=0.8535,k3=0.9985,k4 = 0.849;
+        double k1=0.6179,k2=0.7116,k3=6176,k4 = 1;
 
         frontLeftMotor.setPower(1*k1);
         backLeftMotor.setPower(1*k2);

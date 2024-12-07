@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.advancedManual;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Disabled
 // The ManualOp currently used is a piece of shit.
@@ -11,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class AdvancedManual extends LinearOpMode {
     @Override
     public void runOpMode(){
-        ServoManager servoMgr = new ServoManager();
+        TaskManager servoMgr = new TaskManager();
         Gamepad previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
         waitForStart();

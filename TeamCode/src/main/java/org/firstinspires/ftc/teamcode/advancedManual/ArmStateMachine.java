@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.advancedManual;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.ManualOpMode;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 public class ArmStateMachine {
@@ -13,7 +12,7 @@ public class ArmStateMachine {
     ArmState armState;
     Gamepad gamepad1;
     Gamepad previousGamepad1;
-    ServoManager servoMgr;
+    TaskManager taskMgr;
 
     final double STRETCH_BACK_POSITION = 0.03;
     final double STRETCH_OUT_POSITION = 0.3;
@@ -34,7 +33,7 @@ public class ArmStateMachine {
     public ArmStateMachine(RobotTop robotTop){
         this.robotTop = robotTop;
         this.armState = ArmState.IDLE;
-        this.servoMgr = new ServoManager();
+        this.taskMgr = new TaskManager();
     }
     protected void init(){
         int liftPosition;
@@ -69,8 +68,9 @@ public class ArmStateMachine {
     }
     protected void handleIdleState(){
         if(gamepad1.x && !previousGamepad1.x){
+            armStretchPos = STRETCH_OUT_POSITION;
             robotTop.setArmStretchPosition(armStretchPos);
-
+            robotTop.setTopServoPosition(0);
         }
     }
     protected void handleTurningOutState(){}

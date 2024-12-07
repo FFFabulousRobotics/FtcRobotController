@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.advancedManual.test;
 
 import android.util.ArrayMap;
 
-import org.firstinspires.ftc.teamcode.advancedManual.ServoTask;
+import org.firstinspires.ftc.teamcode.advancedManual.Task;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ class ServoStimulator{
 }
 
 class ServoMgrTest {
-    protected Map<Integer, ServoTask> tasks;
+    protected Map<Integer, Task> tasks;
     protected Map<Integer, Boolean> taskState;
 
     public ServoMgrTest() {
@@ -30,9 +30,9 @@ class ServoMgrTest {
     }
 
     public void updateServos(){
-        for (Map.Entry<Integer, ServoTask> taskEntry : tasks.entrySet()) {
+        for (Map.Entry<Integer, Task> taskEntry : tasks.entrySet()) {
             int taskId = taskEntry.getKey();
-            ServoTask task = taskEntry.getValue();
+            Task task = taskEntry.getValue();
             if (!task.hasNext()) {
                 task.finish();
                 taskState.replace(taskId, false);
@@ -43,11 +43,11 @@ class ServoMgrTest {
         }
     }
 
-    private ServoTask timedSetPosition(ServoStimulator servo, double position, long timeMs) {
+    private Task timedSetPosition(ServoStimulator servo, double position, long timeMs) {
         final double deltaPos = position - servo.getPosition();
-        final long iterationCount = timeMs / ServoTask.TICK_MS;
+        final long iterationCount = timeMs / Task.TICK_MS;
         final double positionPerIteration = deltaPos / iterationCount;
-        return new ServoTask() {
+        return new Task() {
             long remainingIterations = iterationCount;
             final double targetPosition = position;
 
@@ -69,7 +69,7 @@ class ServoMgrTest {
         };
     }
     public int setTimedServoPosition(ServoStimulator servo, double position, long timeMs){
-        ServoTask task = timedSetPosition(servo, position, timeMs);
+        Task task = timedSetPosition(servo, position, timeMs);
         int taskId = findMinFreeTaskId();
         tasks.put(taskId, task);
         return taskId;

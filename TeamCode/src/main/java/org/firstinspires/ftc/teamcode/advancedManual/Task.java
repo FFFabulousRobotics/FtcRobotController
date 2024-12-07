@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.advancedManual;
 
-public interface ServoTask {
+public interface Task {
     int TICK_MS = 50;
 
     /**
