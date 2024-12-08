@@ -149,7 +149,7 @@ public class ManualOpMode extends LinearOpMode {
                     }
                     robotTop.setLeftPower(0.5);
                 } else {
-                    if(LIFT_TOP_POSITION - 100 <= liftPosition && liftPosition <= LIFT_TOP_POSITION){
+                    if(LIFT_HANGING_POSITION - 100 <= liftPosition && liftPosition <= LIFT_HANGING_POSITION){
                         robotTop.setLeftPower(0.03);
                     }else{
                         robotTop.setLeftPower(0);
