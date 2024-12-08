@@ -27,7 +27,6 @@ public class ManualOpMode extends LinearOpMode {
     // grab(5): [0.2-open, 0.83-close]; default: 0.2
 
     final int LIFT_TOP_POSITION = 1250;
-    final int LIFT_HANGING_POSITION = 925;
     final int LIFT_BOTTOM_POSITION = 50;
     final double STRETCH_BACK_POSITION = 0.03;
     final double STRETCH_OUT_POSITION = 0.3;
@@ -70,7 +69,7 @@ public class ManualOpMode extends LinearOpMode {
         robotTop.setArmStretchPosition(armStretchPos);
         robotTop.setArmTurnPosition(armTurnPos);
         robotTop.setContainerServoPosition(0.35);
-        robotTop.setLiftServoPosition(0.6);
+        robotTop.setLiftServoPosition(0.2);
         while (opModeIsActive()) {
             robotChassis.driveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
 
@@ -142,15 +141,15 @@ public class ManualOpMode extends LinearOpMode {
                     if(!topServoOut){
                         robotTop.setTopServoPosition(0.05);
                     }
-                    robotTop.setLeftPower(-0.3);
+                    robotTop.setLeftPower(-0.5);
                 } else if (gamepad1.right_trigger != 0) {
                     if(!topServoOut){
                         robotTop.setTopServoPosition(0.05);
                     }
                     robotTop.setLeftPower(0.5);
                 } else {
-                    if(LIFT_HANGING_POSITION - 100 <= liftPosition && liftPosition <= LIFT_HANGING_POSITION){
-                        robotTop.setLeftPower(0.03);
+                    if(LIFT_TOP_POSITION - 150 <= liftPosition && liftPosition <= LIFT_TOP_POSITION){
+                        robotTop.setLeftPower(0.2);
                     }else{
                         robotTop.setLeftPower(0);
                     }
@@ -268,7 +267,6 @@ public class ManualOpMode extends LinearOpMode {
             //vision
             if ((gamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0
             ) || (gamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0)) {
-                //robotTop.setArmSpinYPosition(SPIN_Y_DEFAULT_POSITION);
                 recognitionAngle = robotVisionAngle.getDetectedAngle();
                 robotTop.setArmSpinYPosition(calculateSpinY(recognitionAngle));
             }
