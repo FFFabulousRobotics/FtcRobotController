@@ -40,3 +40,8 @@ repositories {
     maven { url "https://repo.sparkfun.com/artifactory/sparkfun-repo" } // 假设这是SparkFun的仓库URL
 }
 
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
