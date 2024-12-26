@@ -254,11 +254,11 @@ public class RobotAuto {
     }
 
     public RobotAuto forward(double d) {
-        return driveStraight(0.6, -d, getHeading());
+        return driveStraight(0.6, d, getHeading());
     }
 
     public RobotAuto fastForward(double d) {
-        return driveStraight(0.9, -d, getHeading());
+        return driveStraight(0.9, d, getHeading());
     }
 
 

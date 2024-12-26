@@ -17,8 +17,6 @@ public class AutoTest extends LinearOpMode {
         robotAuto = new RobotAuto(this);
         waitForStart();
         resetRuntime();
-        while (getRuntime() <= 4){
-            robotChassis.driveRobot(0,-0.5,0);
-        }
+        robotAuto.fastForward(24);
     }
 }
