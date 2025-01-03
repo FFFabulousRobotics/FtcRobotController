@@ -16,17 +16,6 @@ public class RedLeftAuto extends LinearOpMode {
 
         robotAuto.grab()
                 .setLiftPower(0.5)
-                .sleep(400)
-                .setLiftPower(0)
-                .fastBackward(24)
-                .leftShift(24)
-                .fastSpin(180)
-                .setLiftPower(0.3)
-                .sleep(800)
-                .fastBackward(10)
-                .setLiftPower(-0.5)
-                .sleep(200)
-                .setLiftPower(0)
                 .release();
     }
 }

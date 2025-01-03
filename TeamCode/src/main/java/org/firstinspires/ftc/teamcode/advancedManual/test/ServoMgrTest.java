@@ -83,18 +83,3 @@ class ServoMgrTest {
         return maxTaskId + 1;
     }
 }
-
-class Main{
-    public static void main(String[] args) {
-        ServoMgrTest servoMgr = new ServoMgrTest();
-        ServoStimulator servo1 = new ServoStimulator();
-        ServoStimulator servo2 = new ServoStimulator();
-        ServoStimulator servo3 = new ServoStimulator();
-        servoMgr.setTimedServoPosition(servo1, 0.7, 1000);
-        servoMgr.setTimedServoPosition(servo2, 0.2, 5000);
-        servoMgr.setTimedServoPosition(servo3, 1, 10000);
-        while (true){
-            servoMgr.updateServos();
-        }
-    }
-}
