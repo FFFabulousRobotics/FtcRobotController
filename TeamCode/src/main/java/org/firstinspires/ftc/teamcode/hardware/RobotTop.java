@@ -16,10 +16,11 @@ public class RobotTop {
     Telemetry telemetry;
     protected DcMotor leftLiftMotor;
     protected DcMotor rightLiftMotor;
-    protected Servo armStretchServo;
-    protected Servo armTurnServo;
-    protected Servo armSpinXServo;
-    protected Servo armSpinYServo;
+    protected DcMotor armStretchMotor;
+    protected Servo armLeftTurnServo;
+    protected Servo armRightTurnServo;
+    protected Servo armLeftSpinServo;
+    protected Servo armRightSpinServo;
     protected Servo armGrabServo;
     protected Servo liftServo;
     protected Servo topServo;
@@ -34,10 +35,11 @@ public class RobotTop {
     public void init() {
         leftLiftMotor = hardwareMap.get(DcMotor.class, "leftLift");
         rightLiftMotor = hardwareMap.get(DcMotor.class, "rightLift");
-        armStretchServo = hardwareMap.get(Servo.class, "armStretch");
-        armTurnServo = hardwareMap.get(Servo.class, "armTurn");
-        armSpinXServo = hardwareMap.get(Servo.class, "armSpinX");
-        armSpinYServo = hardwareMap.get(Servo.class, "armSpinY");
+        armStretchMotor = hardwareMap.get(DcMotor.class, "armStretch");
+        armLeftTurnServo = hardwareMap.get(Servo.class, "armTurnL");
+        armRightTurnServo = hardwareMap.get(Servo.class, "armTurnR");
+        armLeftSpinServo = hardwareMap.get(Servo.class, "armSpinL");
+        armRightSpinServo = hardwareMap.get(Servo.class, "armSpinR");
         armGrabServo = hardwareMap.get(Servo.class, "armGrab");
         liftServo = hardwareMap.get(Servo.class, "liftServo");
         topServo = hardwareMap.get(Servo.class, "liftTop");
@@ -53,6 +55,8 @@ public class RobotTop {
         leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        armStretchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void setLeftPower(double power) {
@@ -64,36 +68,44 @@ public class RobotTop {
         return leftLiftMotor.getCurrentPosition();
     }
 
-    public void setArmStretchPosition(double position) {
-        armStretchServo.setPosition(position);
+    public void setArmStretchPosition(int position) {
+        armStretchMotor.setTargetPosition(position);
     }
 
     public double getArmStretchPosition() {
-        return armStretchServo.getPosition();
+        return armStretchMotor.getCurrentPosition();
     }
 
-    public void setArmTurnPosition(double position) {
-        armTurnServo.setPosition(position);
+    public void setArmLeftTurnPosition(double position) {
+        armLeftTurnServo.setPosition(position);
     }
 
-    public double getArmTurnPosition() {
-        return armTurnServo.getPosition();
+    public double getArmLeftTurnPosition() {
+        return armLeftTurnServo.getPosition();
     }
 
-    public void setArmSpinXPosition(double position) {
-        armSpinXServo.setPosition(position);
+    public void setArmRightTurnPosition(double position) {
+        armRightTurnServo.setPosition(position);
     }
 
-    public double getArmSpinXPosition() {
-        return armSpinXServo.getPosition();
+    public double getArmRightTurnPosition() {
+        return armRightTurnServo.getPosition();
     }
 
-    public void setArmSpinYPosition(double position) {
-        armSpinYServo.setPosition(position);
+    public void setArmLeftSpinPosition(double position) {
+        armLeftSpinServo.setPosition(position);
     }
 
-    public double getArmSpinYPosition() {
-        return armSpinYServo.getPosition();
+    public double getArmLeftSpinPosition() {
+        return armLeftSpinServo.getPosition();
+    }
+
+    public void setArmRightSpinPosition(double position) {
+        armRightSpinServo.setPosition(position);
+    }
+
+    public double getArmRightSpinPosition() {
+        return armRightSpinServo.getPosition();
     }
 
     public void setArmGrabPosition(double position) {
