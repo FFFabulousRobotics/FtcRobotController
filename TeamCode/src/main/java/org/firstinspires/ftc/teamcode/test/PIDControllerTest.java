@@ -19,7 +19,7 @@ public class PIDControllerTest extends LinearOpMode {
         double targetPos = 1000;
         double delta;
         double p = 0, i = 0 , d = 0;
-        final double Kp = 0.014, Ki = 0.000013, Kd = -0.01;
+        final double Kp = 0.1, Ki = 0.0, Kd = 0.0;
         double power;
 
         while (opModeIsActive()){
@@ -31,7 +31,7 @@ public class PIDControllerTest extends LinearOpMode {
                 p = Kp * delta;
                 i += Ki * delta;
                 d = Kd * (currentPos - previousPos);
-                power = Math.min(p + i + d, 0.8);
+                power = Math.min(p + i + d, 1);
                 robotTop.setLeftPower(power);
                 previousGamepad1.copy(gamepad1);
                 telemetry.addData("power",power);

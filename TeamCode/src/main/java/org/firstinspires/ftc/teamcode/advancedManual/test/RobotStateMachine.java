@@ -60,7 +60,7 @@ public class RobotStateMachine {
 
     private void initializeRobotPositions() {
         robotTop.setArmStretchPosition(armStretchPos);
-        robotTop.setArmTurnPosition(armTurnPos);
+        robotTop.setArmLeftTurnPosition(armTurnPos);
         robotTop.setContainerServoPosition(CONTAINER_OPEN_POSITION);
         robotTop.setLiftServoPosition(LIFT_SERVO_CLOSE);
     }

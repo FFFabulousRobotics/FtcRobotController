@@ -350,7 +350,7 @@ public class RobotAuto {
     }
 
     public RobotAuto stretchArm(){
-        robotTop.setArmStretchPosition(0.3);
+        robotTop.setArmStretchPosition(0);
         return this;
     }
     public RobotAuto setLiftPower(double power){

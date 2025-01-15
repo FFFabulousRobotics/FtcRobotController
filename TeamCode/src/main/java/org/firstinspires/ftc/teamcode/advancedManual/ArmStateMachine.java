@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.advancedManual;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 public class ArmStateMachine {
@@ -9,9 +10,11 @@ public class ArmStateMachine {
         IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK
     }
     RobotTop robotTop;
+    RobotChassis robotChassis;
     ArmState armState;
     Gamepad gamepad1;
     Gamepad previousGamepad1;
+    Gamepad gamepad2;
     TaskManager taskMgr;
 
     final double STRETCH_BACK_POSITION = 0.03;
@@ -30,8 +33,9 @@ public class ArmStateMachine {
     double armTurnPos;
     double armSpinXPos;
     double armSpinYPos;
-    public ArmStateMachine(RobotTop robotTop){
+    public ArmStateMachine(RobotTop robotTop, RobotChassis robotChassis){
         this.robotTop = robotTop;
+        this.robotChassis = robotChassis;
         this.armState = ArmState.IDLE;
         this.taskMgr = new TaskManager();
     }
@@ -47,12 +51,15 @@ public class ArmStateMachine {
         boolean containerRelease = false;
         double recognitionAngle = 0;
     }
-    public void receiveGamepad(Gamepad gamepad1, Gamepad previousGamepad1){
+    public void receiveGamepad(Gamepad gamepad1, Gamepad previousGamepad1,
+                                Gamepad gamepad2){
         this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
         this.previousGamepad1 = previousGamepad1;
     }
 
     public void update(){
+        robotChassis.driveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
         switch (armState){
             case IDLE:
                 handleIdleState();
@@ -67,11 +74,6 @@ public class ArmStateMachine {
         }
     }
     protected void handleIdleState(){
-        if(gamepad1.x && !previousGamepad1.x){
-            armStretchPos = STRETCH_OUT_POSITION;
-            robotTop.setArmStretchPosition(armStretchPos);
-            robotTop.setTopServoPosition(0);
-        }
     }
     protected void handleTurningOutState(){}
     protected void handleTurnedState(){}
