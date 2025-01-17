@@ -1,22 +1,28 @@
 package org.firstinspires.ftc.teamcode.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
-import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
+import com.qualcomm. robotcore.eventloop. opmode.Autonomous;
+import com.qualcomm. robotcore. eventloop. opmode. LinearOpMode;
+import com.qualcomm. robotcore.hardware.DcMotorSimple;
 
 @Autonomous
 public class AutoTest extends LinearOpMode {
-    RobotAuto robotAuto;
-    RobotChassis robotChassis;
-
     @Override
     public void runOpMode() {
-        robotChassis = new RobotChassis(this);
-        robotAuto = new RobotAuto(this);
+        DcMotorSimple frontLeft = hardwareMap.get(DcMotorSimple.class, "FL");
+        DcMotorSimple backLeft = hardwareMap.get(DcMotorSimple.class, "BL");
+        DcMotorSimple frontRight = hardwareMap.get(DcMotorSimple.class, "FR");
+        DcMotorSimple backRight = hardwareMap.get(DcMotorSimple.class, "BR");
+
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
         waitForStart();
-        resetRuntime();
-        robotAuto.fastForward(24);
+
+        frontLeft.setPower(0.5);
+        backLeft.setPower(0.5);
+        frontRight.setPower(0.5);
+        backRight.setPower(0.5);
+
+        sleep(500);
     }
 }
