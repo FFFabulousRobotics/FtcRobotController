@@ -15,38 +15,52 @@ public class PIDControllerTest2 extends LinearOpMode {
         waitForStart();
         Gamepad previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
-        double currentPos = 0, previousPos;
-        double targetPos = 300;
-        double delta;
+        double currentPos = 0, previousPos = 0, offset = 0;
+        double targetPos = 0;
+        double ticks_per_rev = 530;
+        double delta = 0;
         double p = 0, i = 0 , d = 0;
-        final double Kp = 0.02, Ki = 0.00007, Kd = -0.008, power_max = 1;
-        double power;
-
+        final double Kp = 0.02, Ki = 0.00008, Kd = -0.01, power_max = 1;
+        double power = 0;
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()){
             previousPos = currentPos;
             currentPos = motor.getCurrentPosition();
-            delta = targetPos - currentPos;
-            p = Kp * delta;
-            i += Ki * delta;
-            d = Kd * (currentPos - previousPos);
-            power = p + i + d;
-            if (power > power_max)
-                power = power_max;
-            else if(power < -power_max)
-                power = -power_max;
+            delta = targetPos - currentPos - offset;
+            if (delta > ticks_per_rev * 0.75)
+                power = 1;
+            else if (delta < -ticks_per_rev * 0.75)
+                power = -1;
+            else
+            {
+                p = Kp * delta;
+                i += Ki * delta;
+                d = Kd * (currentPos - previousPos);
+                power = p + i + d;
+                if (power > power_max)
+                    power = power_max;
+                else if(power < -power_max)
+                    power = -power_max;
+            }
             motor.setPower(power);
             previousGamepad1.copy(gamepad1);
             telemetry.addData("power",power);
             telemetry.addData("p",p);
             telemetry.addData("i",i);
             telemetry.addData("d",d);
+            telemetry.addData("tpr",ticks_per_rev);
             telemetry.update();
             sleep(10);
             if(gamepad1.a) {
-                targetPos += 50;
+                targetPos = 0;
             }
             if(gamepad1.b){
-                targetPos -= 50;
+                targetPos = ticks_per_rev;
+            }
+            if(gamepad1.start){
+                offset = motor.getCurrentPosition();
+                p = i = d = 0;
             }
         }
     }

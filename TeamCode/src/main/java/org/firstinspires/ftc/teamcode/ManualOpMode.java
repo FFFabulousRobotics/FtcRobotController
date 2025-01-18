@@ -1,80 +1,146 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
-import org.firstinspires.ftc.teamcode.hardware.RobotVision.RobotVisionAngle;
 
+@Disabled
 @TeleOp
 public class ManualOpMode extends LinearOpMode {
-    RobotChassis robotChassis;
+    enum ArmState {
+        IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK, LOCKED
+    }
+
+    enum LiftState {
+        DISABLED, RUNNING
+    }
+
     RobotTop robotTop;
+    RobotChassis robotChassis;
+    ArmState armState;
+    LiftState liftState;
+    Gamepad previousGamepad1;
 
-    // servoName(port): positionRange[a, b]; defaultPos
-    // control hub:
-    // top(3): [0-idle, 0.62-out] up: 0.05; default: 0
-    // container(2): [0.35-open, 1-close]; default: 1
-    // lift(5): [0.2-open, 0.6-close];default: 0.6
-    // --------------------------------------------
-    // expansion hub:
-    // stretch(1): [0-back, 0.3-out]; default: 0
-    // spinX(2): [0, 1]; default: 0.5
-    // turn(3): [0.38-back, 0.71-out]; default: 0.38
-    // spinY(4): [0, 1]; default: 0.07
-    // grab(5): [0.2-open, 0.83-close]; default: 0.2
+    //TODO: test the constants
+    final int STRETCH_BACK_POSITION = 70;
+    final int STRETCH_OUT_POSITION = 1500;
+    final double SPIN_DEFAULT_POSITION = 0.3;
+    final double SPIN_HOVERING_POSITION = 1;
+    final double SPIN_DOWN_POSITION = 0;
+    final double TURN_BACK_POSITION = 0.5;
+    final double TURN_HOVERING_POSITION = 0.8;
+    final double TURN_DOWN_POSITION = 0.85;
+    final double GRAB_OPEN_POSITION = 0.4;
+    final double GRAB_CLOSE_POSITION = 0.92;
+    final double TOP_BACK = 0.03;
+    final double TOP_OUT = 0.66;
 
-    final int LIFT_TOP_POSITION = 1250;
-    final int LIFT_BOTTOM_POSITION = 50;
-    final int STRETCH_BACK_POSITION = 0; // TODO: change it
-    final int STRETCH_OUT_POSITION = 0; // TODO: change it
-    final double SPIN_X_DEFAULT_POSITION = 0.22;
-    final double SPIN_X_HOVERING_POSITION = 0.53;
-    final double SPIN_X_DOWN_POSITION = 0.58;
-    final double SPIN_Y_DEFAULT_POSITION = 0.1;
-    final double TURN_BACK_POSITION = 0.38;
-    final double TURN_OUT_HOVERING_POSITION = 0.64;
-    final double TURN_OUT_DOWN_POSITION = 0.68;
-    final double GRAB_OPEN_POSITION = 0.2;
-    final double GRAB_CLOSE_POSITION = 0.9;
+    boolean isGrabbing;
+    boolean topServoOut;
+    boolean backGrabOpen;
+    int liftPosition;
+    double turnPosition;
 
     @Override
     public void runOpMode() {
-        robotChassis = new RobotChassis(this);
-        robotTop = new RobotTop(this);
-        RobotVisionAngle robotVisionAngle = new RobotVisionAngle();
-        robotVisionAngle.initialize(hardwareMap);
-        Gamepad previousGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
-        Gamepad previousGamepad2 = new Gamepad();
-        previousGamepad2.copy(gamepad2);
-
-        int liftPosition;
-        int armStretchPos = STRETCH_BACK_POSITION;
-        double armTurnPos = TURN_BACK_POSITION;
-        double armSpinXPos = SPIN_X_DEFAULT_POSITION;
-        double armSpinYPos = SPIN_Y_DEFAULT_POSITION;
-        boolean armGrabbing = false;
-        boolean grabbingFlag = false;
-        boolean topServoOut = false;
-        boolean containerRelease = true;
-        boolean backGrabOpen = false;
-        double recognitionAngle = 0;
-        LiftState liftState = LiftState.BOTTOM;
-        ArmState armState = ArmState.IDLE;
-
+        this.robotTop = new RobotTop(this);
+        this.robotChassis = new RobotChassis(this);
+        this.armState = ArmState.IDLE;
+        this.liftState = LiftState.DISABLED;
+        this.isGrabbing = false;
+        this.topServoOut = false;
+        this.backGrabOpen = false;
+        this.liftPosition = 0;
         waitForStart();
-        robotTop.setArmStretchPosition(armStretchPos);
-        robotTop.setArmLeftTurnPosition(armTurnPos);
-        robotTop.setContainerServoPosition(0.35);
-        robotTop.setLiftServoPosition(0.2);
+        robotTop.setTurnPosition(TURN_BACK_POSITION);
+        robotTop.setArmLeftSpinPosition(SPIN_DEFAULT_POSITION);
+        robotTop.setArmRightSpinPosition(SPIN_DEFAULT_POSITION);
         while (opModeIsActive()) {
             robotChassis.driveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
 
             // robotLift
             liftPosition = robotTop.getLiftPosition();
+            turnPosition = robotTop.getTurnPosition();
+
+            if(gamepad1.x && !gamepad1.left_bumper){
+                robotTop.setStretchPower(0.5);
+            } else if (gamepad1.x && gamepad1.left_bumper) {
+                robotTop.setStretchPower(-0.5);
+            }else{
+                robotTop.setStretchPower(0);
+            }
+
+            if(gamepad1.y && !gamepad1.left_bumper){
+                turnPosition += 0.005;
+            } else if (gamepad1.y && gamepad1.left_bumper) {
+                turnPosition -= 0.005;
+            }
+            robotTop.setTurnPosition(turnPosition);
+
+            if(gamepad1.b && !previousGamepad1.b){
+                if(isGrabbing){
+                    robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
+                }else {
+                    robotTop.setArmGrabPosition(GRAB_OPEN_POSITION);
+                }
+                isGrabbing = !isGrabbing;
+            }
+
+            if(gamepad1.dpad_up){
+                robotTop.setArmLeftSpinPosition(Math.min(1, robotTop.getArmLeftSpinPosition() + 0.005));
+                robotTop.setArmRightSpinPosition(Math.min(1, robotTop.getArmRightSpinPosition() + 0.005));
+            }
+            if(gamepad1.dpad_down){
+                robotTop.setArmLeftSpinPosition(Math.max(0, robotTop.getArmLeftSpinPosition() - 0.005));
+                robotTop.setArmRightSpinPosition(Math.max(0, robotTop.getArmRightSpinPosition() - 0.005));
+            }
+            if(gamepad1.dpad_left){
+                robotTop.setArmLeftSpinPosition(Math.min(1, robotTop.getArmLeftSpinPosition() + 0.005));
+                robotTop.setArmRightSpinPosition(Math.max(0, robotTop.getArmRightSpinPosition() - 0.005));
+            }
+            if(gamepad1.dpad_right){
+                robotTop.setArmLeftSpinPosition(Math.max(0, robotTop.getArmLeftSpinPosition() - 0.005));
+                robotTop.setArmRightSpinPosition(Math.min(1, robotTop.getArmRightSpinPosition() + 0.005));
+            }
+
+            if(gamepad1.right_trigger != 0){
+                robotTop.setLeftPower(0.5);
+                robotTop.setLiftTargetPos(robotTop.getLiftPosition());
+            } else if (gamepad1.left_trigger != 0) {
+                robotTop.setLeftPower(-0.5);
+                robotTop.setLiftTargetPos(robotTop.getLiftPosition());
+            }else{
+                if(robotTop.getLiftPosition() >= 200){
+                    robotTop.updateLiftPID();
+                }else{
+                    robotTop.setLeftPower(0);
+                }
+            }
+
+            if (gamepad1.right_bumper && !previousGamepad1.right_bumper) {
+                if (topServoOut) {
+                    robotTop.setTopServoPosition(TOP_BACK);
+                } else {
+                    robotTop.setTopServoPosition(TOP_OUT);
+                }
+                topServoOut = !topServoOut;
+            }
+
+            if (gamepad1.a && !previousGamepad1.a) {
+                if (backGrabOpen) {
+                    robotTop.setLiftServoPosition(0.1);
+                } else {
+                    robotTop.setLiftServoPosition(0.6);
+                }
+                backGrabOpen = !backGrabOpen;
+            }
+
 //            if (liftState == LiftState.BOTTOM) {
 //                if (gamepad1.y) {
 //                    liftState = LiftState.GOING_UP;
@@ -123,165 +189,168 @@ public class ManualOpMode extends LinearOpMode {
 //                    armState = ArmState.WITHDRAWING;
 //                }
 //            }
-            if (liftState == LiftState.BOTTOM && armState == ArmState.IDLE) {
-                if (gamepad1.left_trigger != 0) {
-                    armStretchPos = STRETCH_OUT_POSITION;
-                    robotTop.setArmStretchPosition(armStretchPos);
-                    armState = ArmState.STRETCHED;
-                    sleep(1000);
-                }
-                if (gamepad1.right_trigger != 0) {
-                    armStretchPos = STRETCH_OUT_POSITION;
-                    robotTop.setArmStretchPosition(armStretchPos);
-                    armState = ArmState.STRETCHED;
-                    sleep(1000);
-                }
-            } else {
-                if (gamepad1.left_trigger != 0) {
-                    if(!topServoOut){
-                        robotTop.setTopServoPosition(0.05);
-                    }
-                    robotTop.setLeftPower(-0.5);
-                } else if (gamepad1.right_trigger != 0) {
-                    if(!topServoOut){
-                        robotTop.setTopServoPosition(0.05);
-                    }
-                    robotTop.setLeftPower(0.5);
-                } else {
-                    if(LIFT_TOP_POSITION - 150 <= liftPosition && liftPosition <= LIFT_TOP_POSITION){
-                        robotTop.setLeftPower(0.2);
-                    }else{
-                        robotTop.setLeftPower(0);
-                    }
-                }
-            }
-            if (gamepad1.left_bumper && !previousGamepad1.left_bumper && liftPosition > 1100) {
-                if (topServoOut) {
-                    robotTop.setTopServoPosition(0.05);
-                } else {
-                    robotTop.setTopServoPosition(0.6);
-                }
-                topServoOut = !topServoOut;
-            }
-            if (gamepad1.right_bumper && !previousGamepad1.right_bumper) {
-                if (containerRelease) {
-                    robotTop.setContainerServoPosition(1);
-                } else {
-                    robotTop.setContainerServoPosition(0.35);
-                }
-                containerRelease = !containerRelease;
-            }
 
-            // robotArm
-            if (gamepad1.x && !previousGamepad1.x) {
-                if (armState == ArmState.IDLE) {
-                    robotTop.setTopServoPosition(0);
-                    armStretchPos = STRETCH_OUT_POSITION;
-                    armState = ArmState.TURNING_OUT;
-                    robotTop.setArmStretchPosition(armStretchPos);
-                } else if (armState == ArmState.TURNED) {
-                    armState = ArmState.TURNING_BACK;
-                    robotTop.setArmLeftSpinPosition(SPIN_Y_DEFAULT_POSITION);
-                }
-            }
-            if (armState == ArmState.WITHDRAWING) {
-                if (armStretchPos <= STRETCH_BACK_POSITION) {
-                    armState = ArmState.IDLE;
-                } else {
-                    armStretchPos -= 0.03;
-                    robotTop.setArmStretchPosition(armStretchPos);
-                }
-            }
-            if (armState == ArmState.TURNING_OUT) {
-                if (armTurnPos >= TURN_OUT_HOVERING_POSITION - 0.05) {
-                    armTurnPos = TURN_OUT_HOVERING_POSITION;
-                    robotTop.setArmLeftTurnPosition(armTurnPos);
-                    robotTop.setArmRightTurnPosition(SPIN_X_HOVERING_POSITION);
-                    armState = ArmState.TURNED;
-                } else {
-                    armTurnPos += 0.03;
-                    robotTop.setArmLeftTurnPosition(armTurnPos);
-                }
-            }
-            if (armState == ArmState.TURNING_BACK) {
-                if (armTurnPos <= TURN_BACK_POSITION + 0.05) {
-                    armTurnPos = TURN_BACK_POSITION;
-                    robotTop.setArmLeftTurnPosition(armTurnPos);
-                    robotTop.setArmRightTurnPosition(SPIN_X_DEFAULT_POSITION);
-                    armState = ArmState.WITHDRAWING;
-                } else {
-                    armTurnPos -= 0.03;
-                    robotTop.setArmLeftTurnPosition(armTurnPos);
-                }
-            }
-            if (armState == ArmState.STRETCHED) {
-                if (gamepad1.x && !previousGamepad1.x) {
-                    robotTop.setTopServoPosition(0);
-                    armState = ArmState.WITHDRAWING;
-                }
-            }
-            if (gamepad1.b && !previousGamepad1.b) {
-                robotTop.setArmGrabPosition(GRAB_OPEN_POSITION);
-                sleep(500);
-                if (!armGrabbing && armState == ArmState.TURNED) {
-                    robotTop.setArmLeftTurnPosition(TURN_OUT_DOWN_POSITION);
-                    robotTop.setArmRightTurnPosition(SPIN_X_DOWN_POSITION);
-                    grabbingFlag = true;
-                } else {
-                    robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
-                    armGrabbing = false;
-                }
-            }
-            if (grabbingFlag && !gamepad1.b) {
-                robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
-                sleep(500);
-                robotTop.setArmLeftTurnPosition(TURN_OUT_HOVERING_POSITION);
-                robotTop.setArmRightTurnPosition(SPIN_X_HOVERING_POSITION);
-                armGrabbing = true;
-                grabbingFlag = false;
-            }
-            robotTop.setArmStretchPosition(armStretchPos);
-            if (gamepad1.dpad_up) {
-                armSpinXPos = Math.min(1, armSpinXPos + 0.02);
-                robotTop.setArmRightTurnPosition(armSpinXPos);
-            } else if (gamepad1.dpad_down) {
-                armSpinXPos = Math.max(0, armSpinXPos - 0.02);
-                robotTop.setArmRightTurnPosition(armSpinXPos);
-            }
-            if (gamepad1.dpad_right) {
-                armSpinYPos = Math.min(1, armSpinYPos + 0.05);
-                robotTop.setArmLeftSpinPosition(armSpinYPos);
-            } else if (gamepad1.dpad_left) {
-                armSpinYPos = Math.max(0, armSpinYPos - 0.05);
-                robotTop.setArmLeftSpinPosition(armSpinYPos);
-            }
-            if (gamepad1.a && !previousGamepad1.a) {
-                if (backGrabOpen) {
-                    robotTop.setLiftServoPosition(0.1);
-                } else {
-                    robotTop.setLiftServoPosition(0.6);
-                }
-                backGrabOpen = !backGrabOpen;
-            }
 
-            //vision
-            if ((gamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0
-            ) || (gamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0)) {
-                recognitionAngle = robotVisionAngle.getDetectedAngle();
-                robotTop.setArmLeftSpinPosition(calculateSpinY(recognitionAngle));
-            }
 
-            // telemetry
-            telemetry.addData("liftPos", liftPosition);
-            telemetry.addData("state", liftState);
-            telemetry.addData("ArmState", armState);
-            telemetry.addData("XPos", armSpinXPos);
-            telemetry.addData("YPos", armSpinYPos);
-            telemetry.addData("angle", recognitionAngle);
-            telemetry.update();
+//            if (liftState == LiftState.BOTTOM && armState == ArmState.IDLE) {
+//                if (gamepad1.left_trigger != 0) {
+//                    armStretchPos = STRETCH_OUT_POSITION;
+//                    robotTop.setArmStretchPosition(armStretchPos);
+//                    armState = ArmState.STRETCHED;
+//                    sleep(1000);
+//                }
+//                if (gamepad1.right_trigger != 0) {
+//                    armStretchPos = STRETCH_OUT_POSITION;
+//                    robotTop.setArmStretchPosition(armStretchPos);
+//                    armState = ArmState.STRETCHED;
+//                    sleep(1000);
+//                }
+//            } else {
+//                if (gamepad1.left_trigger != 0) {
+//                    if (!topServoOut) {
+//                        robotTop.setTopServoPosition(0.05);
+//                    }
+//                    robotTop.setLeftPower(-0.5);
+//                } else if (gamepad1.right_trigger != 0) {
+//                    if (!topServoOut) {
+//                        robotTop.setTopServoPosition(0.05);
+//                    }
+//                    robotTop.setLeftPower(0.5);
+//                } else {
+//                    if (LIFT_TOP_POSITION - 150 <= liftPosition && liftPosition <= LIFT_TOP_POSITION) {
+//                        robotTop.setLeftPower(0.2);
+//                    } else {
+//                        robotTop.setLeftPower(0);
+//                    }
+//                }
+//            }
+//            if (gamepad1.left_bumper && !previousGamepad1.left_bumper && liftPosition > 1100) {
+//                if (topServoOut) {
+//                    robotTop.setTopServoPosition(0.05);
+//                } else {
+//                    robotTop.setTopServoPosition(0.6);
+//                }
+//                topServoOut = !topServoOut;
+//            }
+//            if (gamepad1.right_bumper && !previousGamepad1.right_bumper) {
+//                if (containerRelease) {
+//                    robotTop.setContainerServoPosition(1);
+//                } else {
+//                    robotTop.setContainerServoPosition(0.35);
+//                }
+//                containerRelease = !containerRelease;
+//            }
+//
+//            // robotArm
+//            if (gamepad1.x && !previousGamepad1.x) {
+//                if (armState == ArmState.IDLE) {
+//                    robotTop.setTopServoPosition(0);
+//                    armStretchPos = STRETCH_OUT_POSITION;
+//                    armState = ArmState.TURNING_OUT;
+//                    robotTop.setArmStretchPosition(armStretchPos);
+//                } else if (armState == ArmState.TURNED) {
+//                    armState = ArmState.TURNING_BACK;
+//                    robotTop.setArmLeftSpinPosition(SPIN_Y_DEFAULT_POSITION);
+//                }
+//            }
+//            if (armState == ArmState.WITHDRAWING) {
+//                if (armStretchPos <= STRETCH_BACK_POSITION) {
+//                    armState = ArmState.IDLE;
+//                } else {
+//                    armStretchPos -= 0.03;
+//                    robotTop.setArmStretchPosition(armStretchPos);
+//                }
+//            }
+//            if (armState == ArmState.TURNING_OUT) {
+//                if (armTurnPos >= TURN_OUT_HOVERING_POSITION - 0.05) {
+//                    armTurnPos = TURN_OUT_HOVERING_POSITION;
+//                    robotTop.setArmLeftTurnPosition(armTurnPos);
+//                    robotTop.setArmRightTurnPosition(SPIN_X_HOVERING_POSITION);
+//                    armState = ArmState.TURNED;
+//                } else {
+//                    armTurnPos += 0.03;
+//                    robotTop.setArmLeftTurnPosition(armTurnPos);
+//                }
+//            }
+//            if (armState == ArmState.TURNING_BACK) {
+//                if (armTurnPos <= TURN_BACK_POSITION + 0.05) {
+//                    armTurnPos = TURN_BACK_POSITION;
+//                    robotTop.setArmLeftTurnPosition(armTurnPos);
+//                    robotTop.setArmRightTurnPosition(SPIN_X_DEFAULT_POSITION);
+//                    armState = ArmState.WITHDRAWING;
+//                } else {
+//                    armTurnPos -= 0.03;
+//                    robotTop.setArmLeftTurnPosition(armTurnPos);
+//                }
+//            }
+//            if (armState == ArmState.STRETCHED) {
+//                if (gamepad1.x && !previousGamepad1.x) {
+//                    robotTop.setTopServoPosition(0);
+//                    armState = ArmState.WITHDRAWING;
+//                }
+//            }
+//            if (gamepad1.b && !previousGamepad1.b) {
+//                robotTop.setArmGrabPosition(GRAB_OPEN_POSITION);
+//                sleep(500);
+//                if (!armGrabbing && armState == ArmState.TURNED) {
+//                    robotTop.setArmLeftTurnPosition(TURN_OUT_DOWN_POSITION);
+//                    robotTop.setArmRightTurnPosition(SPIN_X_DOWN_POSITION);
+//                    grabbingFlag = true;
+//                } else {
+//                    robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
+//                    armGrabbing = false;
+//                }
+//            }
+//            if (grabbingFlag && !gamepad1.b) {
+//                robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
+//                sleep(500);
+//                robotTop.setArmLeftTurnPosition(TURN_OUT_HOVERING_POSITION);
+//                robotTop.setArmRightTurnPosition(SPIN_X_HOVERING_POSITION);
+//                armGrabbing = true;
+//                grabbingFlag = false;
+//            }
+//            robotTop.setArmStretchPosition(armStretchPos);
+//            if (gamepad1.dpad_up) {
+//                armSpinXPos = Math.min(1, armSpinXPos + 0.02);
+//                robotTop.setArmRightTurnPosition(armSpinXPos);
+//            } else if (gamepad1.dpad_down) {
+//                armSpinXPos = Math.max(0, armSpinXPos - 0.02);
+//                robotTop.setArmRightTurnPosition(armSpinXPos);
+//            }
+//            if (gamepad1.dpad_right) {
+//                armSpinYPos = Math.min(1, armSpinYPos + 0.05);
+//                robotTop.setArmLeftSpinPosition(armSpinYPos);
+//            } else if (gamepad1.dpad_left) {
+//                armSpinYPos = Math.max(0, armSpinYPos - 0.05);
+//                robotTop.setArmLeftSpinPosition(armSpinYPos);
+//            }
+//            if (gamepad1.a && !previousGamepad1.a) {
+//                if (backGrabOpen) {
+//                    robotTop.setLiftServoPosition(0.1);
+//                } else {
+//                    robotTop.setLiftServoPosition(0.6);
+//                }
+//                backGrabOpen = !backGrabOpen;
+//            }
+//
+//            //vision
+//            if ((gamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0
+//            ) || (gamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0)) {
+//                recognitionAngle = robotVisionAngle.getDetectedAngle();
+//                robotTop.setArmLeftSpinPosition(calculateSpinY(recognitionAngle));
+//            }
+//
+//            // telemetry
+//            telemetry.addData("liftPos", liftPosition);
+//            telemetry.addData("state", liftState);
+//            telemetry.addData("ArmState", armState);
+//            telemetry.addData("XPos", armSpinXPos);
+//            telemetry.addData("YPos", armSpinYPos);
+//            telemetry.addData("angle", recognitionAngle);
+//            telemetry.update();
             previousGamepad1.copy(gamepad1);
-            previousGamepad2.copy(gamepad2);
-            sleep(50);
+//            previousGamepad2.copy(gamepad2);
+            sleep(10);
         }
     }
 
@@ -298,14 +367,5 @@ public class ManualOpMode extends LinearOpMode {
         }
 
         return Math.max(0, Math.min(adjustedAngle, 1)); // 确保值在0到1之间
-    }
-
-
-    enum LiftState {
-        BOTTOM, GOING_UP, TOP, GOING_DOWN
-    }
-
-    enum ArmState {
-        IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK, LOCKED, STRETCHED
     }
 }

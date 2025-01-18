@@ -31,7 +31,7 @@ public class ServoTest extends LinearOpMode {
             }if(b){
                 servoPos = Math.max(0, servoPos - 0.003);
             }
-            armServo0.setPosition(servoPos);
+            armServo0.setPosition(0.5-servoPos);
             armServo1.setPosition(servoPos);
             telemetry.addData("pos", servoPos);
             telemetry.update();

@@ -25,6 +25,9 @@ public class RobotTop {
     protected Servo liftServo;
     protected Servo topServo;
     protected Servo containerServo;
+
+    protected int targetLiftPosition;
+
     public RobotTop(LinearOpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
@@ -56,7 +59,9 @@ public class RobotTop {
         rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        armStretchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armStretchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armStretchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armStretchMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void setLeftPower(double power) {
@@ -69,10 +74,14 @@ public class RobotTop {
     }
 
     public void setArmStretchPosition(int position) {
-        armStretchMotor.setTargetPosition(position);
+        //armStretchMotor.setTargetPosition(position);
     }
 
-    public double getArmStretchPosition() {
+    public void setStretchPower(double p) {
+        armStretchMotor.setPower(p);
+    }
+
+    public int getArmStretchPosition() {
         return armStretchMotor.getCurrentPosition();
     }
 
@@ -90,6 +99,15 @@ public class RobotTop {
 
     public double getArmRightTurnPosition() {
         return armRightTurnServo.getPosition();
+    }
+
+    public double getTurnPosition(){
+        return getArmLeftTurnPosition();
+    }
+
+    public void setTurnPosition(double position){
+        setArmLeftTurnPosition(position);
+        setArmRightTurnPosition(1 - position);
     }
 
     public void setArmLeftSpinPosition(double position) {
@@ -115,6 +133,7 @@ public class RobotTop {
     public double getArmGrabPosition() {
         return armGrabServo.getPosition();
     }
+
     public void setLiftServoPosition(double position) {
         liftServo.setPosition(position);
     }
@@ -122,6 +141,7 @@ public class RobotTop {
     public double getLiftServoPosition() {
         return liftServo.getPosition();
     }
+
     public void setTopServoPosition(double position) {
         topServo.setPosition(position);
     }
@@ -129,6 +149,7 @@ public class RobotTop {
     public double getTopServoPosition() {
         return topServo.getPosition();
     }
+
     public void setContainerServoPosition(double position) {
         containerServo.setPosition(position);
     }
@@ -136,4 +157,51 @@ public class RobotTop {
     public double getContainerServoPosition() {
         return containerServo.getPosition();
     }
+
+    public void setTargetLiftPosition(int position){
+        this.targetLiftPosition = position;
+    }
+
+    //PID
+    double currentPos = 0, previousPos = 0, offset = 0;
+    double targetPos = 0;
+    double ticks_per_rev = 530;
+    double delta = 0;
+    double p = 0, i = 0 , d = 0;
+    final double Kp = 0.005, Ki = 0.000008, Kd = -0.01;
+    final double power_max = 1;
+    double power = 0;
+
+    public void updateLiftPID() {
+        previousPos = currentPos;
+        currentPos = getLiftPosition();
+        delta = targetPos - currentPos - offset;
+        if (delta > ticks_per_rev * 0.6)
+            power = 1;
+        else if (delta < -ticks_per_rev * 0.6)
+            power = -1;
+        else
+        {
+            p = Kp * delta;
+            i += Ki * delta;
+            d = Kd * (currentPos - previousPos);
+            power = p + i + d;
+            if (power > power_max)
+                power = power_max;
+            else if(power < -power_max)
+                power = -power_max;
+        }
+        setLeftPower(power);
+        telemetry.addData("power",power);
+        telemetry.addData("p",p);
+        telemetry.addData("i",i);
+        telemetry.addData("d",d);
+        telemetry.addData("target",targetPos);
+    }
+
+    public void setLiftTargetPos(int pos){
+        this.targetPos = Math.min(1260, pos);
+        this.targetPos = Math.max(40, targetPos);
+    }
+
 }
