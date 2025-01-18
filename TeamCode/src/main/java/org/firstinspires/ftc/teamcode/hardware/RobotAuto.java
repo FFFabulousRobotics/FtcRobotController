@@ -50,10 +50,10 @@ public class RobotAuto {
 
     // gearing UP (will affect the direction of wheel rotation) < 1 < gearing DOWN
     // eg. for a 12-tooth driving a 24-tooth, the value is 24/12=2.0
-    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double DRIVE_GEAR_REDUCTION = 15.0;
 
     // wheel diameter in inches
-    static final double WHEEL_DIAMETER_INCHES = 5.31;
+    static final double WHEEL_DIAMETER_INCHES = 3.0;
 
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -350,7 +350,7 @@ public class RobotAuto {
     }
 
     public RobotAuto stretchArm(){
-        robotTop.setArmStretchPosition(0.3);
+        robotTop.setArmStretchPosition(0);
         return this;
     }
     public RobotAuto setLiftPower(double power){

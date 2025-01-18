@@ -1,17 +1,17 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm. robotcore.eventloop. opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm. robotcore. eventloop. opmode. LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm. robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
+import org.firstinspires.ftc.teamcode.hardware.RobotTop;
+
 @Autonomous
-public class AutoTest extends LinearOpMode {
+public class RightAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
+        RobotTop robotTop = new RobotTop(this);
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FL");
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "BL");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "FR");
@@ -28,11 +28,11 @@ public class AutoTest extends LinearOpMode {
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
         rightLift.setDirection(DcMotor.Direction.REVERSE);
         armStretchMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -42,6 +42,7 @@ public class AutoTest extends LinearOpMode {
         liftServo.setPosition(0.95);
         sleep(700);
 
+        //left rafe
         frontLeft.setPower(-0.7);
         backLeft.setPower(0.7);
         frontRight.setPower(0.7);
@@ -60,75 +61,97 @@ public class AutoTest extends LinearOpMode {
         backRight.setPower(0);
 
         //stretch arm
-        armStretchMotor.setPower(0.5);
-        sleep(1400);
-        armStretchMotor.setPower(0);
+//        armStretchMotor.setPower(0.5);
+//        sleep(1400);
+//        armStretchMotor.setPower(0);
+        robotTop.setTurnPosition(0.6);
+        sleep(500);
 
-        //lift
+        //lift1
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
-        sleep(1700);
+        while(leftLift.getCurrentPosition() < 1000){}
         leftLift.setPower(0);
         rightLift.setPower(0);
 
+        //forward close to target
         frontLeft.setPower(0.5);
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(130);
+        sleep(100);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
 
+        //lift2
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
-        while(leftLift.getCurrentPosition() < 800);
+        sleep(500);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        //Release
+        //Release specimen
         liftServo.setPosition(0.2);
         sleep(500);
 
-        armStretchMotor.setPower(-0.5);
-        sleep(1400);
-        armStretchMotor.setPower(0);
+        //drawback arm
+//        armStretchMotor.setPower(-0.5);
+//        sleep(1400);
+//        armStretchMotor.setPower(0);
+        robotTop.setTurnPosition(0.3);
+        sleep(500);
 
-        //back1
+        //back
         frontLeft.setPower(-0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(-0.7);
-        sleep(500);
+        sleep(700);
 
-        //rafe
+        //right rafe
         frontLeft.setPower(0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(0.7);
-        sleep(1500);
+        sleep(2500);
 
-        //spin
-        frontLeft.setPower(-0.7);
-        backLeft.setPower(-0.7);
-        frontRight.setPower(0.7);
-        backRight.setPower(0.7);
-        sleep(1320);
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
-
-        //back2
-        frontLeft.setPower(0.7);
-        backLeft.setPower(0.7);
-        frontRight.setPower(0.7);
-        backRight.setPower(0.7);
-        sleep(100);
-
-        liftServo.setPosition(0.95);
-        sleep(700);
-
+//        //back1
+//        frontLeft.setPower(-0.7);
+//        backLeft.setPower(-0.7);
+//        frontRight.setPower(-0.7);
+//        backRight.setPower(-0.7);
+//        sleep(500);
+//
+//        //right rafe
+//        frontLeft.setPower(0.7);
+//        backLeft.setPower(-0.7);
+//        frontRight.setPower(-0.7);
+//        backRight.setPower(0.7);
+//        sleep(1500);
+//
+//        //spin
+//        frontLeft.setPower(-0.7);
+//        backLeft.setPower(-0.7);
+//        frontRight.setPower(0.7);
+//        backRight.setPower(0.7);
+//        sleep(1320);
+//        frontLeft.setPower(0);
+//        backLeft.setPower(0);
+//        frontRight.setPower(0);
+//        backRight.setPower(0);
+//
+//        //back2
+//        frontLeft.setPower(0.7);
+//        backLeft.setPower(0.7);
+//        frontRight.setPower(0.7);
+//        backRight.setPower(0.7);
+//        sleep(100);
+//
+//        //grab
+//        liftServo.setPosition(0.95);
+//        sleep(700);
+//
     }
 }

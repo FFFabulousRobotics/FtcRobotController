@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Servo armServo = hardwareMap.get(Servo.class , "arm");
+        Servo armServo0 = hardwareMap.get(Servo.class , "arm0");
+        Servo armServo1 = hardwareMap.get(Servo.class , "arm1");
         //stretch(1): [0, 0.3]
         //turn(3): [0.38-back, 0.71-out]
         //grab(5): [0-open, 0.53-close]
@@ -21,23 +22,23 @@ public class ServoTest extends LinearOpMode {
         waitForStart();
         Gamepad previousGamepad1 = new Gamepad();
         previousGamepad1.copy(gamepad1);
-        double servoPos = 0;
+        double servoPos = 0.5;
 
         while (opModeIsActive()){
             boolean x = gamepad1.x;
             boolean b = gamepad1.b;
             if(x){
-                servoPos += 0.01;
+                servoPos = Math.min(1, servoPos + 0.003);
             }if(b){
-                servoPos -= 0.01;
+                servoPos = Math.max(0, servoPos - 0.003);
             }
-
-            armServo.setPosition(servoPos);
+            armServo0.setPosition(0.5-servoPos);
+            armServo1.setPosition(servoPos);
             telemetry.addData("pos", servoPos);
             telemetry.update();
 
             previousGamepad1.copy(gamepad1);
-            sleep(100);
+            sleep(10);
         }
     }
 }
