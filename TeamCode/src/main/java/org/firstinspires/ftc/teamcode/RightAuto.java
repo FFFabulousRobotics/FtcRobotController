@@ -79,7 +79,7 @@ public class RightAuto extends LinearOpMode {
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(100);
+        sleep(250);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -100,58 +100,54 @@ public class RightAuto extends LinearOpMode {
 //        armStretchMotor.setPower(-0.5);
 //        sleep(1400);
 //        armStretchMotor.setPower(0);
-        robotTop.setTurnPosition(0.3);
+        robotTop.setTurnPosition(0.2);
         sleep(500);
 
-        //back
+        //back1
         frontLeft.setPower(-0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(-0.7);
-        sleep(700);
+        sleep(500);
 
         //right rafe
         frontLeft.setPower(0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(0.7);
-        sleep(2500);
+        sleep(1500);
 
-//        //back1
-//        frontLeft.setPower(-0.7);
-//        backLeft.setPower(-0.7);
-//        frontRight.setPower(-0.7);
-//        backRight.setPower(-0.7);
-//        sleep(500);
-//
-//        //right rafe
+        //spin
+        frontLeft.setPower(-0.7);
+        backLeft.setPower(-0.7);
+        frontRight.setPower(0.7);
+        backRight.setPower(0.7);
+        sleep(1320);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        //back2
+        frontLeft.setPower(0.7);
+        backLeft.setPower(0.7);
+        frontRight.setPower(0.7);
+        backRight.setPower(0.7);
+        sleep(100);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        //grab
+        liftServo.setPosition(0.95);
+        sleep(700);
+
+        //right rafe
 //        frontLeft.setPower(0.7);
 //        backLeft.setPower(-0.7);
 //        frontRight.setPower(-0.7);
 //        backRight.setPower(0.7);
-//        sleep(1500);
-//
-//        //spin
-//        frontLeft.setPower(-0.7);
-//        backLeft.setPower(-0.7);
-//        frontRight.setPower(0.7);
-//        backRight.setPower(0.7);
-//        sleep(1320);
-//        frontLeft.setPower(0);
-//        backLeft.setPower(0);
-//        frontRight.setPower(0);
-//        backRight.setPower(0);
-//
-//        //back2
-//        frontLeft.setPower(0.7);
-//        backLeft.setPower(0.7);
-//        frontRight.setPower(0.7);
-//        backRight.setPower(0.7);
-//        sleep(100);
-//
-//        //grab
-//        liftServo.setPosition(0.95);
-//        sleep(700);
-//
+//        sleep(2500); fd
     }
 }
