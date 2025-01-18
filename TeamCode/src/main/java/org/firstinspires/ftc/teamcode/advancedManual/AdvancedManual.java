@@ -26,11 +26,11 @@ public class AdvancedManual extends LinearOpMode {
     //TODO: test the constants
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION = 0.3;
+    final double SPIN_DEFAULT_POSITION = 0.2 ;
     final double SPIN_HOVERING_POSITION = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0;
-    final double TURN_HOVERING_POSITION = 0.35;
+    final double TURN_HOVERING_POSITION = 0.32;
     final double TURN_DOWN_POSITION = 0.4;
     final double GRAB_OPEN_POSITION = 0.4;
     final double GRAB_CLOSE_POSITION = 0.92;
@@ -57,7 +57,7 @@ public class AdvancedManual extends LinearOpMode {
         this.backGrabOpen = false;
         this.targetTurnPosition = TURN_BACK_POSITION;
         waitForStart();
-        robotTop.setTurnPosition(TURN_BACK_POSITION);
+        // robotTop.setTurnPosition(TURN_BACK_POSITION);
         robotTop.setArmLeftSpinPosition(SPIN_DEFAULT_POSITION);
         robotTop.setArmRightSpinPosition(SPIN_DEFAULT_POSITION);
         int armStretchStartPos = robotTop.getArmStretchPosition();
