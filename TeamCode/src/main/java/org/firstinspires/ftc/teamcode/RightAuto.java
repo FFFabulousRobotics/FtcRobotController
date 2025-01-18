@@ -93,14 +93,14 @@ public class RightAuto extends LinearOpMode {
         rightLift.setPower(0);
 
         //Release specimen
-        liftServo.setPosition(0.2);
+        liftServo.setPosition(0.6);
         sleep(500);
 
         //drawback arm
 //        armStretchMotor.setPower(-0.5);
 //        sleep(1400);
 //        armStretchMotor.setPower(0);
-        robotTop.setTurnPosition(0);
+        robotTop.setTurnPosition(0.3);
         sleep(500);
 
         //back
