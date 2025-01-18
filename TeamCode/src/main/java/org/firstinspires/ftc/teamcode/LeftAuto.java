@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm. robotcore.eventloop. opmode.Autonomous;
-import com.qualcomm. robotcore. eventloop. opmode. LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -16,10 +16,10 @@ public class LeftAuto extends LinearOpMode {
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "BL");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "FR");
         DcMotor backRight = hardwareMap.get(DcMotor.class, "BR");
-        DcMotor leftLift = hardwareMap.get(DcMotor.class,"leftLift");
-        DcMotor rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftLift");
+        DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         DcMotor armStretchMotor = hardwareMap.get(DcMotor.class, "armStretch");
-        Servo liftServo = hardwareMap.get(Servo.class,"liftServo");
+        Servo liftServo = hardwareMap.get(Servo.class, "liftServo");
 
 
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -65,13 +65,14 @@ public class LeftAuto extends LinearOpMode {
 //        armStretchMotor.setPower(0.5);
 //        sleep(1400);
 //        armStretchMotor.setPower(0);
-        robotTop.setTurnPosition(0.2);
+        robotTop.setTurnPosition(0.6);
         sleep(500);
 
         //lift1
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
-        while(leftLift.getCurrentPosition() < 1000){}
+        while (leftLift.getCurrentPosition() < 1000) {
+        }
         leftLift.setPower(0);
         rightLift.setPower(0);
 
@@ -101,7 +102,7 @@ public class LeftAuto extends LinearOpMode {
 //        armStretchMotor.setPower(-0.5);
 //        sleep(1400);
 //        armStretchMotor.setPower(0);
-        robotTop.setTurnPosition(0);
+        robotTop.setTurnPosition(0.3);
         sleep(500);
 
         //back
