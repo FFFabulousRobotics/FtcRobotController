@@ -168,8 +168,8 @@ public class RobotTop {
     double ticks_per_rev = 530;
     double delta = 0;
     double p = 0, i = 0 , d = 0;
-    final double Kp = 0.005, Ki = 0.000008, Kd = -0.01;
-    final double power_max = 1;
+    final double Kp = 0.0008, Ki = 0.00001, Kd = -0.004;
+    final double power_max = 0.5;
     double power = 0;
 
     public void updateLiftPID() {
@@ -196,6 +196,7 @@ public class RobotTop {
         telemetry.addData("p",p);
         telemetry.addData("i",i);
         telemetry.addData("d",d);
+        telemetry.addData("current",currentPos);
         telemetry.addData("target",targetPos);
     }
 

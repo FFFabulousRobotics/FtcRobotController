@@ -59,7 +59,7 @@ public class RobotStateMachine {
     }
 
     private void initializeRobotPositions() {
-        robotTop.setArmStretchPosition(armStretchPos);
+        // robotTop.setArmStretchPosition(armStretchPos);
         robotTop.setArmLeftTurnPosition(armTurnPos);
         robotTop.setContainerServoPosition(CONTAINER_OPEN_POSITION);
         robotTop.setLiftServoPosition(LIFT_SERVO_CLOSE);
@@ -82,7 +82,7 @@ public class RobotStateMachine {
     protected void handleArmIdle(){
         if(gamepad1.x && !previousGamepad1.x){
             armStretchPos = STRETCH_OUT_POSITION;
-            robotTop.setArmStretchPosition(armStretchPos);
+            // robotTop.setArmStretchPosition(armStretchPos);
             robotTop.setTopServoPosition(0);
         }
     }

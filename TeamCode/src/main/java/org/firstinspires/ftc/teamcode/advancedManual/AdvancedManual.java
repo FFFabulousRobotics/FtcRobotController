@@ -26,12 +26,12 @@ public class AdvancedManual extends LinearOpMode {
     //TODO: test the constants
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION = 0.3;
+    final double SPIN_DEFAULT_POSITION = 0.2 ;
     final double SPIN_HOVERING_POSITION = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0;
-    final double TURN_HOVERING_POSITION = 0.4;
-    final double TURN_DOWN_POSITION = 0.45;
+    final double TURN_HOVERING_POSITION = 0.32;
+    final double TURN_DOWN_POSITION = 0.4;
     final double GRAB_OPEN_POSITION = 0.4;
     final double GRAB_CLOSE_POSITION = 0.92;
     final double TOP_BACK = 0.03;
@@ -57,7 +57,7 @@ public class AdvancedManual extends LinearOpMode {
         this.backGrabOpen = false;
         this.targetTurnPosition = TURN_BACK_POSITION;
         waitForStart();
-        robotTop.setTurnPosition(TURN_BACK_POSITION);
+        // robotTop.setTurnPosition(TURN_BACK_POSITION);
         robotTop.setArmLeftSpinPosition(SPIN_DEFAULT_POSITION);
         robotTop.setArmRightSpinPosition(SPIN_DEFAULT_POSITION);
         int armStretchStartPos = robotTop.getArmStretchPosition();
@@ -157,10 +157,10 @@ public class AdvancedManual extends LinearOpMode {
             armState = ArmState.TURNED;
         }
         currentTurnPosition = robotTop.getTurnPosition();
-        if(currentTurnPosition > targetTurnPosition + 0.005){
-            robotTop.setTurnPosition(currentTurnPosition - 0.005);
-        } else if (currentTurnPosition < targetTurnPosition - 0.005) {
-            robotTop.setTurnPosition(currentTurnPosition + 0.005);
+        if(currentTurnPosition > targetTurnPosition + 0.014){
+            robotTop.setTurnPosition(currentTurnPosition - 0.014);
+        } else if (currentTurnPosition < targetTurnPosition - 0.014) {
+            robotTop.setTurnPosition(currentTurnPosition + 0.014);
         }else{
             robotTop.setTurnPosition(targetTurnPosition);
         }
@@ -218,10 +218,10 @@ public class AdvancedManual extends LinearOpMode {
             armState = ArmState.IDLE;
         }
         currentTurnPosition = robotTop.getTurnPosition();
-        if(currentTurnPosition > targetTurnPosition + 0.005){
-            robotTop.setTurnPosition(currentTurnPosition - 0.005);
-        } else if (currentTurnPosition < targetTurnPosition - 0.005) {
-            robotTop.setTurnPosition(currentTurnPosition + 0.005);
+        if(currentTurnPosition > targetTurnPosition + 0.014){
+            robotTop.setTurnPosition(currentTurnPosition - 0.014);
+        } else if (currentTurnPosition < targetTurnPosition - 0.014) {
+            robotTop.setTurnPosition(currentTurnPosition + 0.014);
         }else{
             robotTop.setTurnPosition(targetTurnPosition);
         }
@@ -233,10 +233,11 @@ public class AdvancedManual extends LinearOpMode {
     }
 
     protected void handleLockedState(){
-        if(gamepad1.y && !previousGamepad1.y){
+        if(gamepad1.x && !previousGamepad1.x){
             liftState = LiftState.DISABLED;
             robotTop.setStretchPower(-0.8);
             armState = ArmState.WITHDRAWING;
+            targetTurnPosition = TURN_BACK_POSITION;
         }
     }
 
@@ -249,15 +250,17 @@ public class AdvancedManual extends LinearOpMode {
             sleep(700);
             robotTop.setStretchPower(0);
             armState = ArmState.LOCKED;
-            liftState = LiftState.RUNNING;
+            liftState = LiftState.DISABLED;
         }
     }
     protected void handleRunningState(){
         if(gamepad1.right_trigger != 0){
             robotTop.setLeftPower(0.5);
+            robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else if (gamepad1.left_trigger != 0) {
             robotTop.setLeftPower(-0.5);
+            robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         }else{
             if(robotTop.getLiftPosition() >= 200){
