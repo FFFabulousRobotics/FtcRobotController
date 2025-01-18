@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.advancedManual.test;
+package org.firstinspires.ftc.teamcode.previousCode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.advancedManual.TaskManager;
+import org.firstinspires.ftc.teamcode.previousCode.TaskManager;
 @Disabled
-// The ManualOp currently used is a piece of shit.
-// I'll write a better one here (if the time is enough).
 public class TimedServoTest extends LinearOpMode {
     @Override
     public void runOpMode(){

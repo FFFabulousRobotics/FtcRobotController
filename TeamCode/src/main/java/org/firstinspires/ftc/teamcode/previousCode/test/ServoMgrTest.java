@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.advancedManual.test;
+package org.firstinspires.ftc.teamcode.previousCode.test;
 
 import android.util.ArrayMap;
 
-import org.firstinspires.ftc.teamcode.advancedManual.Task;
+import org.firstinspires.ftc.teamcode.previousCode.Task;
 
 import java.util.List;
 import java.util.Map;
