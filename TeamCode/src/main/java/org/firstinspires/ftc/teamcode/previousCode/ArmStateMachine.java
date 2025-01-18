@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.advancedManual;
+package org.firstinspires.ftc.teamcode.previousCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
-
+@Disabled
 public class ArmStateMachine {
     enum ArmState{
         IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK

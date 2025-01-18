@@ -101,11 +101,11 @@ public class RobotTop {
         return armRightTurnServo.getPosition();
     }
 
-    public double getTurnPosition(){
+    public double getTurnPosition() {
         return getArmLeftTurnPosition();
     }
 
-    public void setTurnPosition(double position){
+    public void setTurnPosition(double position) {
         setArmLeftTurnPosition(position);
         setArmRightTurnPosition(1 - position);
     }
@@ -158,7 +158,7 @@ public class RobotTop {
         return containerServo.getPosition();
     }
 
-    public void setTargetLiftPosition(int position){
+    public void setTargetLiftPosition(int position) {
         this.targetLiftPosition = position;
     }
 
@@ -167,7 +167,7 @@ public class RobotTop {
     double targetPos = 0;
     double ticks_per_rev = 530;
     double delta = 0;
-    double p = 0, i = 0 , d = 0;
+    double p = 0, i = 0, d = 0;
     final double Kp = 0.0008, Ki = 0.00001, Kd = -0.004;
     final double power_max = 0.5;
     double power = 0;
@@ -180,27 +180,26 @@ public class RobotTop {
             power = 1;
         else if (delta < -ticks_per_rev * 0.6)
             power = -1;
-        else
-        {
+        else {
             p = Kp * delta;
             i += Ki * delta;
             d = Kd * (currentPos - previousPos);
             power = p + i + d;
             if (power > power_max)
                 power = power_max;
-            else if(power < -power_max)
+            else if (power < -power_max)
                 power = -power_max;
         }
         setLeftPower(power);
-        telemetry.addData("power",power);
-        telemetry.addData("p",p);
-        telemetry.addData("i",i);
-        telemetry.addData("d",d);
-        telemetry.addData("current",currentPos);
-        telemetry.addData("target",targetPos);
+        telemetry.addData("power", power);
+        telemetry.addData("p", p);
+        telemetry.addData("i", i);
+        telemetry.addData("d", d);
+        telemetry.addData("current", currentPos);
+        telemetry.addData("target", targetPos);
     }
 
-    public void setLiftTargetPos(int pos){
+    public void setLiftTargetPos(int pos) {
         this.targetPos = Math.min(1260, pos);
         this.targetPos = Math.max(40, targetPos);
     }
