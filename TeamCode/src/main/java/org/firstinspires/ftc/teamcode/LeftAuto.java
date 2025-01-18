@@ -65,7 +65,7 @@ public class LeftAuto extends LinearOpMode {
         //lift1
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
-        while(leftLift.getCurrentPosition() < 1200){}
+        while(leftLift.getCurrentPosition() < 1000){}
         leftLift.setPower(0);
         rightLift.setPower(0);
 
@@ -74,7 +74,7 @@ public class LeftAuto extends LinearOpMode {
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(130);
+        sleep(200);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
