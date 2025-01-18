@@ -5,10 +5,13 @@ import com.qualcomm. robotcore. eventloop. opmode. LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.hardware.RobotTop;
+
 @Autonomous
 public class RightAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
+        RobotTop robotTop = new RobotTop(this);
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FL");
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "BL");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "FR");
@@ -58,14 +61,16 @@ public class RightAuto extends LinearOpMode {
         backRight.setPower(0);
 
         //stretch arm
-        armStretchMotor.setPower(0.5);
-        sleep(1400);
-        armStretchMotor.setPower(0);
+//        armStretchMotor.setPower(0.5);
+//        sleep(1400);
+//        armStretchMotor.setPower(0);
+        robotTop.setTurnPosition(0.2);
+        sleep(500);
 
         //lift1
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
-        while(leftLift.getCurrentPosition() < 1200){}
+        while(leftLift.getCurrentPosition() < 1000){}
         leftLift.setPower(0);
         rightLift.setPower(0);
 
@@ -74,7 +79,7 @@ public class RightAuto extends LinearOpMode {
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(130);
+        sleep(100);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -92,9 +97,11 @@ public class RightAuto extends LinearOpMode {
         sleep(500);
 
         //drawback arm
-        armStretchMotor.setPower(-0.5);
-        sleep(1400);
-        armStretchMotor.setPower(0);
+//        armStretchMotor.setPower(-0.5);
+//        sleep(1400);
+//        armStretchMotor.setPower(0);
+        robotTop.setTurnPosition(0);
+        sleep(500);
 
         //back
         frontLeft.setPower(-0.7);
