@@ -23,7 +23,7 @@ public class DriveTest extends LinearOpMode {
                 robotChassis.resetIMU();
             }
             robotChassis.absoluteDriveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
-            sleep(10);
+            sleep(50);
         }
     }
 }

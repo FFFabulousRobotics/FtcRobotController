@@ -103,6 +103,11 @@ public class RobotChassis {
         double backLeftPower = (axial - lateral + yaw) / denominator;
         double frontRightPower = (axial - lateral - yaw) / denominator;
         double backRightPower = (axial + lateral - yaw) / denominator;
+//        telemetry.addData("fl",frontLeftPower);
+//        telemetry.addData("bl",backLeftPower);
+//        telemetry.addData("fr",frontRightPower);
+//        telemetry.addData("br",backRightPower);
+//        telemetry.update();
 
         leftFrontDrive.setPower(frontLeftPower);
         leftBackDrive.setPower(backLeftPower);

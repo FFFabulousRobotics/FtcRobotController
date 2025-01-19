@@ -135,16 +135,16 @@ public class RobotAuto {
 
                 // Apply the turning correction to the current driving speed.
                 robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
-                telemetry.addData("x", "%4.2f, %4.2f, %4.2f, %4.2f, %4d", maxDriveSpeed, distance, heading, turnSpeed, moveCounts);
-                telemetry.addData("target", robotChassis.getTargetPosition()[0]);
-                telemetry.addData("target", robotChassis.getTargetPosition()[1]);
-                telemetry.addData("target", robotChassis.getTargetPosition()[2]);
-                telemetry.addData("target", robotChassis.getTargetPosition()[3]);
-                telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
-                telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
-                telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
-                telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
-                telemetry.update();
+//                telemetry.addData("x", "%4.2f, %4.2f, %4.2f, %4.2f, %4d", maxDriveSpeed, distance, heading, turnSpeed, moveCounts);
+//                telemetry.addData("target", robotChassis.getTargetPosition()[0]);
+//                telemetry.addData("target", robotChassis.getTargetPosition()[1]);
+//                telemetry.addData("target", robotChassis.getTargetPosition()[2]);
+//                telemetry.addData("target", robotChassis.getTargetPosition()[3]);
+//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
+//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
+//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
+//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
+//                telemetry.update();
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -158,6 +158,7 @@ public class RobotAuto {
                                  double distance,
                                  double heading
     ) {
+        robotChassis.resetEncoder();
 
         // Ensure that the OpMode is still active
         if (opMode.opModeIsActive()) {
@@ -389,6 +390,15 @@ public class RobotAuto {
 
     public RobotAuto release() {
         robotTop.setLiftServoPosition(0.2);
+        return this;
+    }
+
+    public RobotAuto topOut() {
+        robotTop.setTopServoPosition(0.66);
+        return this;
+    }
+    public RobotAuto topBack(){
+        robotTop.setTopServoPosition(0.03);
         return this;
     }
 }
