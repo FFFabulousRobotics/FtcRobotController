@@ -35,10 +35,23 @@ public class RobotChassis {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        resetEncoder();
+
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void resetEncoder() {
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public boolean isAllBusy() {
@@ -61,14 +74,17 @@ public class RobotChassis {
         lateral = -lateral * 1.1; // Counteract imperfect strafing
         yaw = -yaw;
 
-        final double LEFT_REDUCTION = 0.96;
+//        final double LEFT_REDUCTION = 0.96;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
+
         double denominator = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
-        double frontLeftPower = (axial + lateral + yaw) / denominator * LEFT_REDUCTION;
-        double backLeftPower = (axial - lateral + yaw) / denominator * LEFT_REDUCTION;
+//        double frontLeftPower = (axial + lateral + yaw) / denominator * LEFT_REDUCTION;
+//        double backLeftPower = (axial - lateral + yaw) / denominator * LEFT_REDUCTION;
+        double frontLeftPower = (axial + lateral + yaw) / denominator;
+        double backLeftPower = (axial - lateral + yaw) / denominator;
         double frontRightPower = (axial - lateral - yaw) / denominator;
         double backRightPower = (axial + lateral - yaw) / denominator;
 
@@ -143,6 +159,15 @@ public class RobotChassis {
         int rf = rightFrontDrive.getTargetPosition();
         int lb = leftBackDrive.getTargetPosition();
         int rb = rightBackDrive.getTargetPosition();
+        return new int[]{lf, lb, lb, rb};
+    }
+
+    public int[] getCurrentPosition() {
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        int lf = leftFrontDrive.getCurrentPosition();
+        int rf = rightFrontDrive.getCurrentPosition();
+        int lb = leftBackDrive.getCurrentPosition();
+        int rb = rightBackDrive.getCurrentPosition();
         return new int[]{lf, lb, lb, rb};
     }
 

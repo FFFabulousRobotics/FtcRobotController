@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 import com.qualcomm.robotcore.util.Range;
 
 @SuppressWarnings(value = "unused")
@@ -33,6 +34,7 @@ public class RobotAuto {
     RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
     RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
     public RobotAuto(LinearOpMode opMode) {
         this.opMode = opMode;
         hardwareMap = opMode.hardwareMap;
@@ -44,19 +46,22 @@ public class RobotAuto {
         imu = opMode.hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
+        robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
     }
 
     static final double COUNTS_PER_MOTOR_REV = 560;
 
     // gearing UP (will affect the direction of wheel rotation) < 1 < gearing DOWN
     // eg. for a 12-tooth driving a 24-tooth, the value is 24/12=2.0
-    static final double DRIVE_GEAR_REDUCTION = 15.0;
+    static final double DRIVE_GEAR_REDUCTION = (double) 3 / 5;
 
     // wheel diameter in inches
-    static final double WHEEL_DIAMETER_INCHES = 3.0;
+    static final double WHEEL_DIAMETER_INCHES = 2.55;
 
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+
+    static final double STRIFE_REDUCTION = 1.25;
 
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
@@ -75,6 +80,7 @@ public class RobotAuto {
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
+
     /**
      * Read the robot heading directly from the IMU.
      *
@@ -83,6 +89,7 @@ public class RobotAuto {
     public double getHeading() {
         return getHeading(AngleUnit.DEGREES);
     }
+
     /**
      * read the Robot heading directly from the IMU
      *
@@ -99,8 +106,9 @@ public class RobotAuto {
     }
 
     public RobotAuto driveStraight(double maxDriveSpeed,
-                                       double distance,
-                                       double heading) {
+                                   double distance,
+                                   double heading) {
+        robotChassis.resetEncoder();
 
         // Ensure that the OpMode is still active
         if (opMode.opModeIsActive()) {
@@ -128,7 +136,15 @@ public class RobotAuto {
 
                 // Apply the turning correction to the current driving speed.
                 robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
-                //                telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f, %4d",maxDriveSpeed,distance,heading,turnSpeed,moveCounts);
+                telemetry.addData("x", "%4.2f, %4.2f, %4.2f, %4.2f, %4d", maxDriveSpeed, distance, heading, turnSpeed, moveCounts);
+                telemetry.addData("target", robotChassis.getTargetPosition()[0]);
+                telemetry.addData("target", robotChassis.getTargetPosition()[1]);
+                telemetry.addData("target", robotChassis.getTargetPosition()[2]);
+                telemetry.addData("target", robotChassis.getTargetPosition()[3]);
+                telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
+                telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
+                telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
+                telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
                 telemetry.update();
             }
 
@@ -140,15 +156,15 @@ public class RobotAuto {
     }
 
     public RobotAuto driveStrafe(double maxDriveSpeed,
-                                     double distance,
-                                     double heading
+                                 double distance,
+                                 double heading
     ) {
 
         // Ensure that the OpMode is still active
         if (opMode.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            int moveCounts = (int) (distance * COUNTS_PER_INCH);
+            int moveCounts = (int) (distance * COUNTS_PER_INCH * STRIFE_REDUCTION);
             setStrafeTargetPosition(moveCounts);
 
             robotChassis.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -180,21 +196,25 @@ public class RobotAuto {
         }
         return this;
     }
+
     public void setStraightTargetPosition(int moveCounts) {
-        int[] motorPos = robotChassis.getTargetPosition();
-        for (int i = 0; i < motorPos.length; i++) {
-            motorPos[i] += moveCounts;
-        }
+        int[] motorPos = robotChassis.getCurrentPosition();
+        motorPos[0] = motorPos[0] + moveCounts;
+        motorPos[1] = motorPos[1] + moveCounts;
+        motorPos[2] = motorPos[2] + moveCounts;
+        motorPos[3] = motorPos[3] + moveCounts;
         robotChassis.setTargetPosition(motorPos);
     }
+
     public void setStrafeTargetPosition(int moveCounts) {
-        int[] motorPos = robotChassis.getTargetPosition();
+        int[] motorPos = robotChassis.getCurrentPosition();
         motorPos[0] = motorPos[0] + moveCounts;
         motorPos[1] = motorPos[1] - moveCounts;
         motorPos[2] = motorPos[2] - moveCounts;
         motorPos[3] = motorPos[3] + moveCounts;
         robotChassis.setTargetPosition(motorPos);
     }
+
     public RobotAuto turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error
@@ -254,20 +274,20 @@ public class RobotAuto {
     }
 
     public RobotAuto forward(double d) {
-        return driveStraight(0.6, d, getHeading());
+        return driveStraight(0.6, -d, getHeading());
     }
 
     public RobotAuto fastForward(double d) {
-        return driveStraight(0.9, d, getHeading());
+        return driveStraight(0.9, -d, getHeading());
     }
 
 
     public RobotAuto backward(double d) {
-        return driveStraight(0.6, -d, getHeading());
+        return driveStraight(0.6, d, getHeading());
     }
 
     public RobotAuto fastBackward(double d) {
-        return driveStraight(0.9, -d, getHeading());
+        return driveStraight(0.9, d, getHeading());
     }
 
     public RobotAuto rightShift(double d) {
@@ -296,6 +316,7 @@ public class RobotAuto {
         double y = vector[0] * Math.sin(Math.toRadians(angle)) + vector[1] * Math.cos(Math.toRadians(angle));
         return new double[]{x, y};
     }
+
     protected double[] getDisplacement(double[] CurrentPos, double[] DesiredPos) {
         double CurrentX = CurrentPos[0];
         double CurrentY = CurrentPos[1];
@@ -307,6 +328,7 @@ public class RobotAuto {
         Displacement = SpinVector(Displacement, -CurrentHeading);
         return Displacement;
     }
+
     /**
      * Go to the position given (track only include left/right and forward/backward)
      * Go forward/backward first,then move left/right.
@@ -322,6 +344,7 @@ public class RobotAuto {
                 .leftShift(-Displacement[1])
                 .fastSpin(DesiredHeading);
     }
+
     public RobotAuto gotoPosition(double x, double y, double h) {
         SparkFunOTOS.Pose2D CurrentPos = getPosition();
         double[] DesiredPos = {x, y, h};
@@ -343,25 +366,29 @@ public class RobotAuto {
                 .fastForward(Displacement[0])
                 .fastSpin(DesiredHeading);
     }
+
     public RobotAuto gotoPosition2(double x, double y, double h) {
         SparkFunOTOS.Pose2D CurrentPos = getPosition();
         double[] DesiredPos = {x, y, h};
         return gotoPosition2(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
     }
 
-    public RobotAuto stretchArm(){
+    public RobotAuto stretchArm() {
         robotTop.setArmStretchPosition(0);
         return this;
     }
-    public RobotAuto setLiftPower(double power){
+
+    public RobotAuto setLiftPower(double power) {
         robotTop.setLeftPower(power);
         return this;
     }
-    public RobotAuto grab(){
+
+    public RobotAuto grab() {
         robotTop.setLiftServoPosition(0.6);
         return this;
     }
-    public RobotAuto release(){
+
+    public RobotAuto release() {
         robotTop.setLiftServoPosition(0.2);
         return this;
     }

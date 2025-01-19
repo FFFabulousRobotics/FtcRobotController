@@ -120,6 +120,10 @@ public class ManualOpMode extends LinearOpMode {
                     handleRunningState();
                     break;
             }
+            telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
+            telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
+            telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
+            telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
             telemetry.addData("armPos", robotTop.getTurnPosition());
@@ -201,9 +205,8 @@ public class ManualOpMode extends LinearOpMode {
         if (gamepad1.b && !previousGamepad1.b) {
             if (isGrabbing) {
                 robotTop.setTurnPosition(TURN_DOWN_POSITION);
-                sleep(500);
                 robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
-                sleep(500);
+                sleep(300);
                 robotTop.setTurnPosition(TURN_HOVERING_POSITION);
                 isGrabbing = !isGrabbing;
             } else {

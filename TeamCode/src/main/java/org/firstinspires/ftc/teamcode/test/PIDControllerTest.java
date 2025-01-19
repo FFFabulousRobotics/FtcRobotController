@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @Disabled
-@TeleOp
+@TeleOp(group = "Test")
 public class PIDControllerTest extends LinearOpMode {
     @Override
     public void runOpMode(){
