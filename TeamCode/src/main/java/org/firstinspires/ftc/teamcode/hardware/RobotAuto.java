@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -373,13 +372,13 @@ public class RobotAuto {
         return gotoPosition2(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
     }
 
-    public RobotAuto stretchArm() {
-        robotTop.setArmStretchPosition(0);
+    public RobotAuto setLiftPower(double power) {
+        robotTop.setLiftPower(power);
         return this;
     }
 
-    public RobotAuto setLiftPower(double power) {
-        robotTop.setLeftPower(power);
+    public RobotAuto setTurnPosition(double p){
+        robotTop.setTurnPosition(p);
         return this;
     }
 

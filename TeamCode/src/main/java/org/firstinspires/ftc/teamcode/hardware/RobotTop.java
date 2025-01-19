@@ -64,7 +64,7 @@ public class RobotTop {
         armStretchMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void setLeftPower(double power) {
+    public void setLiftPower(double power) {
         leftLiftMotor.setPower(power);
         rightLiftMotor.setPower(power);
     }
@@ -190,7 +190,7 @@ public class RobotTop {
             else if (power < -power_max)
                 power = -power_max;
         }
-        setLeftPower(power);
+        setLiftPower(power);
         telemetry.addData("power", power);
         telemetry.addData("p", p);
         telemetry.addData("i", i);

@@ -109,16 +109,16 @@ public class PreviousManual extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger != 0) {
-                robotTop.setLeftPower(0.5);
+                robotTop.setLiftPower(0.5);
                 robotTop.setLiftTargetPos(robotTop.getLiftPosition());
             } else if (gamepad1.left_trigger != 0) {
-                robotTop.setLeftPower(-0.5);
+                robotTop.setLiftPower(-0.5);
                 robotTop.setLiftTargetPos(robotTop.getLiftPosition());
             } else {
                 if (robotTop.getLiftPosition() >= 200) {
                     robotTop.updateLiftPID();
                 } else {
-                    robotTop.setLeftPower(0);
+                    robotTop.setLiftPower(0);
                 }
             }
 

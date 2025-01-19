@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @SuppressWarnings(value = "unused")
 public class RobotChassis {
@@ -15,6 +18,7 @@ public class RobotChassis {
     protected DcMotor leftBackDrive;
     protected DcMotor rightFrontDrive;
     protected DcMotor rightBackDrive;
+    protected IMU imu;
 
     public RobotChassis(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -41,6 +45,18 @@ public class RobotChassis {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //IMU
+        imu = opMode.hardwareMap.get(IMU.class, "imu");
+        resetIMU();
+    }
+
+    public void resetIMU(){
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
     }
 
     public void resetEncoder() {
@@ -92,6 +108,16 @@ public class RobotChassis {
         leftBackDrive.setPower(backLeftPower);
         rightFrontDrive.setPower(frontRightPower);
         rightBackDrive.setPower(backRightPower);
+    }
+
+    public void absoluteDriveRobot(double axial, double lateral, double yaw){
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = axial * Math.cos(-botHeading) - lateral * Math.sin(-botHeading);
+        double rotY = axial * Math.sin(-botHeading) + lateral * Math.cos(-botHeading);
+
+        driveRobot(rotX, rotY, yaw);
     }
 
     /**

@@ -31,6 +31,7 @@ public class ManualOpMode extends LinearOpMode {
     final double SPIN_HOVERING_POSITION = 0.85;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.3;
+    final double TURN_LOCK_POSITION = 0.42;
     final double TURN_HOVERING_POSITION = 0.62;
     final double TURN_DOWN_POSITION = 0.7;
     final double GRAB_OPEN_POSITION = 0.4;
@@ -120,10 +121,6 @@ public class ManualOpMode extends LinearOpMode {
                     handleRunningState();
                     break;
             }
-            telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
-            telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
-            telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
-            telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
             telemetry.addData("armPos", robotTop.getTurnPosition());
@@ -316,7 +313,7 @@ public class ManualOpMode extends LinearOpMode {
         }
         if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0) {
             // robotTop.setTurnPosition(TURN_DOWN_POSITION - 0.1);
-            targetTurnPosition = TURN_DOWN_POSITION - 0.1;
+            targetTurnPosition = TURN_LOCK_POSITION;
             armState = ArmState.LOCKING;
             liftState = LiftState.RUNNING;
         }
@@ -324,18 +321,18 @@ public class ManualOpMode extends LinearOpMode {
 
     protected void handleRunningState() {
         if (gamepad1.right_trigger != 0) {
-            robotTop.setLeftPower(0.5);
+            robotTop.setLiftPower(0.5);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else if (gamepad1.left_trigger != 0) {
-            robotTop.setLeftPower(-0.5);
+            robotTop.setLiftPower(-0.5);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else {
             if (robotTop.getLiftPosition() >= 200) {
                 robotTop.updateLiftPID();
             } else {
-                robotTop.setLeftPower(0);
+                robotTop.setLiftPower(0);
             }
         }
         if (gamepad2.left_bumper && !previousGamepad2.left_bumper) {
