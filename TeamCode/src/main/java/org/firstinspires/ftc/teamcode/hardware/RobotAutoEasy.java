@@ -2,16 +2,19 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-public class AutoEasy {
+public class RobotAutoEasy {
     LinearOpMode opMode;
     DcMotor frontLeft;
     DcMotor backLeft;
     DcMotor frontRight;
     DcMotor backRight;
 
-    public AutoEasy(LinearOpMode opMode) {
+    final static double ForwardRatio = 600;
+    final static double SpinRatio = 50;
+    final static double ShiftRatio = 50;
+
+    public RobotAutoEasy(LinearOpMode opMode) {
         this.opMode = opMode;
         this.init();
     }
@@ -27,22 +30,33 @@ public class AutoEasy {
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void forward(double distance) {
+    public RobotAutoEasy forward(double distance) {
         double power = 0.7;
-        long sleepTime = (long) (distance * 1000); // Example conversion factor
+        long sleepTime = (long) (distance * ForwardRatio); // Example conversion factor
 
         setDrivePower(power, power, power, power);
         opMode.sleep(sleepTime);
         stopMotors();
+        return this;
     }
 
-    public void spin(double degree) {
+    public RobotAutoEasy spin(double degree) {
         double power = 0.7;
-        long sleepTime = (long) (degree * 10); // Example conversion factor
+        long sleepTime = (long) (degree * SpinRatio); // Example conversion factor
 
+        setDrivePower(power, power, -power, -power);
+        opMode.sleep(sleepTime);
+        stopMotors();
+        return this;
+    }
+
+    public RobotAutoEasy shift(double distance) {
+        double power = 0.7;
+        long sleepTime = (long) (distance * ShiftRatio); // Example conversion factor
         setDrivePower(power, -power, power, -power);
         opMode.sleep(sleepTime);
         stopMotors();
+        return this;
     }
 
     private void setDrivePower(double leftFront, double leftBack, double rightFront, double rightBack) {
@@ -70,3 +84,4 @@ public class AutoEasy {
         backRight.setMode(mode);
     }
 }
+
