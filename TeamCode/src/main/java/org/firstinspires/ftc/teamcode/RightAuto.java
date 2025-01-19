@@ -39,22 +39,21 @@ public class RightAuto extends LinearOpMode {
         waitForStart();
 
         //tighten
-        liftServo.setPosition(0.95);
-        sleep(700);
+        liftServo.setPosition(0.6);
 
         //left rafe
         frontLeft.setPower(-0.7);
         backLeft.setPower(0.7);
         frontRight.setPower(0.7);
         backRight.setPower(-0.7);
-        sleep(700);
+        sleep(500);
 
         //forward
         frontLeft.setPower(0.7);
         backLeft.setPower(0.7);
         frontRight.setPower(0.7);
         backRight.setPower(0.7);
-        sleep(600);
+        sleep(500);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -71,6 +70,9 @@ public class RightAuto extends LinearOpMode {
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
         while(leftLift.getCurrentPosition() < 1000){}
+        leftLift.setPower(0.5);
+        rightLift.setPower(0.5);
+        sleep(200);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
@@ -79,7 +81,7 @@ public class RightAuto extends LinearOpMode {
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(100);
+        sleep(300);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -92,66 +94,54 @@ public class RightAuto extends LinearOpMode {
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        //Release specimen
-        liftServo.setPosition(0.6);
-        sleep(500);
-
         //drawback arm
 //        armStretchMotor.setPower(-0.5);
 //        sleep(1400);
 //        armStretchMotor.setPower(0);
-        robotTop.setTurnPosition(0.3);
+        robotTop.setTurnPosition(0.2);
         sleep(500);
 
-        //back
+        //back1
         frontLeft.setPower(-0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(-0.7);
-        sleep(700);
+        sleep(500);
 
         //right rafe
         frontLeft.setPower(0.7);
         backLeft.setPower(-0.7);
         frontRight.setPower(-0.7);
         backRight.setPower(0.7);
-        sleep(2500);
+        sleep(1500);
 
-//        //back1
-//        frontLeft.setPower(-0.7);
-//        backLeft.setPower(-0.7);
-//        frontRight.setPower(-0.7);
-//        backRight.setPower(-0.7);
-//        sleep(500);
-//
-//        //right rafe
-//        frontLeft.setPower(0.7);
-//        backLeft.setPower(-0.7);
-//        frontRight.setPower(-0.7);
-//        backRight.setPower(0.7);
-//        sleep(1500);
-//
-//        //spin
-//        frontLeft.setPower(-0.7);
-//        backLeft.setPower(-0.7);
-//        frontRight.setPower(0.7);
-//        backRight.setPower(0.7);
-//        sleep(1320);
-//        frontLeft.setPower(0);
-//        backLeft.setPower(0);
-//        frontRight.setPower(0);
-//        backRight.setPower(0);
-//
-//        //back2
-//        frontLeft.setPower(0.7);
-//        backLeft.setPower(0.7);
-//        frontRight.setPower(0.7);
-//        backRight.setPower(0.7);
-//        sleep(100);
-//
-//        //grab
-//        liftServo.setPosition(0.95);
-//        sleep(700);
-//
+        //spin
+        frontLeft.setPower(-0.7);
+        backLeft.setPower(-0.7);
+        frontRight.setPower(0.7);
+        backRight.setPower(0.7);
+        sleep(1320);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        //back2
+        frontLeft.setPower(0.5);
+        backLeft.setPower(0.5);
+        frontRight.setPower(0.5);
+        backRight.setPower(0.5);
+        sleep(700);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        //grab
+        liftServo.setPosition(0.6);
+        sleep(100);
+        liftServo.setPosition(0.6);
+
+
     }
 }

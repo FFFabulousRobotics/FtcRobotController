@@ -112,10 +112,10 @@ public class LeftAuto extends LinearOpMode {
         sleep(700);
 
         //left rafe
-        frontLeft.setPower(-0.7);
-        backLeft.setPower(0.7);
-        frontRight.setPower(0.7);
-        backRight.setPower(-0.7);
+        frontLeft.setPower(0.7);
+        backLeft.setPower(-0.7);
+        frontRight.setPower(-0.7);
+        backRight.setPower(0.7);
         sleep(2500);
 
 //        //back1
