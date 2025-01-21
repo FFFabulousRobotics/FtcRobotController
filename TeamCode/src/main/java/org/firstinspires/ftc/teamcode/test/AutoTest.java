@@ -43,25 +43,36 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-        liftServo.setPosition(0.6);
-        sleep(700);//0.6 close
+        liftServo.setPosition(0.7);//0.7 back close
+        sleep(700);
         robotAuto.rightShift(16);
         robotAuto.backward(28);
 
-        robotTop.setTurnPosition(0.5);//0.5 out
+        robotTop.setTurnPosition(0.45);//0.45 arm out
         sleep(500);
 
+        //lift up1
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
         sleep(1100);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
+        //close to target
         robotAuto.backward(3);
 
+        //lift down1
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(250);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+
+        leftLift.setPower(-0.5);
+        rightLift.setPower(-0.5);
+        sleep(100);
+        liftServo.setPosition(0.1);//back open
+        sleep(100);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
@@ -69,9 +80,10 @@ public class AutoTest extends LinearOpMode {
 
         robotAuto.leftShift(40);
         robotAuto.spin(180);
-        liftServo.setPosition(0.1);//0.1 open
+        liftServo.setPosition(0.1);//0.1 back open
         robotAuto.backward(12);
-        liftServo.setPosition(0.6);//0.6 close
+        liftServo.setPosition(0.7);//0.7 back close
+        sleep(150);
 
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
@@ -87,29 +99,41 @@ public class AutoTest extends LinearOpMode {
         robotAuto.spin(0);
         robotAuto.fastBackward(10);
 
-        robotTop.setTurnPosition(0.45);//0.45 out
+        robotTop.setTurnPosition(0.45);//0.45 arm out
         sleep(500);
 
-        leftLift.setPower(0.5);
+        //lift up2
         rightLift.setPower(0.5);
+        leftLift.setPower(0.5);
         sleep(1100);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        robotAuto.backward(3);
+        //close to target
+        robotAuto.backward(5);
 
+        //lift down2
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(250);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        robotTop.setTurnPosition(0.25);//0.25 in
+        leftLift.setPower(-0.5);
+        rightLift.setPower(-0.5);
+        sleep(100);
+        liftServo.setPosition(0.1);//back open
+        sleep(100);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+        sleep(100);
+
+        robotTop.setTurnPosition(0.25);//0.25 arm in
         sleep(500);
 
         robotAuto.fastForward(5);
         robotAuto.leftShift(60);
-//        robotAuto.fastForward(5);
+        robotAuto.fastForward(15);
 
     }
 }
