@@ -78,26 +78,32 @@ public class AutoTest extends LinearOpMode {
 
         robotAuto.fastForward(20);
 
-        robotAuto.leftShift(40);
+        robotAuto.spin(90);
+        robotAuto.fastForward(45);
         robotAuto.spin(180);
         liftServo.setPosition(0.1);//0.1 back open
+        robotAuto.spin(180);
+        sleep(600);
         robotAuto.backward(12);
+        robotAuto.forward(0.8);
         liftServo.setPosition(0.7);//0.7 back close
-        sleep(150);
+        sleep(500);
+        liftServo.setPosition(0.7);//0.7 back close
 
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
-        sleep(200);
+        sleep(400);
         leftLift.setPower(0);
         rightLift.setPower(0);
+        sleep(300);
 
-//        robotTop.setTurnPosition(0.25);//0.25 in
-//        sleep(500);
-
+        sleep(500);
         robotAuto.forward(10);
-        robotAuto.leftShift(40);
+        robotAuto.spin(270);
+        robotAuto.fastForward(40);
         robotAuto.spin(0);
-        robotAuto.fastBackward(10);
+        robotAuto.backward(17.5);
+        robotAuto.spin(1);
 
         robotTop.setTurnPosition(0.45);//0.45 arm out
         sleep(500);
@@ -110,7 +116,7 @@ public class AutoTest extends LinearOpMode {
         rightLift.setPower(0);
 
         //close to target
-        robotAuto.backward(5);
+        robotAuto.backward(3);
 
         //lift down2
         leftLift.setPower(-0.5);
@@ -131,9 +137,10 @@ public class AutoTest extends LinearOpMode {
         robotTop.setTurnPosition(0.25);//0.25 arm in
         sleep(500);
 
-        robotAuto.fastForward(5);
-        robotAuto.leftShift(60);
-        robotAuto.fastForward(15);
+        robotAuto.fastForward(10);
+        robotAuto.spin(90);
+        robotAuto.fastForward(60);
+        robotAuto.rightShift(20);
 
     }
 }
