@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @Disabled
-@TeleOp
+@TeleOp(group = "Test")
 public class PIDControllerTest extends LinearOpMode {
     @Override
     public void runOpMode(){
@@ -34,7 +34,7 @@ public class PIDControllerTest extends LinearOpMode {
                 i += Ki * delta;
                 d = Kd * (currentPos - previousPos);
                 power = Math.min(p + i + d, 1);
-                robotTop.setLeftPower(power);
+                robotTop.setLiftPower(power);
                 previousGamepad1.copy(gamepad1);
                 telemetry.addData("power",power);
                 telemetry.addData("p",p);
@@ -43,7 +43,7 @@ public class PIDControllerTest extends LinearOpMode {
                 telemetry.update();
                 sleep(10);
             }else {
-                robotTop.setLeftPower(0);
+                robotTop.setLiftPower(0);
             }
         }
     }

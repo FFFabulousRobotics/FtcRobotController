@@ -21,7 +21,6 @@ public class LeftAuto extends LinearOpMode {
         DcMotor armStretchMotor = hardwareMap.get(DcMotor.class, "armStretch");
         Servo liftServo = hardwareMap.get(Servo.class, "liftServo");
 
-
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -32,7 +31,6 @@ public class LeftAuto extends LinearOpMode {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         rightLift.setDirection(DcMotor.Direction.REVERSE);
         armStretchMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -95,7 +93,7 @@ public class LeftAuto extends LinearOpMode {
         rightLift.setPower(0);
 
         //Release specimen
-        liftServo.setPosition(0.2);
+        liftServo.setPosition(0.3);
         sleep(500);
 
         //drawback arm
@@ -105,6 +103,7 @@ public class LeftAuto extends LinearOpMode {
         robotTop.setTurnPosition(0.3);
         sleep(500);
 
+
         //back
         frontLeft.setPower(-0.7);
         backLeft.setPower(-0.7);
@@ -113,10 +112,10 @@ public class LeftAuto extends LinearOpMode {
         sleep(700);
 
         //left rafe
-        frontLeft.setPower(-0.7);
-        backLeft.setPower(0.7);
-        frontRight.setPower(0.7);
-        backRight.setPower(-0.7);
+        frontLeft.setPower(0.7);
+        backLeft.setPower(-0.7);
+        frontRight.setPower(-0.7);
+        backRight.setPower(0.7);
         sleep(2500);
 
 //        //back1

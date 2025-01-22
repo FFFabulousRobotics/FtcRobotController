@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @SuppressWarnings(value = "unused")
 public class RobotChassis {
@@ -15,6 +18,7 @@ public class RobotChassis {
     protected DcMotor leftBackDrive;
     protected DcMotor rightFrontDrive;
     protected DcMotor rightBackDrive;
+    protected IMU imu;
 
     public RobotChassis(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -35,10 +39,35 @@ public class RobotChassis {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        resetEncoder();
+
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //IMU
+        imu = opMode.hardwareMap.get(IMU.class, "imu");
+        resetIMU();
+    }
+
+    public void resetIMU(){
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
+    }
+
+    public void resetEncoder() {
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public boolean isAllBusy() {
@@ -61,21 +90,39 @@ public class RobotChassis {
         lateral = -lateral * 1.1; // Counteract imperfect strafing
         yaw = -yaw;
 
-        final double LEFT_REDUCTION = 0.96;
+//        final double LEFT_REDUCTION = 0.96;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
+
         double denominator = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
-        double frontLeftPower = (axial + lateral + yaw) / denominator * LEFT_REDUCTION;
-        double backLeftPower = (axial - lateral + yaw) / denominator * LEFT_REDUCTION;
+//        double frontLeftPower = (axial + lateral + yaw) / denominator * LEFT_REDUCTION;
+//        double backLeftPower = (axial - lateral + yaw) / denominator * LEFT_REDUCTION;
+        double frontLeftPower = (axial + lateral + yaw) / denominator;
+        double backLeftPower = (axial - lateral + yaw) / denominator;
         double frontRightPower = (axial - lateral - yaw) / denominator;
         double backRightPower = (axial + lateral - yaw) / denominator;
+//        telemetry.addData("fl",frontLeftPower);
+//        telemetry.addData("bl",backLeftPower);
+//        telemetry.addData("fr",frontRightPower);
+//        telemetry.addData("br",backRightPower);
+//        telemetry.update();
 
         leftFrontDrive.setPower(frontLeftPower);
         leftBackDrive.setPower(backLeftPower);
         rightFrontDrive.setPower(frontRightPower);
         rightBackDrive.setPower(backRightPower);
+    }
+
+    public void absoluteDriveRobot(double axial, double lateral, double yaw){
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = axial * Math.cos(-botHeading) - lateral * Math.sin(-botHeading);
+        double rotY = axial * Math.sin(-botHeading) + lateral * Math.cos(-botHeading);
+
+        driveRobot(rotX, rotY, yaw);
     }
 
     /**
@@ -143,6 +190,15 @@ public class RobotChassis {
         int rf = rightFrontDrive.getTargetPosition();
         int lb = leftBackDrive.getTargetPosition();
         int rb = rightBackDrive.getTargetPosition();
+        return new int[]{lf, lb, lb, rb};
+    }
+
+    public int[] getCurrentPosition() {
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        int lf = leftFrontDrive.getCurrentPosition();
+        int rf = rightFrontDrive.getCurrentPosition();
+        int lb = leftBackDrive.getCurrentPosition();
+        int rb = rightBackDrive.getCurrentPosition();
         return new int[]{lf, lb, lb, rb};
     }
 

@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.previousCode.test;
+package org.firstinspires.ftc.teamcode.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp
+@Disabled
+@TeleOp(group = "Test")
 public class TurnServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
