@@ -4,7 +4,6 @@ import com.qualcomm. robotcore.eventloop. opmode.Autonomous;
 import com.qualcomm. robotcore. eventloop. opmode. LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
