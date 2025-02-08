@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 
-@Disabled
+
 @Autonomous(group = "Test")
 public class AutoTest2 extends LinearOpMode {
     @Override
@@ -31,6 +31,12 @@ public class AutoTest2 extends LinearOpMode {
             }
             if(gamepad2.dpad_right){
                 robotAuto.spin(-90);
+            }
+            if(gamepad2.dpad_up){
+                robotAuto.spin(0);
+            }
+            if(gamepad2.dpad_down){
+                robotAuto.spin(180);
             }
         }
 

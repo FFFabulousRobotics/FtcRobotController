@@ -30,10 +30,10 @@ public class ManualOpMode extends LinearOpMode {
     final double SPIN_DEFAULT_POSITION = 0.2;
     final double SPIN_HOVERING_POSITION = 0.85;
     final double SPIN_DOWN_POSITION = 0;
-    final double TURN_BACK_POSITION = 0.3;
-    final double TURN_LOCK_POSITION = 0.42;
-    final double TURN_HOVERING_POSITION = 0.62;
-    final double TURN_DOWN_POSITION = 0.7;
+    final double TURN_BACK_POSITION = 0.5;
+    final double TURN_LOCK_POSITION = 0.62;
+    final double TURN_HOVERING_POSITION = 0.82;
+    final double TURN_DOWN_POSITION = 0.9;
     final double GRAB_OPEN_POSITION = 0.4;
     final double GRAB_CLOSE_POSITION = 0.92;
     final double TOP_BACK = 0.03;

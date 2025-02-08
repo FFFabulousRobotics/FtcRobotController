@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
 @TeleOp(group = "Test")
 public class ServoTest extends LinearOpMode {
     @Override
@@ -33,7 +32,7 @@ public class ServoTest extends LinearOpMode {
                 servoPos = Math.max(0, servoPos - 0.003);
             }
             armServo0.setPosition(0.5-servoPos);
-            armServo1.setPosition(servoPos);
+            armServo1.setPosition(0.5+servoPos);
             telemetry.addData("pos", servoPos);
             telemetry.update();
 
