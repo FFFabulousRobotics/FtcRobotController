@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,32 +10,28 @@ import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @TeleOp(group = "Test")
-public class DriveTest extends LinearOpMode {
+public class OdometryTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         RobotChassis robotChassis = new RobotChassis(this);
+        RobotAuto robotAuto = new RobotAuto(this);
 
         waitForStart();
 
         if (isStopRequested()) return;
-        boolean isAbsolute = true;
-        boolean flag = true;
 
         while (opModeIsActive()) {
+            SparkFunOTOS.Pose2D pos = robotAuto.getPosition();
+            // Log the position to the telemetry
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.update();
             if(gamepad1.a){
-                robotChassis.resetIMU();
+                robotAuto.gotoPos(0,0);
+                telemetry.update();
             }
-            if(gamepad1.b && flag){
-                isAbsolute = !isAbsolute;
-                flag = false;
-            }else{
-                flag = true;
-            }
-            if(isAbsolute){
-                robotChassis.absoluteDriveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            }else {
-                robotChassis.driveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            }
+            robotChassis.driveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             sleep(50);
         }
     }

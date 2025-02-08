@@ -24,6 +24,8 @@ public class RobotAuto {
     private double headingError = 0;
     @SuppressWarnings("FieldCanBeLocal")
     private double targetHeading = 0;
+    private double previousHeading = 0;
+    private double deltaHeading = 0;
     @SuppressWarnings("FieldMayBeFinal")
     private double driveSpeed = 0;
     private double turnSpeed = 0;
@@ -65,7 +67,25 @@ public class RobotAuto {
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
     static final double P_TURN_GAIN = 0.1;     // Larger is more responsive, but also less stable
+    static final double D_TURN_GAIN = -0.1;
     static final double HEADING_THRESHOLD = 0.5;
+
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain, double dGain) {
+
+        // Determine the heading current error
+        headingError = desiredHeading - getHeading();
+        deltaHeading = getHeading() - previousHeading;
+        if(Math.abs(deltaHeading) > 45) deltaHeading = 0;
+
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        previousHeading = getHeading();
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain + deltaHeading * dGain, -1, 1);
+    }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
@@ -224,6 +244,7 @@ public class RobotAuto {
         //绝对值的问题？
         while (opMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
 
+
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
@@ -271,6 +292,39 @@ public class RobotAuto {
 
     public SparkFunOTOS.Pose2D getPosition() {
         return otos.getPosition();
+    }
+
+    private double calcDistance(double x,double y){
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public RobotAuto gotoPos(double desiredX, double desiredY){
+        double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
+        double kp;
+        SparkFunOTOS.Pose2D pose = getPosition();
+        currentX = pose.x; currentY = pose.y;
+        dx = desiredX-currentX;
+        dy = desiredY-currentY;
+
+        while (calcDistance(dx,dy) > 1){
+            pose = getPosition();
+            currentX = pose.x; currentY = pose.y;
+            dx = desiredX-currentX;
+            dy = desiredY-currentY;
+            telemetry.addData("dx",dx);
+            telemetry.addData("dy",dy);
+            angle = Math.atan2(dy,dx);
+            unitY = Math.sin(angle);
+            unitX = Math.cos(angle);
+            deltaDistance = calcDistance(dx,dy);
+            kp = deltaDistance * 0.06;
+            telemetry.addData("ux",unitX);
+            telemetry.addData("uy",unitY);
+            if(kp > 1) kp = 1;
+            robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp,0);
+        }
+
+        return this;
     }
 
     public RobotAuto forward(double d) {
