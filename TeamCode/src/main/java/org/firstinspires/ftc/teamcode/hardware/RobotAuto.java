@@ -12,6 +12,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;   
+
+
 import com.qualcomm.robotcore.util.Range;
 
 @SuppressWarnings(value = "unused")
@@ -29,6 +33,7 @@ public class RobotAuto {
     @SuppressWarnings("FieldMayBeFinal")
     private double driveSpeed = 0;
     private double turnSpeed = 0;
+     private DistanceSensor sensorDistance;    
 
     IMU imu;
     SparkFunOTOS otos;
@@ -124,6 +129,14 @@ public class RobotAuto {
         return orientation.getYaw(unit);
     }
 
+    public double getREVdistance() {
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_distance");
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) sensorDistance;
+        return sensorDistance.getDistance(DistanceUnit.INCH);
+    }
+
+
+    
     public RobotAuto driveStraight(double maxDriveSpeed,
                                    double distance,
                                    double heading) {
