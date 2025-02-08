@@ -44,6 +44,7 @@ public class AutoTest extends LinearOpMode {
 
         liftServo.setPosition(0.7);//0.7 back close
         sleep(700);
+        liftServo.setPosition(0.7);//0.7 back close
         robotAuto.rightShift(16);
         robotAuto.backward(28);
 
@@ -78,12 +79,32 @@ public class AutoTest extends LinearOpMode {
         robotAuto.fastForward(20);
 
         robotAuto.spin(90);
-        robotAuto.fastForward(45);
+        robotAuto.fastForward(36);
+        robotAuto.spin(90);
+        robotAuto.leftShift(43);
+        robotAuto.forward(10);
+        robotAuto.spin(90);
+        robotAuto.rightShift(48);
+        robotAuto.spin(90);
+
+        //AUTO阶段推剩余两个sample
+//        robotAuto.leftShift(50);
+//        robotAuto.spin(90);
+//        robotAuto.forward(8);
+//        robotAuto.rightShift(52);
+//        robotAuto.spin(90);
+//        robotAuto.leftShift(54);
+//        robotAuto.spin(90);
+//        robotAuto.forward(10);
+//        robotAuto.rightShift(56);
+//        robotAuto.spin(90);
+
+        robotAuto.backward(5);
         robotAuto.spin(180);
         liftServo.setPosition(0.1);//0.1 back open
         robotAuto.spin(180);
         sleep(600);
-        robotAuto.backward(12);
+        robotAuto.backward(7);
         robotAuto.forward(0.8);
         liftServo.setPosition(0.7);//0.7 back close
         sleep(500);
@@ -136,10 +157,88 @@ public class AutoTest extends LinearOpMode {
         robotTop.setTurnPosition(0.25);//0.25 arm in
         sleep(500);
 
+        robotAuto.fastForward(20);
+
+        robotAuto.spin(90);
+        robotAuto.fastForward(45);
+        robotAuto.spin(180);
+        liftServo.setPosition(0.1);//0.1 back open
+        robotAuto.spin(180);
+        sleep(600);
+        robotAuto.backward(12);
+        robotAuto.forward(0.8);
+        liftServo.setPosition(0.7);//0.7 back close
+        sleep(500);
+        liftServo.setPosition(0.7);//0.7 back close
+
+        leftLift.setPower(0.5);
+        rightLift.setPower(0.5);
+        sleep(400);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+        sleep(300);
+
+        sleep(500);
+        robotAuto.forward(10);
+        robotAuto.spin(270);
+        robotAuto.fastForward(40);
+        robotAuto.spin(0);
+        robotAuto.backward(17.5);
+        robotAuto.spin(1);
+
+        robotTop.setTurnPosition(0.45);//0.45 arm out
+        sleep(500);
+
+        //lift up3
+        rightLift.setPower(0.5);
+        leftLift.setPower(0.5);
+        sleep(1100);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+
+        //close to target
+        robotAuto.backward(3);
+
+        //lift down3
+        leftLift.setPower(-0.5);
+        rightLift.setPower(-0.5);
+        sleep(250);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+
+        leftLift.setPower(-0.5);
+        rightLift.setPower(-0.5);
+        sleep(100);
+        liftServo.setPosition(0.1);//back open
+        sleep(100);
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+        sleep(100);
+
+        robotTop.setTurnPosition(0.25);//0.25 arm in
+        sleep(500);
+
         robotAuto.fastForward(10);
         robotAuto.spin(90);
         robotAuto.fastForward(60);
         robotAuto.rightShift(20);
+
+//        robotAuto.spin(90);
+//        robotAuto.fastForward(45);
+//        robotAuto.spin(180);
+//        liftServo.setPosition(0.1);//0.1 back open
+//        robotAuto.spin(180);
+//        sleep(600);
+//        robotAuto.backward(12);
+//        robotAuto.forward(0.8);
+//        liftServo.setPosition(0.7);//0.7 back close
+//        sleep(500);
+//        liftServo.setPosition(0.7);//0.7 back close
+//
+//        robotAuto.fastForward(10);
+//        robotAuto.spin(90);
+//        robotAuto.fastForward(60);
+//        robotAuto.rightShift(20);
 
     }
 }
