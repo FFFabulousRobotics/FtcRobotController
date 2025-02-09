@@ -3,14 +3,12 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
-import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @TeleOp(group = "Test")
-public class OdometryTest extends LinearOpMode {
+public class AutoTest3 extends LinearOpMode {
     @Override
     public void runOpMode() {
         RobotChassis robotChassis = new RobotChassis(this);
@@ -29,6 +27,10 @@ public class OdometryTest extends LinearOpMode {
             telemetry.update();
             if(gamepad1.a){
                 robotAuto.gotoPos(0,0);
+                telemetry.update();
+            }
+            if(gamepad1.b){
+                robotAuto.gotoPosWithHeading(0,0, 0);
                 telemetry.update();
             }
             robotChassis.driveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
