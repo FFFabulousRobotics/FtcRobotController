@@ -485,12 +485,12 @@ public class RobotAuto {
     }
 
     public RobotAuto grab() {
-        robotTop.setLiftServoPosition(0.6);
+        robotTop.setLiftServoPosition(0.7);
         return this;
     }
 
     public RobotAuto release() {
-        robotTop.setLiftServoPosition(0.2);
+        robotTop.setLiftServoPosition(0.1);
         return this;
     }
 

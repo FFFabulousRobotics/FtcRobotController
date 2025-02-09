@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @Autonomous(group = "Test")
-public class RightAuto extends LinearOpMode {
+public class RightAuto2 extends LinearOpMode {
     @Override
     public void runOpMode() {
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FL");
