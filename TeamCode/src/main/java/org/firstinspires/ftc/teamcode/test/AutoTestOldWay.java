@@ -45,11 +45,12 @@ public class AutoTestOldWay extends LinearOpMode {
         robotAuto.grab();
         sleep(200);
         robotAuto.grab();
-        robotAuto.rightShift(16);
-        robotAuto.backward(28);
+        robotAuto.gotoPos(20,-26);
+//        robotAuto.rightShift(16);
+//        robotAuto.backward(28);
         robotAuto.spin(0);
 
-        robotTop.setTurnPosition(0.55);//0.55 arm out
+        robotTop.setTurnPosition(0.6);//0.6 arm out
         sleep(500);
 
         //lift up1
@@ -60,7 +61,7 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         //close to target
-        robotAuto.backward(3);
+        robotAuto.backward(3.5);
 
         //lift down1
         leftLift.setPower(-0.5);
@@ -74,10 +75,11 @@ public class AutoTestOldWay extends LinearOpMode {
 
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
-        sleep(250);
+        sleep(500);
         leftLift.setPower(0);
         rightLift.setPower(0);
-        robotTop.setTurnPosition(0.25);//0.25 arm in
+        sleep(250);
+        robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(300);
 
         robotAuto.fastForward(20);
@@ -85,8 +87,8 @@ public class AutoTestOldWay extends LinearOpMode {
         robotAuto.spin(90);
         robotAuto.fastForward(36);
         robotAuto.spin(90);
-        robotAuto.gotoPos(-20,-47);
-        robotAuto.gotoPos(-27,-47);
+        robotAuto.gotoPos(-20,-44);
+        robotAuto.gotoPos(-27,-44);
         robotAuto.gotoPos(-27,-5);
         robotAuto.spin(180);
 
@@ -104,27 +106,32 @@ public class AutoTestOldWay extends LinearOpMode {
 
         robotAuto.release();
         robotAuto.spin(180);
-        robotAuto.backward(7);
-        robotAuto.forward(0.8);
-        robotAuto.grab();
-        sleep(200);
+        robotAuto.backward(4.5);
         robotAuto.grab();
 
+        //小幅度抬升使标本脱离
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+        sleep(500);
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
         sleep(400);
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        sleep(500);
-        robotAuto.forward(10);
-        robotAuto.spin(270);
-        robotAuto.fastForward(40);
-        robotAuto.spin(0);
-        robotAuto.backward(17.5);
+        sleep(300);
+        robotAuto.gotoPos(10,-21);
         robotAuto.spin(1);
+        //最古早
+//        robotAuto.forward(5);
+//        robotAuto.spin(270);
+//        robotAuto.fastForward(40);
+//        robotAuto.spin(0);
+//        robotAuto.backward(17.5);
+//        robotAuto.spin(1);
 
-        robotTop.setTurnPosition(0.55);//0.55 arm out
+        robotTop.setTurnPosition(0.6);//0.6 arm out
+        robotAuto.spin(1);
         sleep(500);
 
         //lift up2
@@ -135,7 +142,7 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         //close to target
-        robotAuto.backward(3.7);
+        robotAuto.backward(3.5);
 
         //lift down2
         leftLift.setPower(-0.5);
@@ -144,33 +151,33 @@ public class AutoTestOldWay extends LinearOpMode {
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        robotAuto.release();
         sleep(100);
+        robotAuto.release();
 
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
-        sleep(250);
+        sleep(500);
         leftLift.setPower(0);
         rightLift.setPower(0);
-        sleep(100);
+        sleep(250);
 
-        robotTop.setTurnPosition(0.25);//0.25 arm in
+        robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(300);
 
         robotAuto.fastForward(20);
 
-        robotAuto.spin(90);
-        robotAuto.fastForward(45);
+        robotAuto.gotoPos(-27,-5);
         robotAuto.spin(180);
+
         robotAuto.release();
         robotAuto.spin(180);
-        sleep(600);
-        robotAuto.backward(12);
-        robotAuto.forward(0.8);
-        robotAuto.grab();
-        sleep(500);
+        robotAuto.backward(7.3);
         robotAuto.grab();
 
+        //小幅度抬升使标本脱离
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+        sleep(600);
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
         sleep(400);
@@ -178,15 +185,13 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(500);
-        robotAuto.forward(10);
-        robotAuto.spin(270);
-        robotAuto.fastForward(40);
-        robotAuto.spin(0);
-        robotAuto.backward(17.5);
+        robotAuto.gotoPos(13,-23);
         robotAuto.spin(1);
+        sleep(100);
 
-        robotTop.setTurnPosition(0.55);//0.55 arm out
-        sleep(500);
+        robotTop.setTurnPosition(0.6);//0.6 arm out
+        robotAuto.spin(1);
+        sleep(100);
 
         //lift up3
         rightLift.setPower(0.5);
@@ -196,7 +201,7 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         //close to target
-        robotAuto.backward(3);
+        robotAuto.backward(2);
 
         //lift down3
         leftLift.setPower(-0.5);
@@ -205,8 +210,8 @@ public class AutoTestOldWay extends LinearOpMode {
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-        robotAuto.release();
         sleep(100);
+        robotAuto.release();
 
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
@@ -215,13 +220,10 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
         sleep(100);
 
-        robotTop.setTurnPosition(0.25);//0.25 arm in
+        robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(300);
 
-        robotAuto.fastForward(10);
-        robotAuto.spin(90);
-        robotAuto.fastForward(60);
-        robotAuto.rightShift(20);
+        robotAuto.gotoPos(-45,0);
 
 //        robotAuto.spin(90);
 //        robotAuto.fastForward(45);
