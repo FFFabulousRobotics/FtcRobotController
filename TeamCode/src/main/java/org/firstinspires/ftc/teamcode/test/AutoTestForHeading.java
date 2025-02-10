@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 
 @TeleOp(group = "Test")
-public class AutoTest3 extends LinearOpMode {
+public class AutoTestForHeading extends LinearOpMode {
     @Override
     public void runOpMode() {
         RobotChassis robotChassis = new RobotChassis(this);

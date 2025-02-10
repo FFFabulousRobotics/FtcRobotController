@@ -42,12 +42,12 @@ public class RightAuto2 extends LinearOpMode {
 
         waitForStart();
 
-        liftServo.setPosition(0.7);//0.7 back close
-        sleep(700);
-        robotAuto.rightShift(16);
-        robotAuto.backward(28);
+        robotAuto.grab();//0.7 back close
+        sleep(200);
+        robotAuto.gotoPos(20,-26);
+        robotAuto.spin(0);
 
-        robotTop.setTurnPosition(0.45);//0.45 arm out
+        robotTop.setTurnPosition(0.6);//0.6 arm out
         sleep(500);
 
         //lift up1
@@ -58,7 +58,7 @@ public class RightAuto2 extends LinearOpMode {
         rightLift.setPower(0);
 
         //close to target
-        robotAuto.backward(3);
+        robotAuto.backward(3.5);
 
         //lift down1
         leftLift.setPower(-0.5);
@@ -70,7 +70,7 @@ public class RightAuto2 extends LinearOpMode {
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(100);
-        liftServo.setPosition(0.1);//back open
+        robotAuto.release();//back open
         sleep(100);
         leftLift.setPower(0);
         rightLift.setPower(0);
@@ -80,14 +80,14 @@ public class RightAuto2 extends LinearOpMode {
         robotAuto.spin(90);
         robotAuto.fastForward(45);
         robotAuto.spin(180);
-        liftServo.setPosition(0.1);//0.1 back open
+        robotAuto.release();//0.1 back open
         robotAuto.spin(180);
         sleep(600);
         robotAuto.backward(12);
         robotAuto.forward(0.8);
-        liftServo.setPosition(0.7);//0.7 back close
+        robotAuto.grab();//0.7 back close
         sleep(500);
-        liftServo.setPosition(0.7);//0.7 back close
+        robotAuto.grab();//0.7 back close
 
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);
@@ -104,7 +104,7 @@ public class RightAuto2 extends LinearOpMode {
         robotAuto.backward(17.5);
         robotAuto.spin(1);
 
-        robotTop.setTurnPosition(0.45);//0.45 arm out
+        robotTop.setTurnPosition(0.6);//0.6 arm out
         sleep(500);
 
         //lift up2
@@ -127,13 +127,13 @@ public class RightAuto2 extends LinearOpMode {
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(100);
-        liftServo.setPosition(0.1);//back open
+        robotAuto.release();//back open
         sleep(100);
         leftLift.setPower(0);
         rightLift.setPower(0);
         sleep(100);
 
-        robotTop.setTurnPosition(0.25);//0.25 arm in
+        robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(500);
 
         robotAuto.fastForward(10);
