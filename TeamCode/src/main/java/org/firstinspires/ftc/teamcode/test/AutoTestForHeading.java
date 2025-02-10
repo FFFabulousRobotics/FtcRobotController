@@ -15,7 +15,6 @@ public class AutoTestForHeading extends LinearOpMode {
         RobotAuto robotAuto = new RobotAuto(this);
 
         waitForStart();
-
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
