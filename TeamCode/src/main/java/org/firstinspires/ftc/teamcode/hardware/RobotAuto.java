@@ -327,7 +327,7 @@ public class RobotAuto {
             if(kp > 1) kp = 1;
             robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp,0);
         }
-
+        robotChassis.stopMotor();
         return this;
     }
 
@@ -365,7 +365,7 @@ public class RobotAuto {
 
             robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp, -turnSpeed);
         }
-
+        robotChassis.stopMotor();
         return this;
     }
 
