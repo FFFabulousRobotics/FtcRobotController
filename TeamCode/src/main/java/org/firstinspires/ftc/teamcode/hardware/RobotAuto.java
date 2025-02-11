@@ -71,7 +71,7 @@ public class RobotAuto {
 
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
-    static final double P_TURN_GAIN = 0.1;     // Larger is more responsive, but also less stable
+    static final double P_TURN_GAIN = 0.05;     // Larger is more responsive, but also less stable
     static final double D_TURN_GAIN = -0.1;
     static final double HEADING_THRESHOLD = 0.5;
 
@@ -345,7 +345,7 @@ public class RobotAuto {
 
         getSteeringCorrection(heading, P_TURN_GAIN);
 
-        while (calcDistance(dx,dy) > 1 || Math.abs(headingError) > HEADING_THRESHOLD){
+        while (calcDistance(dx,dy) > 1 && Math.abs(headingError) > HEADING_THRESHOLD){
             pose = getPosition();
             currentX = pose.x; currentY = pose.y;
             dx = desiredX-currentX;
@@ -354,7 +354,8 @@ public class RobotAuto {
             unitY = Math.sin(angle);
             unitX = Math.cos(angle);
             deltaDistance = calcDistance(dx,dy);
-            kp = deltaDistance * proportionalGain;
+            kp = Math.min(1, 0.5 + 0.5 * (deltaDistance / 10));
+//            kp = deltaDistance * proportionalGain;
             if(kp > 1) kp = 1;
 
             // Determine required steering to keep on heading

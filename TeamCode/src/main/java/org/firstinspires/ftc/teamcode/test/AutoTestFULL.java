@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @Autonomous(group = "Test")
-public class AutoTestOldWay extends LinearOpMode {
+public class AutoTestFULL extends LinearOpMode {
     @Override
     public void runOpMode() {
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FL");
@@ -43,9 +43,7 @@ public class AutoTestOldWay extends LinearOpMode {
         waitForStart();
 
         robotAuto.grab();
-        sleep(200);
-        robotAuto.grab();
-        robotAuto.gotoPos(20,-26);
+        robotAuto.gotoPos(10,-26);
 //        robotAuto.rightShift(16);
 //        robotAuto.backward(28);
         robotAuto.spin(0);
@@ -82,15 +80,11 @@ public class AutoTestOldWay extends LinearOpMode {
         robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(300);
 
-        robotAuto.gotoPosWithHeading(-20,-11,90);
-//        robotAuto.fastForward(20);
+        robotAuto.gotoPosWithHeading(-10,-5.5,90);
 
-////        robotAuto.spin(90);
-//        robotAuto.fastForward(36);
-//        robotAuto.spin(90);
         robotAuto.gotoPosWithHeading(-20,-44,90 );
         robotAuto.gotoPos(-27,-44);
-        robotAuto.gotoPosWithHeading(-27,-5,90);
+        robotAuto.gotoPosWithHeading(-27,-2.5,90);
         robotAuto.spin(180);
 
         //AUTO阶段推剩余两个sample
@@ -106,7 +100,7 @@ public class AutoTestOldWay extends LinearOpMode {
 //        robotAuto.spin(90);
 
         robotAuto.release();
-        robotAuto.gotoPosWithHeading(-27,-1,180);
+        robotAuto.gotoPosWithHeading(-27,0.25,180);
         sleep(500);
         robotAuto.grab();
 
@@ -121,7 +115,7 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(300);
-        robotAuto.gotoPosWithHeading(10,-21,1);
+        robotAuto.gotoPosWithHeading(13,-23,1);
         //最古早
 //        robotAuto.forward(5);
 //        robotAuto.spin(270);
@@ -131,7 +125,7 @@ public class AutoTestOldWay extends LinearOpMode {
 //        robotAuto.spin(1);
 
         robotTop.setTurnPosition(0.6);//0.6 arm out
-        robotAuto.gotoPosWithHeading(10,-23,1);
+        robotAuto.gotoPosWithHeading(7,-23,1);
         sleep(500);
 
         //lift up2
@@ -164,10 +158,10 @@ public class AutoTestOldWay extends LinearOpMode {
         robotTop.setTurnPosition(0.3);//0.3 arm in
         sleep(300);
 
-        robotAuto.gotoPosWithHeading(-27,-5,180);
+        robotAuto.gotoPosWithHeading(-27,-2.5,180);
 
         robotAuto.release();
-        robotAuto.gotoPos(-27,-3,180);
+        robotAuto.gotoPos(-27,-1,180);
         sleep(500);
         robotAuto.grab();
 
@@ -182,7 +176,7 @@ public class AutoTestOldWay extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(500);
-        robotAuto.gotoPosWithHeading(13,-23,1);
+        robotAuto.gotoPosWithHeading(7,-23,1);
         sleep(100);
 
         robotTop.setTurnPosition(0.6);//0.6 arm out
