@@ -49,9 +49,6 @@ public class RobotAuto {
         this.robotTop = new RobotTop(opMode);
         otos = opMode.hardwareMap.get(SparkFunOTOS.class, "otos");
         configureOtos();
-        imu = opMode.hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
         robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
     }
 
@@ -121,12 +118,24 @@ public class RobotAuto {
      * @return The heading of the robot in desired units.
      */
     public double getHeading(AngleUnit unit) {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        telemetry.addData("Yaw/Pitch/Roll", orientation.toString());
-        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-        return orientation.getYaw(unit);
+        SparkFunOTOS.Pose2D pose = otos.getPosition();
+        return pose.h;  // 假设h表示SparkFunOTOS中的航向
+//        telemetry.addData("Yaw/Pitch/Roll", orientation.toString());
+//        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+//        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+//        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+//        return orientation.getYaw(unit);
+    }
+
+    public void absoluteDriveRobot(double axial, double lateral, double yaw){
+        double botHeading = getHeading();
+        botHeading = Math.toRadians(botHeading);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = axial * Math.cos(-botHeading) - lateral * Math.sin(-botHeading);
+        double rotY = axial * Math.sin(-botHeading) + lateral * Math.cos(-botHeading);
+
+        robotChassis.driveRobot(rotX, rotY, yaw);
     }
 
     public double getREVdistance() {
