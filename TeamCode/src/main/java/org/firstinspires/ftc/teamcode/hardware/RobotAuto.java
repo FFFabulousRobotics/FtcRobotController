@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;   
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 
 import com.qualcomm.robotcore.util.Range;
@@ -28,10 +28,12 @@ public class RobotAuto {
     private double headingError = 0;
     @SuppressWarnings("FieldCanBeLocal")
     private double targetHeading = 0;
+    private double previousHeading = 0;
+    private double deltaHeading = 0;
     @SuppressWarnings("FieldMayBeFinal")
     private double driveSpeed = 0;
     private double turnSpeed = 0;
-     private DistanceSensor sensorDistance;    
+     private DistanceSensor sensorDistance;
 
     IMU imu;
     SparkFunOTOS otos;
@@ -70,7 +72,25 @@ public class RobotAuto {
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
     static final double P_TURN_GAIN = 0.1;     // Larger is more responsive, but also less stable
+    static final double D_TURN_GAIN = -0.1;
     static final double HEADING_THRESHOLD = 0.5;
+
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain, double dGain) {
+
+        // Determine the heading current error
+        headingError = desiredHeading - getHeading();
+        deltaHeading = getHeading() - previousHeading;
+        if(Math.abs(deltaHeading) > 45) deltaHeading = 0;
+
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        previousHeading = getHeading();
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain + deltaHeading * dGain, -1, 1);
+    }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
@@ -116,7 +136,7 @@ public class RobotAuto {
     }
 
 
-    
+
     public RobotAuto driveStraight(double maxDriveSpeed,
                                    double distance,
                                    double heading) {
@@ -148,16 +168,6 @@ public class RobotAuto {
 
                 // Apply the turning correction to the current driving speed.
                 robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
-//                telemetry.addData("x", "%4.2f, %4.2f, %4.2f, %4.2f, %4d", maxDriveSpeed, distance, heading, turnSpeed, moveCounts);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[0]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[1]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[2]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[3]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
-//                telemetry.update();
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -237,6 +247,7 @@ public class RobotAuto {
         //绝对值的问题？
         while (opMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
 
+
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
@@ -285,6 +296,83 @@ public class RobotAuto {
     public SparkFunOTOS.Pose2D getPosition() {
         return otos.getPosition();
     }
+
+    private double calcDistance(double x,double y){
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public RobotAuto gotoPos(double desiredX, double desiredY, double proportionalGain){
+        double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
+        double kp;
+        SparkFunOTOS.Pose2D pose = getPosition();
+        currentX = pose.x; currentY = pose.y;
+        dx = desiredX-currentX;
+        dy = desiredY-currentY;
+
+        while (calcDistance(dx,dy) > 1){
+            // get the position error
+            pose = getPosition();
+            currentX = pose.x; currentY = pose.y;
+            dx = desiredX-currentX;
+            dy = desiredY-currentY;
+
+            // change it into a unit length
+            angle = Math.atan2(dy,dx);
+            unitY = Math.sin(angle);
+            unitX = Math.cos(angle);
+
+            // P control
+            deltaDistance = calcDistance(dx,dy);
+            kp = deltaDistance * proportionalGain;
+            if(kp > 1) kp = 1;
+            robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp,0);
+        }
+        robotChassis.stopMotor();
+        return this;
+    }
+
+    public RobotAuto gotoPos(double desiredX, double desiredY){
+        return gotoPos(desiredX, desiredY, 0.06);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain){
+        double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
+        double kp;
+        SparkFunOTOS.Pose2D pose = getPosition();
+        currentX = pose.x; currentY = pose.y;
+        dx = desiredX-currentX;
+        dy = desiredY-currentY;
+
+        getSteeringCorrection(heading, P_TURN_GAIN);
+
+        while (calcDistance(dx,dy) > 1 || Math.abs(headingError) > HEADING_THRESHOLD){
+            pose = getPosition();
+            currentX = pose.x; currentY = pose.y;
+            dx = desiredX-currentX;
+            dy = desiredY-currentY;
+            angle = Math.atan2(dy,dx);
+            unitY = Math.sin(angle);
+            unitX = Math.cos(angle);
+            deltaDistance = calcDistance(dx,dy);
+            kp = deltaDistance * proportionalGain;
+            if(kp > 1) kp = 1;
+
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -0.6, 0.6);
+
+            robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp, -turnSpeed);
+        }
+        robotChassis.stopMotor();
+        return this;
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading){
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06);
+    }
+
 
     public RobotAuto forward(double d) {
         return driveStraight(0.6, -d, getHeading());
@@ -397,12 +485,12 @@ public class RobotAuto {
     }
 
     public RobotAuto grab() {
-        robotTop.setLiftServoPosition(0.6);
+        robotTop.setLiftServoPosition(0.7);
         return this;
     }
 
     public RobotAuto release() {
-        robotTop.setLiftServoPosition(0.2);
+        robotTop.setLiftServoPosition(0.1);
         return this;
     }
 

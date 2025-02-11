@@ -52,8 +52,8 @@ public class RobotChassis {
     }
 
     public void resetIMU(){
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
@@ -87,7 +87,7 @@ public class RobotChassis {
      * @param yaw     Right/Left turning power (-1.0 to 1.0) +ve is clockwise
      */
     public void driveRobot(double axial, double lateral, double yaw) {
-        lateral = -lateral * 1.1; // Counteract imperfect strafing
+        lateral = -lateral; // Counteract imperfect strafing
         yaw = -yaw;
 
 //        final double LEFT_REDUCTION = 0.96;
@@ -103,11 +103,6 @@ public class RobotChassis {
         double backLeftPower = (axial - lateral + yaw) / denominator;
         double frontRightPower = (axial - lateral - yaw) / denominator;
         double backRightPower = (axial + lateral - yaw) / denominator;
-//        telemetry.addData("fl",frontLeftPower);
-//        telemetry.addData("bl",backLeftPower);
-//        telemetry.addData("fr",frontRightPower);
-//        telemetry.addData("br",backRightPower);
-//        telemetry.update();
 
         leftFrontDrive.setPower(frontLeftPower);
         leftBackDrive.setPower(backLeftPower);

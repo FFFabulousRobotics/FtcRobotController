@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.previousCode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -57,8 +57,7 @@ public class WheelOffset extends LinearOpMode {
                 telemetry.addData("k4", rate[3]);
                 telemetry.update();
                 flag = false;
-            }
-            sleep(50);
+            }            sleep(50);
         }
     }
 }

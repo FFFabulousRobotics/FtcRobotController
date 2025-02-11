@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.previousCode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -31,6 +31,12 @@ public class AutoTest2 extends LinearOpMode {
             }
             if(gamepad2.dpad_right){
                 robotAuto.spin(-90);
+            }
+            if(gamepad2.dpad_up){
+                robotAuto.spin(0);
+            }
+            if(gamepad2.dpad_down){
+                robotAuto.spin(180);
             }
         }
 
