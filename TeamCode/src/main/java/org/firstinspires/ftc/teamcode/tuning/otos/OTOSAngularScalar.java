@@ -1,31 +1,36 @@
-package org.firstinspires.ftc.teamcode.tuning;
+package org.firstinspires.ftc.teamcode.tuning.otos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Drawing;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-public class LocalizationTest extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.Drawing;
+import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
+@TeleOp
+public class OTOSAngularScalar extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
-
+        SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0,0,0));
+        double radsTurned = 0;
+        Rotation2d lastHeading = Rotation2d.fromDouble(0);
+        telemetry.addLine("OTOS Angular Scalar Tuner");
+        telemetry.addLine("Press START, then rotate the robot on the ground 10 times (3600 degrees).");
+        telemetry.addLine("Then copy the scalar into SparkFunOTOSDrive.");
+        telemetry.update();
         waitForStart();
-
         while (opModeIsActive()) {
+
+
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
-                            gamepad1.left_stick_y,
+                            -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x
                     ),
                     -gamepad1.right_stick_x
@@ -42,7 +47,16 @@ public class LocalizationTest extends LinearOpMode {
             packet.fieldOverlay().setStroke("#3F51B5");
             Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+
+            drive.updatePoseEstimate();
+            radsTurned += drive.pose.heading.minus(lastHeading);
+            lastHeading = drive.pose.heading;
+            telemetry.addData("Uncorrected Degrees Turned", Math.toDegrees(radsTurned));
+            telemetry.addData("Calculated Angular Scalar", 3600 / Math.toDegrees(radsTurned));
+            telemetry.update();
         }
+
+
     }
 }
-
