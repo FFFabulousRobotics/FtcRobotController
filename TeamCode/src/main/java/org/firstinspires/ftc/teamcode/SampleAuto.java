@@ -49,8 +49,6 @@ public class SampleAuto extends LinearOpMode {
         target = robotAuto.getPosition();
         waitForStart();
 
-        while (opModeIsActive()) {
-
             ThrowsSample();
             pickUpAndThrow(1);
             pickUpAndThrow(2);
@@ -66,7 +64,7 @@ public class SampleAuto extends LinearOpMode {
             telemetry.addData("y", a.y);
             telemetry.addData("h", a.h);
             telemetry.update();
-        }
+        
     }
 
     public void goCorrect(double x,double y,double z) {
