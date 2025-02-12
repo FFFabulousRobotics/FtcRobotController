@@ -129,7 +129,7 @@ public class SampleAuto extends LinearOpMode {
 
     public void ThrowsSample()
     {
-        goCorrect(-22.6728,0.4926,-48.3728);
+        goCorrect(posD[0],posD[1],posD[2]);
         SPINcontrol();
         while(robotTop.getLiftPosition() <= 1260)FakePidUp();
         robotAuto.topOut();
