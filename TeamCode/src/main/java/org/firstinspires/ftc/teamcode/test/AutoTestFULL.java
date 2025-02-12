@@ -43,7 +43,7 @@ public class AutoTestFULL extends LinearOpMode {
         waitForStart();
 
         robotAuto.grab();
-        robotAuto.gotoPos(10,-23);
+        robotAuto.gotoPos(10,-12);
 //        robotAuto.rightShift(16);
 //        robotAuto.backward(28);
         robotAuto.spin(0);
@@ -114,7 +114,7 @@ public class AutoTestFULL extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(300);
-        robotAuto.gotoPosWithHeading(13,-23,1);
+        robotAuto.gotoPosWithHeading(13,-11,1);
         //最古早
 //        robotAuto.forward(5);
 //        robotAuto.spin(270);
@@ -124,7 +124,7 @@ public class AutoTestFULL extends LinearOpMode {
 //        robotAuto.spin(1);
 
         robotTop.setTurnPosition(0.6);//0.6 arm out
-        robotAuto.gotoPosWithHeading(7,-23,1);
+        robotAuto.gotoPosWithHeading(7,-11,1);
         sleep(500);
 
         //lift up2
