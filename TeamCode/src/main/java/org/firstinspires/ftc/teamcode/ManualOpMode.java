@@ -143,7 +143,6 @@ public class ManualOpMode extends LinearOpMode {
             telemetry.addData("x", a.x);
             telemetry.addData("y", a.y);
             telemetry.addData("h", a.h);
-            telemetry.update();
             sleep(10);
         }
 
