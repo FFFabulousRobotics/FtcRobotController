@@ -117,14 +117,15 @@ public class RobotAuto {
      * @param unit The desired angle unit (degrees or radians)
      * @return The heading of the robot in desired units.
      */
+
     public double getHeading(AngleUnit unit) {
-        SparkFunOTOS.Pose2D pose = otos.getPosition();
-        return pose.h;  // 假设h表示SparkFunOTOS中的航向
-//        telemetry.addData("Yaw/Pitch/Roll", orientation.toString());
-//        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-//        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-//        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-//        return orientation.getYaw(unit);
+        SparkFunOTOS.Pose2D pose = otos.getPosition();  // 获取位置和航向
+        telemetry.addData("Yaw/Pitch/Roll", "Yaw: %.2f, Pitch: %.2f, Roll: %.2f", pose.h, 0.0, 0.0);  // Pitch和Roll暂时设为0
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", pose.h);
+        telemetry.addData("Pitch (X)", "%.2f Deg.", 0.0);
+        telemetry.addData("Roll (Y)", "%.2f Deg.\n", 0.0);
+        telemetry.update();
+        return pose.h;
     }
 
     public void absoluteDriveRobot(double axial, double lateral, double yaw){
@@ -334,7 +335,7 @@ public class RobotAuto {
             deltaDistance = calcDistance(dx,dy);
             kp = deltaDistance * proportionalGain;
             if(kp > 1) kp = 1;
-            robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp,0);
+            absoluteDriveRobot(-unitY * kp,unitX * kp,0);
         }
         robotChassis.stopMotor();
         return this;
@@ -373,7 +374,7 @@ public class RobotAuto {
             // Clip the speed to the maximum permitted value.
             turnSpeed = Range.clip(turnSpeed, -0.6, 0.6);
 
-            robotChassis.absoluteDriveRobot(-unitY * kp,unitX * kp, -turnSpeed);
+            absoluteDriveRobot(-unitY * kp,unitX * kp, -turnSpeed);
         }
         robotChassis.stopMotor();
         return this;
