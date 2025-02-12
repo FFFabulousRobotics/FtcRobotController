@@ -217,7 +217,7 @@ public class ManualOpMode extends LinearOpMode {
         if (gamepad1.b && !previousGamepad1.b) {
             if (isGrabbing) {
                 robotTop.setTurnPosition(TURN_DOWN_POSITION);
-                sleep(300);
+                sleep(200);
                 robotTop.setArmGrabPosition(GRAB_CLOSE_POSITION);
                 sleep(300);
                 robotTop.setTurnPosition(TURN_HOVERING_POSITION);
