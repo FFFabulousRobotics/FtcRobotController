@@ -42,13 +42,12 @@ public class AutoTestFULL extends LinearOpMode {
 
         waitForStart();
 
+        //开局
         robotAuto.grab();
-        robotAuto.gotoPos(10,-12);
-//        robotAuto.rightShift(16);
-//        robotAuto.backward(28);
-        robotAuto.spin(0);
+        robotAuto.gotoPos(10,-20);//第一次到杆前
+        robotAuto.spin(0);//定位校准
 
-        robotTop.setTurnPosition(0.6);//0.6 arm out
+        robotTop.setTurnPosition(0.7);//0.7 arm out 打开前手
         sleep(500);
 
         //lift up1
@@ -71,37 +70,27 @@ public class AutoTestFULL extends LinearOpMode {
         sleep(100);
         robotAuto.release();
 
+        //高挂回落
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(500);
         leftLift.setPower(0);
         rightLift.setPower(0);
         sleep(250);
-        robotTop.setTurnPosition(0.3);//0.3 arm in
+        robotTop.setTurnPosition(0.4);//0.4 arm in 回前手
         sleep(300);
 
-        robotAuto.gotoPosWithHeading(-20,-11,90);
-        robotAuto.gotoPosWithHeading(-20,-44,90 );
-        robotAuto.gotoPos(-27,-44);
-        robotAuto.gotoPosWithHeading(-27,-2.5,90);
+        robotAuto.gotoPosWithHeading(-17,-11,90);//到位置1，准备北上
+        robotAuto.gotoPosWithHeading(-17,-30,90 );//到位置2
+        robotAuto.gotoPos(-22,-30);//到sample1上面
+        robotAuto.gotoPosWithHeading(-22,-2.5,90);//推sample1到人玩区
+        // 如果要推更多的sample，在这里写
+
         robotAuto.spin(180);
-
-        //AUTO阶段推剩余两个sample
-//        robotAuto.leftShift(50);
-//        robotAuto.spin(90);
-//        robotAuto.forward(8);
-//        robotAuto.rightShift(52);
-//        robotAuto.spin(90);
-//        robotAuto.leftShift(54);
-//        robotAuto.spin(90);
-//        robotAuto.forward(10);
-//        robotAuto.rightShift(56);
-//        robotAuto.spin(90);
-
-        robotAuto.release();
-        robotAuto.gotoPosWithHeading(-27,0.25,180);
+        robotAuto.release();//保持后手张开
+        robotAuto.gotoPos(-22,2);//放入标本
         sleep(500);
-        robotAuto.grab();
+        robotAuto.grab();//夹住
 
         //小幅度抬升使标本脱离
         leftLift.setPower(0);
@@ -114,7 +103,8 @@ public class AutoTestFULL extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(300);
-        robotAuto.gotoPosWithHeading(13,-11,1);
+        robotAuto.gotoPosWithHeading(13,-19,0);//第二次到杆前
+
         //最古早
 //        robotAuto.forward(5);
 //        robotAuto.spin(270);
@@ -123,8 +113,7 @@ public class AutoTestFULL extends LinearOpMode {
 //        robotAuto.backward(17.5);
 //        robotAuto.spin(1);
 
-        robotTop.setTurnPosition(0.6);//0.6 arm out
-        robotAuto.gotoPosWithHeading(7,-11,1);
+        robotTop.setTurnPosition(0.7);//0.7 arm out 前手出
         sleep(500);
 
         //lift up2
@@ -147,6 +136,7 @@ public class AutoTestFULL extends LinearOpMode {
         sleep(100);
         robotAuto.release();
 
+        //高挂回落
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(500);
@@ -154,13 +144,13 @@ public class AutoTestFULL extends LinearOpMode {
         rightLift.setPower(0);
         sleep(250);
 
-        robotTop.setTurnPosition(0.3);//0.3 arm in
+        robotTop.setTurnPosition(0.4);//0.4 arm in 前手回
         sleep(300);
 
-        robotAuto.gotoPosWithHeading(-27,-2.5,180);
+        robotAuto.gotoPosWithHeading(-22,1.5,180);//到标本前并且面对
 
         robotAuto.release();
-        robotAuto.gotoPos(-27,-1,180);
+        robotAuto.gotoPos(-20,4.5,180);//使标本进入
         sleep(500);
         robotAuto.grab();
 
@@ -175,11 +165,11 @@ public class AutoTestFULL extends LinearOpMode {
         rightLift.setPower(0);
 
         sleep(500);
-        robotAuto.gotoPosWithHeading(7,-23,1);
+        robotAuto.gotoPosWithHeading(7,-18,0);//第三次到杆前
         sleep(100);
 
-        robotTop.setTurnPosition(0.6);//0.6 arm out
-        robotAuto.spin(1);
+        robotTop.setTurnPosition(0.7);//0.7 arm out 前手出
+        robotAuto.spin(0);//微调朝向
         sleep(100);
 
         //lift up3
@@ -202,6 +192,7 @@ public class AutoTestFULL extends LinearOpMode {
         sleep(100);
         robotAuto.release();
 
+        ////高挂回落
         leftLift.setPower(-0.5);
         rightLift.setPower(-0.5);
         sleep(250);
@@ -209,10 +200,10 @@ public class AutoTestFULL extends LinearOpMode {
         rightLift.setPower(0);
         sleep(100);
 
-        robotTop.setTurnPosition(0.3);//0.3 arm in
+        robotTop.setTurnPosition(0.4);//0.4 arm in 前手回
         sleep(300);
 
-        robotAuto.gotoPosWithHeading(-45,0,0);
+        robotAuto.gotoPosWithHeading(-40,2,0);//停靠
 
 //        robotAuto.spin(90);
 //        robotAuto.fastForward(45);

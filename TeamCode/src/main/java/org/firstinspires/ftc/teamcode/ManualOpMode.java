@@ -89,7 +89,7 @@ public class ManualOpMode extends LinearOpMode {
             robotChassis.driveRobot(gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
             if (gamepad1.a && !previousGamepad1.a) {
                 if (backGrabOpen) {
-                    robotTop.setLiftServoPosition(0.1);
+                    robotTop.setLiftServoPosition(0);
                 } else {
                     robotTop.setLiftServoPosition(0.6);
                 }

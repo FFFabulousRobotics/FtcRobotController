@@ -289,7 +289,7 @@ public class RobotAuto {
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.03, 0.4746, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.03, 0.4746, 172);
         otos.setOffset(offset);
 
         otos.setLinearScalar(1.0);
