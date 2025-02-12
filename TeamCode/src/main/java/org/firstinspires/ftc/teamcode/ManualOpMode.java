@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
@@ -23,6 +25,9 @@ public class ManualOpMode extends LinearOpMode {
     LiftState liftState;
     Gamepad previousGamepad1;
     Gamepad previousGamepad2;
+    RobotAuto robotAuto;
+
+
 
     //Constants
     final int STRETCH_BACK_POSITION = 70;
@@ -68,6 +73,7 @@ public class ManualOpMode extends LinearOpMode {
         this.targetTurnPosition = TURN_BACK_POSITION;
         spinLeft = false;
         spinRight = false;
+        robotAuto = new RobotAuto(this);
 
         waitForStart();
         // robotTop.setTurnPosition(TURN_BACK_POSITION);
@@ -132,6 +138,12 @@ public class ManualOpMode extends LinearOpMode {
             telemetry.update();
             previousGamepad1.copy(gamepad1);
             previousGamepad2.copy(gamepad2);
+            SparkFunOTOS.Pose2D a = robotAuto.getPosition();
+
+            telemetry.addData("x", a.x);
+            telemetry.addData("y", a.y);
+            telemetry.addData("h", a.h);
+            telemetry.update();
             sleep(10);
         }
 
