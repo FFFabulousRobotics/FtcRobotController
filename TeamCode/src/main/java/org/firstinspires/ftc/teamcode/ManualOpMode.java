@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
+
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
@@ -55,6 +57,7 @@ public class ManualOpMode extends LinearOpMode {
     double currentTurnPosition;
     boolean spinLeft;
     boolean spinRight;
+    boolean AUTO;
 
     @Override
     public void runOpMode() {
@@ -129,6 +132,12 @@ public class ManualOpMode extends LinearOpMode {
                     handleRunningState();
                     break;
             }
+
+
+            AutoINmanual();
+
+
+
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
             telemetry.addData("armPos", robotTop.getTurnPosition());
@@ -327,7 +336,7 @@ public class ManualOpMode extends LinearOpMode {
         if (armState != ArmState.IDLE || armState != ArmState.LOCKED) {
             liftState = LiftState.RUNNING;
         }
-        if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0) {
+        if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0|| gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0 ) {
             // robotTop.setTurnPosition(TURN_DOWN_POSITION - 0.1);
             targetTurnPosition = TURN_LOCK_POSITION;
             armState = ArmState.LOCKING;
@@ -336,11 +345,11 @@ public class ManualOpMode extends LinearOpMode {
     }
 
     protected void handleRunningState() {
-        if (gamepad1.right_trigger != 0) {
+        if (gamepad1.right_trigger != 0 || gamepad2.right_trigger != 0 ) {
             robotTop.setLiftPower(0.5);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
-        } else if (gamepad1.left_trigger != 0) {
+        } else if (gamepad1.left_trigger!= 0 || gamepad2.left_trigger != 0) {
             robotTop.setLiftPower(-0.5);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
@@ -360,4 +369,30 @@ public class ManualOpMode extends LinearOpMode {
             topServoOut = !topServoOut;
         }
     }
+
+    public void AutoINmanual(){
+        double targetpos[] = {0,0,0};
+        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true)
+        {
+            AUTO = true;
+            targetpos[0] = 29.5804 + robotAuto.getPosition().x;
+            targetpos[1] = -23.0564 + robotAuto.getPosition().y;
+            targetpos[2] = -173.3807 + robotAuto.getPosition().h;
+
+        }
+
+        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true)
+            AUTO = false;
+        if (AUTO)
+        {
+
+            robotAuto.absoluteDriveRobot(targetpos[0],targetpos[1],targetpos[2]);
+            while(robotAuto.getPosition() == new SparkFunOTOS.Pose2D(targetpos[0],targetpos[1],targetpos[2]))
+                AUTO= false;
+
+        }
+        }
+
+
+
 }
