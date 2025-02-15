@@ -400,8 +400,9 @@ public class RobotAuto {
             turnSpeed = Range.clip(turnSpeed, -0.8, 0.8);
 
             absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
-            if(but)
-            break;
+            if(but) {
+                break;//temporary
+            }
 
             absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
         }
