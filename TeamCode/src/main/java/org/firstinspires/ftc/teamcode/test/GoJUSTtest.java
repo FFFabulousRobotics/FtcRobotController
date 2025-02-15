@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.SampleAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
+@Autonomous
 public class GoJUSTtest extends LinearOpMode {
     public enum method  {BACK,OUT};
     public RobotAuto robotAuto = new RobotAuto(this);
     public RobotTop robotTop = new RobotTop(this);
     final double TURN_LOCK_POSITION = 0.62;
+
 
     @Override
     public void runOpMode() throws InterruptedException {

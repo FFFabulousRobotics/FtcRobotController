@@ -360,7 +360,7 @@ public class RobotAuto {
         return gotoPos(desiredX, desiredY, 0.06);
     }
 
-    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain){
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain,boolean but){
         double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
         double kp;
         SparkFunOTOS.Pose2D pose = getPosition();
@@ -400,15 +400,31 @@ public class RobotAuto {
             turnSpeed = Range.clip(turnSpeed, -0.8, 0.8);
 
             absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
+            if(but)
+            break;
+
+            absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
         }
         robotChassis.stopMotor();
         return this;
     }
 
     public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading){
-        return gotoPosWithHeading(desiredX,desiredY,heading,0.06);
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,false);
     }
 
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,boolean but){
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,but);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,double proportionalGain){
+        return gotoPosWithHeading(desiredX,desiredY,heading,proportionalGain,false);
+    }
+
+
+    public  RobotAuto JustGo(double desiredX, double desiredY, double heading){
+        return  gotoPosWithHeading(desiredX,desiredY,heading,true);
+    }
 
     public RobotAuto forward(double d) {
         return driveStraight(0.6, -d, getHeading());
