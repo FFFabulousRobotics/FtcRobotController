@@ -5,7 +5,7 @@ public class SequentialCommandGroup implements Command{
     int cmdLength;
     int currentIndex = 0;
 
-    SequentialCommandGroup(Command... commands) {
+    public SequentialCommandGroup(Command... commands) {
         this.commandGroup = commands;
         this.cmdLength = commandGroup.length;
     }
@@ -25,12 +25,16 @@ public class SequentialCommandGroup implements Command{
         if(currentIndex >= cmdLength)return;
 
         Command currentCommand = commandGroup[currentIndex];
-        if(currentCommand.hasNext()){
+        if(currentCommand.isContinuous()){
             currentCommand.iterate();
-        }else{
-            currentCommand.finish();
-            currentIndex += 1;
-            if(currentIndex < cmdLength) commandGroup[currentIndex].init();
+        }else {
+            if (currentCommand.hasNext()) {
+                currentCommand.iterate();
+            } else {
+                currentCommand.finish();
+                currentIndex += 1;
+                if (currentIndex < cmdLength) commandGroup[currentIndex].init();
+            }
         }
     }
 
@@ -47,5 +51,13 @@ public class SequentialCommandGroup implements Command{
             iterate();
         }
         finish();
+    }
+
+    @Override
+    public boolean isContinuous(){
+        for (Command eachCommand: commandGroup) {
+            if(eachCommand.isContinuous())return true;
+        }
+        return false;
     }
 }

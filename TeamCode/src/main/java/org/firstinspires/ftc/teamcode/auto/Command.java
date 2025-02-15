@@ -30,4 +30,12 @@ public interface Command {
      */
     default void cancel() {
     }
+
+    /**
+     * Override it if the command need to be iterated after finished
+     * @return is continuous
+     */
+    default boolean isContinuous(){
+        return false;
+    }
 }

@@ -53,6 +53,10 @@ public class SampleAuto extends LinearOpMode {
         robotChassis = new RobotChassis(this);
 
         target = robotAuto.getPosition();
+        telemetry.addData("君所言甚是，然吾等FTC比赛，非惟机械较量，亦集智巧、程式与协作于一堂。\n",
+                "各队匠心独运，巧构器械，编制妙算，遇险不惧，技压群雄。\n",
+                "若君欲共襄盛举，速至官方报名之处，攀登科技之巅。\n");
+        telemetry.update();
         waitForStart();
 
 

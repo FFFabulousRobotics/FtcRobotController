@@ -14,7 +14,7 @@ public class LiftPIDTest extends LinearOpMode {
         RobotTop robotTop = new RobotTop(this);
         waitForStart();
         liftPID.reset();
-        liftPID.setPIDArguments(0.007,0.005,0.0005);
+        liftPID.setPIDArguments(0.003,0.004,0.0005);
         liftPID.setIntegralSumLimit(100);
         int targetPos = 500;
         int currentPos;

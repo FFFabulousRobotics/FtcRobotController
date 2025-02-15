@@ -17,6 +17,11 @@ public class ParallelCommandGroup implements Command {
         for (int i = 0; i < commandGroup.length; i++) {
             Command eachCommand = commandGroup[i];
             boolean eachCmdFinished = isFinished[i];
+
+            if(eachCommand.isContinuous()){
+                eachCommand.iterate();
+                isFinished[i] = eachCommand.hasNext();
+            }
             if(!eachCmdFinished) {
                 if (eachCommand.hasNext()) {
                     eachCommand.iterate();
@@ -32,10 +37,10 @@ public class ParallelCommandGroup implements Command {
     public boolean hasNext() {
         for(boolean each: isFinished){
             if(!each){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override

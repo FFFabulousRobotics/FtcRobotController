@@ -23,8 +23,8 @@ public class RobotAuto {
     LinearOpMode opMode;
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    RobotChassis robotChassis;
-    RobotTop robotTop;
+    public RobotChassis robotChassis;
+    public RobotTop robotTop;
     private double headingError = 0;
     @SuppressWarnings("FieldCanBeLocal")
     private double targetHeading = 0;
@@ -156,7 +156,10 @@ public class RobotAuto {
         return sensorDistance.getDistance(DistanceUnit.INCH);
     }
 
-
+    public RobotAuto stopMotor(){
+        robotChassis.stopMotor();
+        return this;
+    }
 
     public RobotAuto driveStraight(double maxDriveSpeed,
                                    double distance,
@@ -318,7 +321,7 @@ public class RobotAuto {
         return otos.getPosition();
     }
 
-    private double calcDistance(double x,double y){
+    public double calcDistance(double x,double y){
         return Math.sqrt(x * x + y * y);
     }
 
@@ -566,6 +569,16 @@ public class RobotAuto {
     public RobotAuto armPick(){
         robotTop.setTurnPosition(0.8);
         sleep(200);
+        robotTop.setArmGrabPosition(0.92);
+        return this;
+    }
+
+    public RobotAuto armDown(){
+        robotTop.setTurnPosition(0.85);
+        return this;
+    }
+
+    public RobotAuto armGrab(){
         robotTop.setArmGrabPosition(0.92);
         return this;
     }
