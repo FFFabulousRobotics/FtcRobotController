@@ -54,10 +54,10 @@ public class RobotTop {
         leftLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         armStretchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armStretchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

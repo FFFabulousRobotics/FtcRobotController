@@ -289,11 +289,11 @@ public class RobotAuto {
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.03, 0.4746, 172);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.03, 0.4746, 0);//172  0.03 0.4746
         otos.setOffset(offset);
 
         otos.setLinearScalar(1.0);
-        otos.setAngularScalar(0.968);
+        otos.setAngularScalar(1.0);//0.968
 
         otos.calibrateImu();
 
@@ -322,64 +322,7 @@ public class RobotAuto {
         return Math.sqrt(x * x + y * y);
     }
 
-    class PIDController{
-        protected ElapsedTime timer = new ElapsedTime();
-        protected double previousError = 0;
-        protected double porportion = 0, integral = 0, derivative = 0;
-        protected double previousFilterEstimate = 0;
-        protected double currentFilterEstimate = 0;
 
-        public double Kp, Ki, Kd;
-        public double integralSumLimit = 0.25;
-        public double filterGain = 0.8;
-
-        public void reset(){
-            timer.reset();
-            integral = 0;
-        }
-
-        public double updatePID(double error){
-            // 滤除噪声，减少对D控制干扰
-            currentFilterEstimate = (filterGain * previousFilterEstimate) + (1- filterGain) * (error - previousError);
-            derivative = currentFilterEstimate / timer.seconds();
-
-            // 设置积分上限防止溢出
-            integral = integral >= integralSumLimit ? integralSumLimit : integral + (error * timer.seconds());
-
-            timer.reset();
-            previousFilterEstimate = currentFilterEstimate;
-            previousError = error;
-
-            double out = (Kp * error) + (Ki * integral) + (Kd * derivative);
-            return out;
-        }
-
-        public void setPIDArguments(double kp, double ki, double kd){
-            this.Kp = kp;
-            this.Ki = ki;
-            this.Kd = kd;
-        }
-
-        public double[] getPIDArguments(){
-            return new double[]{Kp, Ki, Kd};
-        }
-
-        public double getFilterGain() {
-            return filterGain;
-        }
-
-        public void setFilterGain(double filterGain) {
-            this.filterGain = filterGain;
-        }
-
-        public double getIntegralSumLimit() {
-            return integralSumLimit;
-        }
-
-        public void setIntegralSumLimit(double integralSumLimit) {
-            this.integralSumLimit = integralSumLimit;
-        }
-    }
     PIDController pidControllerForDistance = new PIDController();
     PIDController pidControllerForHeading = new PIDController();
 
@@ -391,7 +334,7 @@ public class RobotAuto {
         dx = desiredX-currentX;
         dy = desiredY-currentY;
 
-        while (calcDistance(dx,dy) > 1){
+        while (calcDistance(dx,dy) > 0.5){
             // get the position error
             pose = getPosition();
             currentX = pose.x; currentY = pose.y;
@@ -417,7 +360,7 @@ public class RobotAuto {
         return gotoPos(desiredX, desiredY, 0.06);
     }
 
-    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain){
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain,boolean but){
         double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
         double kp;
         SparkFunOTOS.Pose2D pose = getPosition();
@@ -432,7 +375,7 @@ public class RobotAuto {
         pidControllerForHeading.reset();
 //        getSteeringCorrection(heading, P_TURN_GAIN);
 
-        while (calcDistance(dx,dy) > 1 || Math.abs(headingError) > HEADING_THRESHOLD){
+        while (calcDistance(dx,dy) > 0.5 || Math.abs(headingError) > HEADING_THRESHOLD){
             pose = getPosition();
             currentX = pose.x; currentY = pose.y;
             dx = desiredX-currentX;
@@ -457,15 +400,32 @@ public class RobotAuto {
             turnSpeed = Range.clip(turnSpeed, -0.8, 0.8);
 
             absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
+            if(but) {
+                break;//temporary
+            }
+
+            absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
         }
         robotChassis.stopMotor();
         return this;
     }
 
     public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading){
-        return gotoPosWithHeading(desiredX,desiredY,heading,0.06);
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,false);
     }
 
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,boolean but){
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,but);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,double proportionalGain){
+        return gotoPosWithHeading(desiredX,desiredY,heading,proportionalGain,false);
+    }
+
+
+    public  RobotAuto JustGo(double desiredX, double desiredY, double heading){
+        return  gotoPosWithHeading(desiredX,desiredY,heading,true);
+    }
 
     public RobotAuto forward(double d) {
         return driveStraight(0.6, -d, getHeading());
@@ -595,4 +555,31 @@ public class RobotAuto {
         robotTop.setTopServoPosition(0.03);
         return this;
     }
+
+    public RobotAuto armHover(){
+        robotTop.setTurnPosition(0.75);
+        robotTop.setArmLeftSpinPosition(0.22);
+        robotTop.setArmRightSpinPosition(1);
+        return this;
+    }
+
+    public RobotAuto armPick(){
+        robotTop.setTurnPosition(0.8);
+        sleep(200);
+        robotTop.setArmGrabPosition(0.92);
+        return this;
+    }
+
+    public RobotAuto armBack(){
+        robotTop.setTurnPosition(0.5);
+        robotTop.setArmLeftSpinPosition(1);
+        robotTop.setArmRightSpinPosition(0.4);
+        return this;
+    }
+
+    public RobotAuto armRelease(){
+        robotTop.setArmGrabPosition(0.4);
+        return this;
+    }
+
 }
