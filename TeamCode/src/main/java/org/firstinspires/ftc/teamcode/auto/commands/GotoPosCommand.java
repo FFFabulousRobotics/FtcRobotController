@@ -11,6 +11,8 @@ public class GotoPosCommand implements Command {
     RobotAuto robotAuto;
     double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
     double kp;
+    double pGain = 0.06;
+    double threshold = 0.5;
     SparkFunOTOS.Pose2D pose;
 
     public GotoPosCommand(RobotAuto robotAuto, double desiredX, double desiredY){
@@ -18,6 +20,17 @@ public class GotoPosCommand implements Command {
         this.desiredX = desiredX;
         this.desiredY = desiredY;
     }
+
+    public GotoPosCommand(RobotAuto robotAuto, double desiredX, double desiredY, boolean isFast){
+        if(isFast){
+            this.pGain = 1;
+            this.threshold = 6;
+        }
+        this.robotAuto = robotAuto;
+        this.desiredX = desiredX;
+        this.desiredY = desiredY;
+    }
+
     @Override
     public void iterate() {
         // get the position error
@@ -33,14 +46,14 @@ public class GotoPosCommand implements Command {
 
         // P control
         deltaDistance = robotAuto.calcDistance(dx,dy);
-        kp = deltaDistance * 0.06;
+        kp = deltaDistance * pGain;
         if(kp > 1) kp = 1;
         robotAuto.absoluteDriveRobot(-unitY * kp,unitX * kp,0);
     }
 
     @Override
     public boolean hasNext() {
-        return robotAuto.calcDistance(dx,dy) > 0.5;
+        return robotAuto.calcDistance(dx,dy) > threshold;
     }
 
     @Override

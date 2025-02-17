@@ -15,9 +15,9 @@ public class SampleAuto extends LinearOpMode {
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
     final double SPIN_DEFAULT_POSITION_L = 1;
-    final double SPIN_DEFAULT_POSITION_R = 0.464;
-    final double SPIN_HOVERING_POSITION_L = 0.4;
-    final double SPIN_HOVERING_POSITION_R = 1;
+    final double SPIN_DEFAULT_POSITION_R = 0;
+    final double SPIN_HOVERING_POSITION_L = 0.315;
+    final double SPIN_HOVERING_POSITION_R = 0.635;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
     final double TURN_LOCK_POSITION = 0.62;

@@ -560,8 +560,8 @@ public class RobotAuto {
 
     public RobotAuto armHover(){
         robotTop.setTurnPosition(0.75);
-        robotTop.setArmLeftSpinPosition(0.22);
-        robotTop.setArmRightSpinPosition(1);
+        robotTop.setArmLeftSpinPosition(0.315);
+        robotTop.setArmRightSpinPosition(0.635);
         return this;
     }
 
@@ -585,7 +585,7 @@ public class RobotAuto {
     public RobotAuto armBack(){
         robotTop.setTurnPosition(0.5);
         robotTop.setArmLeftSpinPosition(1);
-        robotTop.setArmRightSpinPosition(0.4);
+        robotTop.setArmRightSpinPosition(0);
         return this;
     }
 
