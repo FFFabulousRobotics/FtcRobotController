@@ -13,6 +13,8 @@ public class GotoPosWithHeadingCommand implements Command {
     double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
     double headingError;
     double kp;
+    double threshold = 0.5;
+    double headingThreshold = 0.5;
     double proportionalGain = 0.06;
     double P_TURN_GAIN = 0.05;
     SparkFunOTOS.Pose2D pose;
@@ -20,6 +22,17 @@ public class GotoPosWithHeadingCommand implements Command {
     PIDController pidControllerForHeading = new PIDController();
 
     public GotoPosWithHeadingCommand(RobotAuto robotAuto, double desiredX, double desiredY, double heading){
+        this.robotAuto = robotAuto;
+        this.desiredX = desiredX;
+        this.desiredY = desiredY;
+        this.heading = heading;
+    }
+    public GotoPosWithHeadingCommand(RobotAuto robotAuto, double desiredX, double desiredY, double heading, boolean isFast){
+        if(isFast){
+            this.threshold = 6;
+            this.headingThreshold = 5;
+            this.proportionalGain = 1;
+        }
         this.robotAuto = robotAuto;
         this.desiredX = desiredX;
         this.desiredY = desiredY;
@@ -52,7 +65,7 @@ public class GotoPosWithHeadingCommand implements Command {
 
     @Override
     public boolean hasNext() {
-        return robotAuto.calcDistance(dx,dy) > 0.5 || Math.abs(headingError) > 0.5;
+        return robotAuto.calcDistance(dx,dy) > threshold || Math.abs(headingError) > headingThreshold;
     }
 
     @Override
