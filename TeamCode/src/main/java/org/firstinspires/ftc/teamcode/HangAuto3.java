@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @Autonomous
-public class HangingAuto extends LinearOpMode {
+public class HangAuto3 extends LinearOpMode {
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
     final double SPIN_DEFAULT_POSITION_L = 1;
@@ -76,7 +76,9 @@ public class HangingAuto extends LinearOpMode {
         );
         cmd1.runCommand();
         SequentialCommandGroup cmd2 = new SequentialCommandGroup(
-                new SetLiftPositionCommand(robotAuto,650),
+                new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
+                new SleepCommand(700),
+                new InstantCommand(() -> robotTop.setLiftPower(0)),
                 new InstantCommand(robotAuto::release)
         );
         cmd2.runCommand();
