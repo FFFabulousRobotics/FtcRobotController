@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.auto.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.commands.ForwardCommand;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.teamcode.auto.commands.SetLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
+
 @Autonomous
 public class HangAuto3 extends LinearOpMode {
     final int STRETCH_BACK_POSITION = 70;
@@ -30,15 +33,18 @@ public class HangAuto3 extends LinearOpMode {
     final double TOP_OUT = 0.66;
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
-    final private double[] posHanging = {10, -20.9, 0};//挂的地方
-    final private double[] posHanging2 = {5, -20.9, 0};//第二次挂的地方(有误差)
-    final private double[] posHanging3 = {2, -19.9, 0};//第三次挂的地方(有误差)
+
+    final private double[] posHanging = {10, -21, 0};//挂的地方
+    final private double[] posHanging2 = {5, -20.5, 0};//第二次挂的地方(有误差)
+    final private double[] posHanging3 = {2, -20.1, 0};//第三次挂的地方(有误差)
     final private double[] posMiddleStop = {-20, -10, 0};//中间停靠点
     final private double[] posReadyForPush = {-24, -43, 90};//准备推的位置
     final private double[] posPushed = {-29, -4, 90};//推到这个位置
     final private double[] posGet = {-27,-2,180};//拿方块的地方
+
     RobotTop robotTop;
     RobotAuto robotAuto;
+
     @Override
     public void runOpMode(){
         robotTop = new RobotTop(this);
@@ -76,7 +82,7 @@ public class HangAuto3 extends LinearOpMode {
     }
     protected void pushSample(){
         SequentialCommandGroup cmd3 = new SequentialCommandGroup(
-                new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1]),
+                new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
                 new GotoPosWithHeadingCommand(robotAuto,posReadyForPush[0],posReadyForPush[1],posReadyForPush[2]),
                 new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2]),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
