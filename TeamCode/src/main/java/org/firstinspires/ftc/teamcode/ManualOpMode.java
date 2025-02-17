@@ -3,10 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.auto.ParallelCommandGroup;
+import org.firstinspires.ftc.teamcode.auto.SequentialCommandGroup;
+import org.firstinspires.ftc.teamcode.auto.commands.InstantCommand;
+import org.firstinspires.ftc.teamcode.auto.commands.SetLiftPositionCommand;
+import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
+import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
+import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
@@ -35,9 +43,9 @@ public class ManualOpMode extends LinearOpMode {
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
     final double SPIN_DEFAULT_POSITION_L = 1;
-    final double SPIN_DEFAULT_POSITION_R = 0.464;
-    final double SPIN_HOVERING_POSITION_L = 0.22;
-    final double SPIN_HOVERING_POSITION_R = 1;
+    final double SPIN_DEFAULT_POSITION_R = 0;
+    final double SPIN_HOVERING_POSITION_L = 0.315;
+    final double SPIN_HOVERING_POSITION_R = 0.635;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
     final double TURN_LOCK_POSITION = 0.68;
@@ -351,7 +359,7 @@ public class ManualOpMode extends LinearOpMode {
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else if (gamepad1.left_trigger!= 0 || gamepad2.left_trigger != 0) {
-            robotTop.setLiftPower(-0.5);
+            robotTop.setLiftPower(-0.25);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else {
@@ -372,28 +380,62 @@ public class ManualOpMode extends LinearOpMode {
     }
 
     public void AutoINmanual(){
-        double targetpos[] = {0,0,0};
-        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true)
-        {
+        double hangpos[] = {0, 0, 0};
+        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true) {
             AUTO = true;
-            targetpos[0] = 29.5804 + robotAuto.getPosition().x;
-            targetpos[1] = -23.0564 + robotAuto.getPosition().y;
-            targetpos[2] = -173.3807 + robotAuto.getPosition().h;
-
+            // 重置坐标
+            robotAuto.resetCoordinates();
         }
 
-        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true)
+        if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
+            Rev2mDistanceSensor leftDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "leftDistanceSensor");
+            Rev2mDistanceSensor rightDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightDistanceSensor");
+
+            // 获取左侧距离数据
+            double leftDistance = leftDistanceSensor.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left Distance", leftDistance);
+
+            // 获取右侧距离数据
+            double rightDistance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+            telemetry.addData("Right Distance", rightDistance);
+            telemetry.update();
+
+            double targetDistance = 7.5, acceptableDelta = 1;
+
+            // 移动到设定的坐标点
+            ParallelCommandGroup cmd1 = new ParallelCommandGroup(
+                    new SequentialCommandGroup(
+                            new GotoPosWithHeadingCommand(robotAuto, -23, 20, 180)
+                    ),
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
+                            new SetLiftPositionCommand(robotAuto,920)
+                    )
+            );
+            cmd1.runCommand();
+            // 检查左侧和右侧的距离是否都小于目标距离
+            if (leftDistance < targetDistance - acceptableDelta || rightDistance < targetDistance - acceptableDelta) {
+                robotAuto.forward(0.3);
+            } else {
+                // 调整机器人位置，继续移动
+                if (leftDistance >= targetDistance + acceptableDelta || rightDistance >= targetDistance + acceptableDelta) {
+                    robotAuto.backward(0.3);
+                } else {
+                    AUTO = false;
+                }
+                telemetry.addData("Status", "Adjusting position...");
+                telemetry.update();
+            }
+            SequentialCommandGroup cmd2 = new SequentialCommandGroup(
+                    new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
+                    new SleepCommand(700),
+                    new InstantCommand(() -> robotTop.setLiftPower(0)),
+                    new InstantCommand(robotAuto::release)
+            );
+            cmd2.runCommand();
+        } else if (gamepad1.dpad_up) {
             AUTO = false;
-        if (AUTO)
-        {
-
-            robotAuto.absoluteDriveRobot(targetpos[0],targetpos[1],targetpos[2]);
-            while(robotAuto.getPosition() == new SparkFunOTOS.Pose2D(targetpos[0],targetpos[1],targetpos[2]))
-                AUTO= false;
-
         }
-        }
-
-
+    }
 
 }

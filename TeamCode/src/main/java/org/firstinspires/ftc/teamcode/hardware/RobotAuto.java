@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -595,4 +594,8 @@ public class RobotAuto {
         return this;
     }
 
+    // 重置位置
+    public void resetCoordinates() {
+        otos.setPosition(new SparkFunOTOS.Pose2D(0,0,0));
+    }
 }
