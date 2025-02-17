@@ -62,6 +62,8 @@ public class RobotTop {
         armStretchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armStretchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armStretchMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        initLift();
     }
 
     public void setLiftPower(double power) {
@@ -163,14 +165,25 @@ public class RobotTop {
     }
 
     //PID
-    double currentPos = 0, previousPos = 0, offset = 0;
-    double targetPos = 0;
-    double ticks_per_rev = 530;
-    double delta = 0;
+    protected PIDController liftPID = new PIDController();
+
+    protected void initLift(){
+        liftPID.setPIDArguments(0.003,0.004,0.0005);
+    }
+    int currentPos = 0, previousPos = 0, offset = 0;
+    public int targetPos = 0;
+    int ticks_per_rev = 530;
+    int delta = 0;
     double p = 0, i = 0, d = 0;
     final double Kp = 0.0008, Ki = 0.00001, Kd = -0.004;
     final double power_max = 0.5;
     double power = 0;
+
+    public void updateLift(){
+        int error = targetPos - getLiftPosition();
+        double power = liftPID.updatePID(error);
+        setLiftPower(power);
+    }
 
     public void updateLiftPID() {
         previousPos = currentPos;
