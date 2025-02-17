@@ -34,9 +34,9 @@ public class HangAuto3 extends LinearOpMode {
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
 
-    final private double[] posHanging = {10, -21, 0};//挂的地方
-    final private double[] posHanging2 = {5, -20.5, 0};//第二次挂的地方(有误差)
-    final private double[] posHanging3 = {2, -20.1, 0};//第三次挂的地方(有误差)
+    final private double[] posHanging = {10, -18, 0};//挂的地方
+    final private double[] posHanging2 = {5, -18, 0};//第二次挂的地方(有误差)
+    final private double[] posHanging3 = {2, -18, 0};//第三次挂的地方(有误差)
     final private double[] posMiddleStop = {-20, -10, 0};//中间停靠点
     final private double[] posReadyForPush = {-24, -43, 90};//准备推的位置
     final private double[] posPushed = {-29, -4, 90};//推到这个位置
@@ -67,52 +67,51 @@ public class HangAuto3 extends LinearOpMode {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
                         new SleepCommand(300),
-                        new SetLiftPositionCommand(robotAuto,920)
+                        new SetLiftPositionCommand(robotAuto,900)
                 )
         );
         cmd1.runCommand();
         SequentialCommandGroup cmd2 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                new SleepCommand(800),
+                new SleepCommand(700),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
-                new InstantCommand(robotAuto::release),
-                new SleepCommand(700)
+                new InstantCommand(robotAuto::release)
         );
         cmd2.runCommand();
     }
     protected void pushSample(){
         SequentialCommandGroup cmd3 = new SequentialCommandGroup(
                 new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
-                new GotoPosWithHeadingCommand(robotAuto,posReadyForPush[0],posReadyForPush[1],posReadyForPush[2]),
-                new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2]),
+                new GotoPosWithHeadingCommand(robotAuto,posReadyForPush[0],posReadyForPush[1],posReadyForPush[2],true),
+                new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
                 new SleepCommand(300),
                 new ForwardCommand(robotAuto,-15),
                 new InstantCommand(robotAuto::grab),
-                new ForwardCommand(robotAuto,1),
-                new SleepCommand(300)
+                new ForwardCommand(robotAuto,1)
         );
         cmd3.runCommand();
     }
     protected void hangSample2(){
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                        new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2])
+                        new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2]),
+                        new ForwardCommand(robotAuto,-6)
+
                 ),
                 new SequentialCommandGroup(
                         new SleepCommand(400),
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
                         new SleepCommand(600),
-                        new SetLiftPositionCommand(robotAuto,920)
+                        new SetLiftPositionCommand(robotAuto,850)
                 )
         );
         cmd1.runCommand();
         SequentialCommandGroup cmd2 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                new SleepCommand(800),
+                new SleepCommand(700),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
-                new InstantCommand(robotAuto::release),
-                new SleepCommand(500)
+                new InstantCommand(robotAuto::release)
         );
         cmd2.runCommand();
     }
@@ -130,22 +129,22 @@ public class HangAuto3 extends LinearOpMode {
     protected void hangSample3(){
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                        new GotoPosWithHeadingCommand(robotAuto,posHanging3[0],posHanging3[1],posHanging3[2])
+                        new GotoPosWithHeadingCommand(robotAuto,posHanging3[0],posHanging3[1],posHanging3[2]),
+                        new ForwardCommand(robotAuto,-6)
                 ),
                 new SequentialCommandGroup(
                         new SleepCommand(400),
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
                         new SleepCommand(600),
-                        new SetLiftPositionCommand(robotAuto,920)
+                        new SetLiftPositionCommand(robotAuto,850)
                 )
         );
         cmd1.runCommand();
         SequentialCommandGroup cmd2 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                new SleepCommand(800),
+                new SleepCommand(700),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
-                new InstantCommand(robotAuto::release),
-                new SleepCommand(700)
+                new InstantCommand(robotAuto::release)
         );
         cmd2.runCommand();
     }
