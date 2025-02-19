@@ -318,7 +318,7 @@ public class RobotAuto {
 
     public SparkFunOTOS.Pose2D getPosition() {
 
-        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.40, odo.getPosY()/25.40, Math.toDegrees(odo.getHeading()));
         return pos;
     }
 
