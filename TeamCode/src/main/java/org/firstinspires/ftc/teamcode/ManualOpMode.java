@@ -89,13 +89,12 @@ public class ManualOpMode extends LinearOpMode {
         spinLeft = false;
         spinRight = false;
         robotAuto = new RobotAuto(this);
-
+        robotAuto.resetCoordinates();
         waitForStart();
         // robotTop.setTurnPosition(TURN_BACK_POSITION);
         robotTop.setTopServoPosition(TOP_BACK);
         robotTop.setArmLeftSpinPosition(SPIN_DEFAULT_POSITION_L);
         robotTop.setArmRightSpinPosition(SPIN_DEFAULT_POSITION_R);
-        robotAuto.resetCoordinates();
         int armStretchStartPos = robotTop.getArmStretchPosition();
         telemetry.addData("aSTARTpos", armStretchStartPos);
         telemetry.update();
