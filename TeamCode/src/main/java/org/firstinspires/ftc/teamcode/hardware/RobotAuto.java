@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.teamcode.hardware.GoBildaPinpointDriver;
@@ -50,6 +51,7 @@ public class RobotAuto {
         otos = opMode.hardwareMap.get(SparkFunOTOS.class, "otos");
         odo = opMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         configureOtos();
+        configureOdo();
         robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
     }
 
@@ -283,16 +285,9 @@ public class RobotAuto {
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
-        odo.recalibrateIMU();
-        odo.setOffsets();
+        odo.setOffsets(14.02,7.9345);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
     }
-
-
-
-
-
-
-
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
@@ -322,7 +317,8 @@ public class RobotAuto {
     }
 
     public SparkFunOTOS.Pose2D getPosition() {
-        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX(), odo.getPosY(), odo.getHeading());
+
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));
         return pos;
     }
 

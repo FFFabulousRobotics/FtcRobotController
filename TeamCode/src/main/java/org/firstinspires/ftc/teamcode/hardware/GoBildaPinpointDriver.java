@@ -494,10 +494,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @return a Pose2D containing the estimated position of the robot
      */
     public Pose2D getPosition(){
-        return new Pose2D(DistanceUnit.INCH,
+        return new Pose2D(DistanceUnit.MM,
                 xPosition,
                 yPosition,
-                AngleUnit.DEGREES,
+                AngleUnit.RADIANS,
                 hOrientation);
     }
 
@@ -507,10 +507,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
      */
     public Pose2D getVelocity(){
-        return new Pose2D(DistanceUnit.INCH,
+        return new Pose2D(DistanceUnit.MM,
                 xVelocity,
                 yVelocity,
-                AngleUnit.DEGREES,
+                AngleUnit.RADIANS,
                 hVelocity);
     }
 
