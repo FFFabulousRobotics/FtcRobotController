@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
@@ -157,7 +156,6 @@ public class ManualOpMode extends LinearOpMode {
             previousGamepad1.copy(gamepad1);
             previousGamepad2.copy(gamepad2);
             SparkFunOTOS.Pose2D a = robotAuto.getPosition();
-
             telemetry.addData("x", a.x);
             telemetry.addData("y", a.y);
             telemetry.addData("h", a.h);

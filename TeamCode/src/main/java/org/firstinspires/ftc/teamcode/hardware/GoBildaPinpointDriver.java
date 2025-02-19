@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
@@ -386,8 +386,8 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param pos a Pose2D describing the robot's new position.
      */
     public Pose2D setPosition(Pose2D pos){
-        writeByteArray(Register.X_POSITION,(floatToByteArray((float) pos.getX(DistanceUnit.MM), ByteOrder.LITTLE_ENDIAN)));
-        writeByteArray(Register.Y_POSITION,(floatToByteArray((float) pos.getY(DistanceUnit.MM),ByteOrder.LITTLE_ENDIAN)));
+        writeByteArray(Register.X_POSITION,(floatToByteArray((float) pos.getX(DistanceUnit.INCH), ByteOrder.LITTLE_ENDIAN)));
+        writeByteArray(Register.Y_POSITION,(floatToByteArray((float) pos.getY(DistanceUnit.INCH),ByteOrder.LITTLE_ENDIAN)));
         writeByteArray(Register.H_ORIENTATION,(floatToByteArray((float) pos.getHeading(AngleUnit.RADIANS),ByteOrder.LITTLE_ENDIAN)));
         return pos;
     }
@@ -494,10 +494,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @return a Pose2D containing the estimated position of the robot
      */
     public Pose2D getPosition(){
-        return new Pose2D(DistanceUnit.MM,
+        return new Pose2D(DistanceUnit.INCH,
                 xPosition,
                 yPosition,
-                AngleUnit.RADIANS,
+                AngleUnit.DEGREES,
                 hOrientation);
     }
 
@@ -507,10 +507,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
      */
     public Pose2D getVelocity(){
-        return new Pose2D(DistanceUnit.MM,
+        return new Pose2D(DistanceUnit.INCH,
                 xVelocity,
                 yVelocity,
-                AngleUnit.RADIANS,
+                AngleUnit.DEGREES,
                 hVelocity);
     }
 

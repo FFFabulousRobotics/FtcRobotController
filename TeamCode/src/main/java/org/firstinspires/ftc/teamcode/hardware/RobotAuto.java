@@ -12,9 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.teamcode.hardware.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @SuppressWarnings(value = "unused")
@@ -36,6 +36,7 @@ public class RobotAuto {
 
     IMU imu;
     SparkFunOTOS otos;
+    GoBildaPinpointDriver odo;
     RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
     RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -47,6 +48,7 @@ public class RobotAuto {
         this.robotChassis = new RobotChassis(opMode);
         this.robotTop = new RobotTop(opMode);
         otos = opMode.hardwareMap.get(SparkFunOTOS.class, "otos");
+        odo = opMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         configureOtos();
         robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
     }
@@ -112,31 +114,20 @@ public class RobotAuto {
     }
 
 
-    /**
-     * Read the robot heading directly from the IMU.
-     *
-     * @return The heading of the robot in degrees.
-     */
     public double getHeading() {
-        return getHeading(AngleUnit.DEGREES);
+        return Math.toDegrees(odo.getHeading());
     }
 
-    /**
-     * read the Robot heading directly from the IMU
-     *
-     * @param unit The desired angle unit (degrees or radians)
-     * @return The heading of the robot in desired units.
-     */
 
-    public double getHeading(AngleUnit unit) {
+/*    public double getHeading(AngleUnit unit) {
         SparkFunOTOS.Pose2D pose = otos.getPosition();  // 获取位置和航向
         telemetry.addData("Yaw/Pitch/Roll", "Yaw: %.2f, Pitch: %.2f, Roll: %.2f", pose.h, 0.0, 0.0);  // Pitch和Roll暂时设为0
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", pose.h);
         telemetry.addData("Pitch (X)", "%.2f Deg.", 0.0);
         telemetry.addData("Roll (Y)", "%.2f Deg.\n", 0.0);
         telemetry.update();
-        return pose.h;
-    }
+        return pose.h;}
+*/
 
     public void absoluteDriveRobot(double axial, double lateral, double yaw){
         double botHeading = getHeading();
@@ -288,6 +279,20 @@ public class RobotAuto {
         return this;
     }
 
+    private void configureOdo(){
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+        odo.recalibrateIMU();
+        odo.setOffsets();
+    }
+
+
+
+
+
+
+
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
@@ -317,7 +322,8 @@ public class RobotAuto {
     }
 
     public SparkFunOTOS.Pose2D getPosition() {
-        return otos.getPosition();
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX(), odo.getPosY(), odo.getHeading());
+        return pos;
     }
 
     public double calcDistance(double x,double y){
@@ -485,14 +491,7 @@ public class RobotAuto {
         return Displacement;
     }
 
-    /**
-     * Go to the position given (track only include left/right and forward/backward)
-     * Go forward/backward first,then move left/right.
-     *
-     * @param CurrentPos The current position.(position{axial,lateral,heading})
-     * @param DesiredPos The desired position.(position{axial,lateral,heading})
-     * @return RobotHardware class.
-     */
+
     public RobotAuto gotoPosition(double[] CurrentPos, double[] DesiredPos) {
         double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
         double DesiredHeading = DesiredPos[2];
@@ -507,14 +506,7 @@ public class RobotAuto {
         return gotoPosition(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
     }
 
-    /**
-     * Go to the position given (track only include left/right and forward/backward)
-     * Move left/right first,then go forward/backward.
-     *
-     * @param CurrentPos The current position.(position{axial,lateral,heading})
-     * @param DesiredPos The desired position.(position{axial,lateral,heading})
-     * @return RobotHardware class.
-     */
+
     public RobotAuto gotoPosition2(double[] CurrentPos, double[] DesiredPos) {
         double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
         double DesiredHeading = DesiredPos[2];
@@ -594,8 +586,12 @@ public class RobotAuto {
         return this;
     }
 
-    // 重置位置
     public void resetCoordinates() {
-        otos.setPosition(new SparkFunOTOS.Pose2D(0,0,0));
+        odo.resetPosAndIMU();
+    }
+
+    public void update(){
+        odo.update();
+
     }
 }

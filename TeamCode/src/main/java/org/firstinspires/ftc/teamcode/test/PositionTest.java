@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import org.firstinspires.ftc.teamcode.hardware.GoBildaPinpointDriver;
+
 
 @TeleOp
 public class PositionTest extends LinearOpMode {
@@ -14,15 +17,14 @@ public class PositionTest extends LinearOpMode {
     public void runOpMode()  {
 
         robotAuto = new RobotAuto(this);
-
+        GoBildaPinpointDriver odo;
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         waitForStart();
-
         while(opModeIsActive()) {
-            SparkFunOTOS.Pose2D a = robotAuto.getPosition();
 
-            telemetry.addData("x", a.x);
-            telemetry.addData("y", a.y);
-            telemetry.addData("h", a.h);
+            telemetry.addData("x", odo.getPosX());
+            telemetry.addData("y", odo.getPosY());
+            telemetry.addData("h", odo.getHeading());
             telemetry.update();
         }
     }
