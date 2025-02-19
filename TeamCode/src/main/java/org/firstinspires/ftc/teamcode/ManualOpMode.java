@@ -41,10 +41,14 @@ public class ManualOpMode extends LinearOpMode {
     //Constants
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION_L = 1;
-    final double SPIN_DEFAULT_POSITION_R = 0;
-    final double SPIN_HOVERING_POSITION_L = 0.315;
-    final double SPIN_HOVERING_POSITION_R = 0.635;
+    final double SPIN_DEFAULT_POSITION_L = 0.85;
+    final double SPIN_DEFAULT_POSITION_R = 0.15;
+    final double SPIN_HOVERING_POSITION_L = 0.25;
+    final double SPIN_HOVERING_POSITION_R = 0.78;
+    final double SPIN_LEAN_RIGHT_L = 0;
+    final double SPIN_LEAN_RIGHT_R = 0.48;
+    final double SPIN_LEAN_LEFT_L = 0.48;
+    final double SPIN_LEAN_LEFT_R = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
     final double TURN_LOCK_POSITION = 0.68;
@@ -65,6 +69,7 @@ public class ManualOpMode extends LinearOpMode {
     boolean spinLeft;
     boolean spinRight;
     boolean AUTO;
+    int spinIndex = 0;
 
     @Override
     public void runOpMode() {
@@ -160,6 +165,7 @@ public class ManualOpMode extends LinearOpMode {
             telemetry.addData("y", a.y);
             telemetry.addData("h", a.h);
             sleep(10);
+            robotAuto.update();
         }
 
     }
@@ -205,6 +211,7 @@ public class ManualOpMode extends LinearOpMode {
         if (robotTop.getArmStretchPosition() >= STRETCH_OUT_POSITION) {
             robotTop.setStretchPower(0);
             armState = ArmState.TURNED;
+            spinIndex = 0;
         }
         currentTurnPosition = robotTop.getTurnPosition();
         if (currentTurnPosition > targetTurnPosition + 0.014) {
@@ -243,6 +250,7 @@ public class ManualOpMode extends LinearOpMode {
                 isGrabbing = !isGrabbing;
             }
         }
+
         if(gamepad1.dpad_right){
             robotTop.setArmLeftSpinPosition(Math.min(1, robotTop.getArmLeftSpinPosition() + 0.008));
             robotTop.setArmRightSpinPosition(Math.min(1, robotTop.getArmRightSpinPosition() + 0.008));
@@ -260,22 +268,41 @@ public class ManualOpMode extends LinearOpMode {
             robotTop.setArmRightSpinPosition(Math.min(1, robotTop.getArmRightSpinPosition() + 0.008));
         }
         if (gamepad1.left_bumper && !previousGamepad1.left_bumper) {
-            spinLeft = !spinLeft;
-            spinRight = false;
+//            spinLeft = !spinLeft;
+//            spinRight = false;
+            spinIndex = Math.max(spinIndex - 1, -1);
+            if(spinIndex == -1){
+                robotTop.setArmLeftSpinPosition(SPIN_LEAN_LEFT_L);
+                robotTop.setArmRightSpinPosition(SPIN_LEAN_LEFT_R);
+            } else if (spinIndex == 0) {
+                robotTop.setArmLeftSpinPosition(SPIN_HOVERING_POSITION_L);
+                robotTop.setArmRightSpinPosition(SPIN_HOVERING_POSITION_R);
+            } else if (spinIndex == 1) {
+                robotTop.setArmLeftSpinPosition(SPIN_LEAN_RIGHT_L);
+                robotTop.setArmRightSpinPosition(SPIN_LEAN_RIGHT_R);
+            }
         }
         if (gamepad1.right_bumper && !previousGamepad1.right_bumper) {
-            spinRight = !spinRight;
-            spinLeft = false;
+//            spinRight = !spinRight;
+//            spinLeft = false;
+            spinIndex = Math.min(spinIndex + 1, 1);
+            if(spinIndex == -1){
+                robotTop.setArmLeftSpinPosition(SPIN_LEAN_LEFT_L);
+                robotTop.setArmRightSpinPosition(SPIN_LEAN_LEFT_R);
+            } else if (spinIndex == 0) {
+                robotTop.setArmLeftSpinPosition(SPIN_HOVERING_POSITION_L);
+                robotTop.setArmRightSpinPosition(SPIN_HOVERING_POSITION_R);
+            } else if (spinIndex == 1) {
+                robotTop.setArmLeftSpinPosition(SPIN_LEAN_RIGHT_L);
+                robotTop.setArmRightSpinPosition(SPIN_LEAN_RIGHT_R);
+            }
         }
 //        if (spinLeft) {
-//            robotTop.setArmLeftSpinPosition(SPIN_HOVERING_POSITION + 0.15);
-//            robotTop.setArmRightSpinPosition(SPIN_HOVERING_POSITION - 0.15);
+//            robotTop.setArmLeftSpinPosition(SPIN_LEAN_LEFT_L);
+//            robotTop.setArmRightSpinPosition(SPIN_LEAN_LEFT_R);
 //        } else if (spinRight) {
-//            robotTop.setArmLeftSpinPosition(SPIN_HOVERING_POSITION - 0.15);
-//            robotTop.setArmRightSpinPosition(SPIN_HOVERING_POSITION + 0.15);
-//        } else {
-//            robotTop.setArmLeftSpinPosition(SPIN_HOVERING_POSITION);
-//            robotTop.setArmRightSpinPosition(SPIN_HOVERING_POSITION);
+//            robotTop.setArmLeftSpinPosition(SPIN_LEAN_RIGHT_L);
+//            robotTop.setArmRightSpinPosition(SPIN_LEAN_RIGHT_R);
 //        }
 
     }
@@ -353,7 +380,7 @@ public class ManualOpMode extends LinearOpMode {
 
     protected void handleRunningState() {
         if (gamepad1.right_trigger != 0 || gamepad2.right_trigger != 0 ) {
-            robotTop.setLiftPower(0.5);
+            robotTop.setLiftPower(0.7);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else if (gamepad1.left_trigger!= 0 || gamepad2.left_trigger != 0) {
@@ -381,24 +408,10 @@ public class ManualOpMode extends LinearOpMode {
         double hangpos[] = {0, 0, 0};
         if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true) {
             AUTO = true;
-            // 重置坐标
             robotAuto.resetCoordinates();
         }
 
         if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            Rev2mDistanceSensor leftDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "leftDistanceSensor");
-            Rev2mDistanceSensor rightDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightDistanceSensor");
-
-            // 获取左侧距离数据
-            double leftDistance = leftDistanceSensor.getDistance(DistanceUnit.CM);
-            telemetry.addData("Left Distance", leftDistance);
-
-            // 获取右侧距离数据
-            double rightDistance = rightDistanceSensor.getDistance(DistanceUnit.CM);
-            telemetry.addData("Right Distance", rightDistance);
-            telemetry.update();
-
-            double targetDistance = 7.5, acceptableDelta = 1;
 
             // 移动到设定的坐标点
             ParallelCommandGroup cmd1 = new ParallelCommandGroup(
@@ -411,19 +424,6 @@ public class ManualOpMode extends LinearOpMode {
                     )
             );
             cmd1.runCommand();
-            // 检查左侧和右侧的距离是否都小于目标距离
-            if (leftDistance < targetDistance - acceptableDelta || rightDistance < targetDistance - acceptableDelta) {
-                robotAuto.forward(0.3);
-            } else {
-                // 调整机器人位置，继续移动
-                if (leftDistance >= targetDistance + acceptableDelta || rightDistance >= targetDistance + acceptableDelta) {
-                    robotAuto.backward(0.3);
-                } else {
-                    AUTO = false;
-                }
-                telemetry.addData("Status", "Adjusting position...");
-                telemetry.update();
-            }
             SequentialCommandGroup cmd2 = new SequentialCommandGroup(
                     new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
                     new SleepCommand(700),
@@ -435,5 +435,4 @@ public class ManualOpMode extends LinearOpMode {
             AUTO = false;
         }
     }
-
 }
