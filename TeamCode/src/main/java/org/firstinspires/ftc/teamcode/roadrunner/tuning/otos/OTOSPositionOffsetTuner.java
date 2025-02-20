@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.roadrunner.tuning.otos;
-
+import  org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -10,7 +10,7 @@ public class OTOSPositionOffsetTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0,0,0));
+       RobotAuto robotAuto = new RobotAuto(this);
         telemetry.addLine("OTOS Position Offset Tuner");
         telemetry.addLine("Line the robot against the corner of two walls facing forward and Press START.");
         telemetry.addLine("Then rotate the robot exactly 180 degrees and press it back into the corner.");
@@ -18,11 +18,11 @@ public class OTOSPositionOffsetTuner extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            drive.updatePoseEstimate();
-            telemetry.addData("Heading (deg)",Math.toDegrees(drive.pose.heading.toDouble()));
-            if (Math.abs(Math.toDegrees(drive.pose.heading.toDouble())) > 175) {
-                telemetry.addData("X Offset", drive.pose.position.x / 2);
-                telemetry.addData("Y Offset", drive.pose.position.y / 2);
+            robotAuto.update();
+            telemetry.addData("Heading (deg)",robotAuto.getPosition().h);
+            if (Math.abs(robotAuto.getPosition().h) > 175) {
+                telemetry.addData("X Offset", robotAuto.getPosition().x / 2);
+                telemetry.addData("Y Offset", robotAuto.getPosition().y / 2);
             } else {
                 telemetry.addLine("Rotate the robot 180 degrees and align it to the corner again.");
             }
