@@ -34,6 +34,7 @@ public class GotoPosCommand implements Command {
     @Override
     public void iterate() {
         // get the position error
+        robotAuto.update();
         pose = robotAuto.getPosition();
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;

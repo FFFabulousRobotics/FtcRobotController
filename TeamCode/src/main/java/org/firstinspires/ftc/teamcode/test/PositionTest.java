@@ -17,14 +17,14 @@ public class PositionTest extends LinearOpMode {
     public void runOpMode()  {
 
         robotAuto = new RobotAuto(this);
-        GoBildaPinpointDriver odo;
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
         waitForStart();
         while(opModeIsActive()) {
 
-            telemetry.addData("x", odo.getPosX());
-            telemetry.addData("y", odo.getPosY());
-            telemetry.addData("h", odo.getHeading());
+            robotAuto.spin(180);
+            telemetry.addData("x", robotAuto.getPosition().x);
+            telemetry.addData("y", robotAuto.getPosition().y);
+            telemetry.addData("h", robotAuto.getPosition().h);
             telemetry.update();
         }
     }
