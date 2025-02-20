@@ -31,6 +31,7 @@ public class ForwardCommand implements Command {
 
     @Override
     public void iterate() {
+        robotAuto.update();
         double turnSpeed = robotAuto.getSteeringCorrection(heading, 0.03);
 
         // if driving in reverse, the motor correction also needs to be reversed
