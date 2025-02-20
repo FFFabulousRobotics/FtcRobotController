@@ -41,7 +41,6 @@ public class GotoPosWithHeadingCommand implements Command {
 
     @Override
     public void iterate() {
-        robotAuto.update();
         pose = robotAuto.getPosition();
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;
@@ -67,7 +66,6 @@ public class GotoPosWithHeadingCommand implements Command {
     @Override
     public boolean hasNext() {
         return robotAuto.calcDistance(dx,dy) > threshold || Math.abs(headingError) > headingThreshold;
-
     }
 
     @Override
