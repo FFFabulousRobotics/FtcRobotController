@@ -41,6 +41,7 @@ public class GotoPosWithHeadingCommand implements Command {
 
     @Override
     public void iterate() {
+        robotAuto.update();
         pose = robotAuto.getPosition();
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;

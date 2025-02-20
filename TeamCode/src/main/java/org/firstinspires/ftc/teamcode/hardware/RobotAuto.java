@@ -283,10 +283,9 @@ public class RobotAuto {
 
     private void configureOdo(){
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
-        odo.setOffsets(14.02,7.9345);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.setOffsets(160,80);
     }
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -318,7 +317,8 @@ public class RobotAuto {
 
     public SparkFunOTOS.Pose2D getPosition() {
 
-        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.40, odo.getPosY()/25.40, Math.toDegrees(odo.getHeading()));
+        update();
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));///25.40
         return pos;
     }
 
