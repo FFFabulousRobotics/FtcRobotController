@@ -18,10 +18,10 @@ import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 public class HangAuto3 extends LinearOpMode {
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION_L = 1;
-    final double SPIN_DEFAULT_POSITION_R = 0.464;
-    final double SPIN_HOVERING_POSITION_L = 0.4;
-    final double SPIN_HOVERING_POSITION_R = 1;
+    final double SPIN_DEFAULT_POSITION_L = 0.85;
+    final double SPIN_DEFAULT_POSITION_R = 0.15;
+    final double SPIN_HOVERING_POSITION_L = 0.25;
+    final double SPIN_HOVERING_POSITION_R = 0.78;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
     final double TURN_LOCK_POSITION = 0.68;
@@ -34,9 +34,9 @@ public class HangAuto3 extends LinearOpMode {
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
 
-    final private double[] posHanging = {10, -18, 0};//挂的地方
-    final private double[] posHanging2 = {5, -18, 0};//第二次挂的地方(有误差)
-    final private double[] posHanging3 = {2, -18, 0};//第三次挂的地方(有误差)
+    final private double[] posHanging = {14, -30, 0};//挂的地方
+    final private double[] posHanging2 = {-12, 30, 0};//第二次挂的地方(有误差)
+    final private double[] posHanging3 = {-16, -30, 0};//第三次挂的地方(有误差)
     final private double[] posMiddleStop = {-20, -10, 0};//中间停靠点
     final private double[] posReadyForPush = {-24, -43, 90};//准备推的位置
     final private double[] posPushed = {-29, -4, 90};//推到这个位置
