@@ -30,10 +30,10 @@ public class BasketballAuto extends LinearOpMode {
     final double TOP_BACK = 0.03;
     final double TOP_OUT = 0.66;
 
-    final private double[] posBasket = {-36.5, 3.5, -43.8135};//投篮位置
-    final private double[] posGrab1 = {-26, 16.4898, 10.5908};//第1个夹取位置
-    final private double[] posGrab2 = {-30.3891, 18.8595, 28.0001};//第1个夹取位置
-    final private double[] posGrab3 = {-29, 20, 45};
+    final private double[] posBasket = {-46.5, 15, -43.8135};//投篮位置
+    final private double[] posGrab1 = {-34.69, 20.8238, 3.2508};//第1个夹取位置
+    final private double[] posGrab2 = {-37.5891, 20.5195, 11.3001};//第2个夹取位置
+    final private double[] posGrab3 = {-46.83, 22.88, 18.48};//第3个夹取位置
     final private double[] parkingPos = {-8,45.8,90.9};
 //    final private double posT[][] = {
 //            {-25, 16.4898, 10.5908},//第1个夹取位置
