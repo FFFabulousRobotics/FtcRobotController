@@ -284,8 +284,16 @@ public class RobotAuto {
     private void configureOdo(){
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
         odo.setOffsets(160,80);
+        odo.doInitialize();
+        while (!opMode.opModeIsActive() && odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY) {
+            telemetry.addData("Pinpoint Status", odo.getDeviceStatus());
+            telemetry.addData("Message", "Waiting for Pinpoint to initialize...");
+            telemetry.update();
+            odo.update(); // 刷新设备数据
+            sleep(50);
+        };
+        sleep(100);// 等待模式切换完成
     }
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -308,10 +316,7 @@ public class RobotAuto {
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         otos.getVersionInfo(hwVersion, fwVersion);
 
-        telemetry.addLine("OTOS configured! Press start to get position data!");
-        telemetry.addLine();
-        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
-        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+        telemetry.addLine("");
         telemetry.update();
     }
 
