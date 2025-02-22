@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.hardware.RobotVision.RobotVisionAngle;
 
 
-@Disabled
 @TeleOp(group = "Test")
 
 public class VisionCameraAngleTest extends LinearOpMode {
