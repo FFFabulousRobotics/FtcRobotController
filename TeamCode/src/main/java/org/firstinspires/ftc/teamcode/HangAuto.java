@@ -40,8 +40,9 @@ public class HangAuto extends LinearOpMode {
     final private double[] posMiddleStop = {-13.53, -10.84, 90};//中间停靠点
     final private double[] posReadyForPush = {-13, -65, 90};//准备推的位置
     final private double[] posPushed = {-25.65, -20, 90};//推到这个位置
+    final private double[] posBack = {-25.65, -35, 90};//回一点位置
     final private double[] posGet = {-22,-5,180};//拿方块的地方
-    final private double[] parkPosition = {-40.0, 5.0, 270};//停靠
+    final private double[] parkPosition = {-40.0, 13.0, 270};//停靠
 
     RobotTop robotTop;
     RobotAuto robotAuto;
@@ -89,8 +90,9 @@ public class HangAuto extends LinearOpMode {
                 new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
                 new GotoPosWithHeadingCommand(robotAuto,posReadyForPush[0],posReadyForPush[1],posReadyForPush[2],true),
                 new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
+                new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-8),
+                new ForwardCommand(robotAuto,-10),
                 new InstantCommand(robotAuto::grab),
                 new ForwardCommand(robotAuto,1),
                 new SleepCommand(500)
@@ -101,7 +103,7 @@ public class HangAuto extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2]),
-                        new ForwardCommand(robotAuto,-8)
+                        new ForwardCommand(robotAuto,-7)
 
                 ),
                 new SequentialCommandGroup(

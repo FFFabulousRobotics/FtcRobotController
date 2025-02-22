@@ -29,6 +29,13 @@ public class ForwardCommand implements Command {
         this.distance = -distance;
     }
 
+    public ForwardCommand(RobotAuto robotAuto, double distance, double speed){
+        this.robotAuto = robotAuto;
+        this.robotChassis = robotAuto.robotChassis;
+        this.distance = -distance;
+        this.maxDriveSpeed = speed;
+    }
+
     @Override
     public void iterate() {
         robotAuto.update();
