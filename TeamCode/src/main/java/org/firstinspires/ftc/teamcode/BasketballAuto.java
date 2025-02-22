@@ -18,11 +18,13 @@ public class BasketballAuto extends LinearOpMode {
     final int STRETCH_OUT_POSITION = 1500;
     final double SPIN_DEFAULT_POSITION_L = 1;
     final double SPIN_DEFAULT_POSITION_R = 0.464;
+    final double SPIN_INSIDE_POSITION_L = 0;
+    final double SPIN_INSIDE_POSITION_R = 0.48;
     final double SPIN_HOVERING_POSITION_L = 0.4;
     final double SPIN_HOVERING_POSITION_R = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
-    final double TURN_LOCK_POSITION = 0.68;
+    final double TURN_LOCK_POSITION = 0.75;
     final double TURN_HOVERING_POSITION = 0.75;
     final double TURN_DOWN_POSITION = 0.85;
     final double GRAB_OPEN_POSITION = 0.4;
@@ -30,11 +32,11 @@ public class BasketballAuto extends LinearOpMode {
     final double TOP_BACK = 0.03;
     final double TOP_OUT = 0.66;
 
-    final private double[] posBasket = {-46.5, 15, -43.8135};//投篮位置
-    final private double[] posGrab1 = {-34.69, 20.8238, 3.2508};//第1个夹取位置
-    final private double[] posGrab2 = {-37.5891, 20.5195, 11.3001};//第2个夹取位置
+    final private double[] posBasket = {-46.5, 16, -43.8135};//投篮位置
+    final private double[] posGrab1 = {-34.69, 21.3, 3.2508};//第1个夹取位置
+    final private double[] posGrab2 = {-37.5891, 22.5195, 11.3001};//第2个夹取位置
     final private double[] posGrab3 = {-46.83, 22.88, 18.48};//第3个夹取位置
-    final private double[] parkingPos = {-8,45.8,90.9};
+    final private double[] parkingPos = {-8,45.8,90.9};//停靠位置
 //    final private double posT[][] = {
 //            {-25, 16.4898, 10.5908},//第1个夹取位置
 //            {-29.3891, 18.8595, 28.0001},//第2个夹取位置
@@ -60,7 +62,7 @@ public class BasketballAuto extends LinearOpMode {
         basketball();
         pickupSample(posGrab2);
         basketball();
-        pickupSample(posGrab3);
+        pickupInsideSample(posGrab3);
         basketball();
         parking();
 
@@ -102,6 +104,38 @@ public class BasketballAuto extends LinearOpMode {
 
         );
         cmd2.runCommand();
+
+        SequentialCommandGroup cmd3 = new SequentialCommandGroup(
+                new InstantCommand(() -> robotTop.setLiftPower(0)),
+                new InstantCommand(robotAuto::armBack),
+                new SleepCommand(500),
+                new InstantCommand(robotAuto::armRelease),
+                new SleepCommand(400),
+                new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION))
+        );
+        cmd3.runCommand();
+    }
+
+    protected void pickupInsideSample(double[] pos){
+        ParallelCommandGroup cmd6 = new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                        new GotoPosWithHeadingCommand(robotAuto,pos[0], pos[1], pos[2]),
+                        new InstantCommand(robotAuto::armHover),
+                        new InstantCommand(() -> robotTop.setArmLeftSpinPosition(SPIN_INSIDE_POSITION_L)),
+                        new InstantCommand(() -> robotTop.setArmRightSpinPosition(SPIN_INSIDE_POSITION_R)),
+                        new SleepCommand(500),
+                        new InstantCommand(robotAuto::armDown),
+                        new SleepCommand(200),
+                        new InstantCommand(robotAuto::armGrab),
+                        new SleepCommand(250)
+                ),
+                new SequentialCommandGroup(
+                        new SleepCommand(750),
+                        new SetLiftPositionCommand(robotAuto,70)
+                )
+
+        );
+        cmd6.runCommand();
 
         SequentialCommandGroup cmd3 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(0)),

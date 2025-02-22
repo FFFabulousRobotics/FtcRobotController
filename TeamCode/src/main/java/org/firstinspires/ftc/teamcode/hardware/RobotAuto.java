@@ -318,6 +318,12 @@ public class RobotAuto {
     public SparkFunOTOS.Pose2D getPosition() {
         update();
         SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));///25.40
+
+        telemetry.addData("x:",pos.x);
+        telemetry.addData("y:",pos.y);
+        telemetry.addData("h:",pos.h);
+        telemetry.update();
+
         return pos;
     }
 

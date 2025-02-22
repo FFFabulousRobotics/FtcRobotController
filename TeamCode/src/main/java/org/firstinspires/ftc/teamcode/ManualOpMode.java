@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.auto.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SetLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
-import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
@@ -145,11 +145,7 @@ public class ManualOpMode extends LinearOpMode {
                     handleRunningState();
                     break;
             }
-
-
-            AutoINmanual();
-
-
+//            AutoINmanual();
 
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
@@ -404,35 +400,35 @@ public class ManualOpMode extends LinearOpMode {
         }
     }
 
-    public void AutoINmanual(){
-        double hangpos[] = {0, 0, 0};
-        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true) {
-            AUTO = true;
-            robotAuto.resetCoordinates();
-        }
-
-        if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-
-            // 移动到设定的坐标点
-            ParallelCommandGroup cmd1 = new ParallelCommandGroup(
-                    new SequentialCommandGroup(
-                            new GotoPosWithHeadingCommand(robotAuto, -23, 20, 180)
-                    ),
-                    new SequentialCommandGroup(
-                            new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
-                            new SetLiftPositionCommand(robotAuto,920)
-                    )
-            );
-            cmd1.runCommand();
-            SequentialCommandGroup cmd2 = new SequentialCommandGroup(
-                    new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                    new SleepCommand(700),
-                    new InstantCommand(() -> robotTop.setLiftPower(0)),
-                    new InstantCommand(robotAuto::release)
-            );
-            cmd2.runCommand();
-        } else if (gamepad1.dpad_up) {
-            AUTO = false;
-        }
-    }
+//    public void AutoINmanual(){
+//        double hangpos[] = {0, 0, 0};
+//        if(gamepad2.dpad_up == true || previousGamepad2.dpad_up == true) {
+//            AUTO = true;
+//            robotAuto.resetCoordinates();
+//        }
+//
+//        if (gamepad2.dpad_up && !previousGamepad2.dpad_up) {
+//
+//            // 移动到设定的坐标点
+//            ParallelCommandGroup cmd1 = new ParallelCommandGroup(
+//                    new SequentialCommandGroup(
+//                            new GotoPosWithHeadingCommand(robotAuto, -23, 20, 180)
+//                    ),
+//                    new SequentialCommandGroup(
+//                            new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
+//                            new SetLiftPositionCommand(robotAuto,920)
+//                    )
+//            );
+//            cmd1.runCommand();
+//            SequentialCommandGroup cmd2 = new SequentialCommandGroup(
+//                    new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
+//                    new SleepCommand(700),
+//                    new InstantCommand(() -> robotTop.setLiftPower(0)),
+//                    new InstantCommand(robotAuto::release)
+//            );
+//            cmd2.runCommand();
+//        } else if (gamepad1.dpad_up) {
+//            AUTO = false;
+//        }
+//    }
 }

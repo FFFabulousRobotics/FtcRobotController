@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
+
+@Disabled
 @Autonomous
 public class GoJUSTtest extends LinearOpMode {
     public enum method  {BACK,OUT};

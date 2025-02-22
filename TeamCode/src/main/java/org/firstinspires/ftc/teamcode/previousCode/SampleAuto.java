@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.previousCode;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 
+@Disabled
 @Autonomous
 public class SampleAuto extends LinearOpMode {
 
