@@ -350,10 +350,10 @@ public class ManualOpMode extends LinearOpMode {
 
     protected void handleLockingState() {
         currentTurnPosition = robotTop.getTurnPosition();
-        if (currentTurnPosition > targetTurnPosition + 0.014) {
-            robotTop.setTurnPosition(currentTurnPosition - 0.014);
-        } else if (currentTurnPosition < targetTurnPosition - 0.014) {
-            robotTop.setTurnPosition(currentTurnPosition + 0.014);
+        if (currentTurnPosition > targetTurnPosition + 0.019) {
+            robotTop.setTurnPosition(currentTurnPosition - 0.019);
+        } else if (currentTurnPosition < targetTurnPosition - 0.019) {
+            robotTop.setTurnPosition(currentTurnPosition + 0.019);
         } else {
             robotTop.setTurnPosition(targetTurnPosition);
             armState = ArmState.LOCKED;
