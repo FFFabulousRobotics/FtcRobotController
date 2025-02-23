@@ -5,16 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.auto.Command;
 import org.firstinspires.ftc.teamcode.auto.commands.ForwardCommand;
 import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.auto.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SetLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
@@ -59,7 +58,7 @@ public class ManualOpMode extends LinearOpMode {
     final double GRAB_CLOSE_POSITION = 0.92;
     final double TOP_BACK = 0.03;
     final double TOP_OUT = 0.66;
-    final private double[] posHanging = {40, -26, 180};//挂的地方
+    final private double[] posHanging = {-35, 28, 180};//挂的地方
 
     // Variables
     boolean isGrabbing;
@@ -147,7 +146,16 @@ public class ManualOpMode extends LinearOpMode {
                     handleRunningState();
                     break;
             }
-            AutoINmanual();
+            if(gamepad2.y && !previousGamepad2.y){
+                runAutoHanging();
+            }
+            if(gamepad2.a && !previousGamepad2.a){
+                runAutoHanging();
+            }
+
+            if(gamepad2.b){
+                robotAuto.resetPosition();
+            }
 
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
@@ -402,34 +410,55 @@ public class ManualOpMode extends LinearOpMode {
         }
     }
 
-    public void AutoINmanual(){
-        if(gamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            robotAuto.resetCoordinates();
-            AUTO = true;
+    // *--------------- Auto in Manual ----------------*
+    public void runAutoHanging(){
+        robotAuto.resetCoordinates();
+        sleep(500);
+        ParallelCommandGroup cmd1 = new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                        new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]),
+                        new ForwardCommand(robotAuto,-8)
+                ),
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
+                        new SleepCommand(300),
+                        new SetLiftPositionCommand(robotAuto,800)
+                )
+        );
+        SequentialCommandGroup cmd2 = new SequentialCommandGroup(
+                new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
+                new SleepCommand(600),
+                new InstantCommand(() -> robotTop.setLiftPower(0)),
+                new InstantCommand(robotAuto::release),
+                new InstantCommand(() -> robotTop.setLiftPower(0.2)),
+                new SleepCommand(200),
+                new InstantCommand(() -> robotTop.setLiftPower(0))
+        );
+        // run autoMode
+        cmd1.init();
+        while (cmd1.hasNext() && !gamepad2.x){
+            cmd1.iterate();
         }
-        if (AUTO = true) {
-            ParallelCommandGroup cmd1 = new ParallelCommandGroup(
-                    new SequentialCommandGroup(
-                            new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]),
-                            new ForwardCommand(robotAuto,-8)
-                    ),
-                    new SequentialCommandGroup(
-                            new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
-                            new SleepCommand(300),
-                            new SetLiftPositionCommand(robotAuto,800)
-                    )
-            );
-            cmd1.runCommand();
-            SequentialCommandGroup cmd2 = new SequentialCommandGroup(
-                    new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                    new SleepCommand(600),
-                    new InstantCommand(() -> robotTop.setLiftPower(0)),
-                    new InstantCommand(robotAuto::release),
-                    new InstantCommand(() -> robotTop.setLiftPower(0.2)),
-                    new SleepCommand(200),
-                    new InstantCommand(() -> robotTop.setLiftPower(0))
-            );
-            cmd2.runCommand();
+        cmd1.finish();
+        robotChassis.stopMotor();
+        robotTop.setLiftPower(0);
+//        cmd2.init();
+//        while (cmd1.hasNext() && gamepad2.y){
+//            cmd1.iterate();
+//        }
+//        cmd2.finish();
+    }
+
+    public void runAutoBack(){
+        robotAuto.resetPosition();
+        sleep(200);
+        Command cmd3 = new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]);
+        cmd3.init();
+        while (cmd3.hasNext() && !gamepad2.x){
+            cmd3.iterate();
         }
+        cmd3.finish();
+        robotChassis.stopMotor();
+        robotTop.setLiftPower(0);
     }
 }

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.hardware.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
@@ -113,6 +115,12 @@ public class RobotAuto {
         while (headingError <= -180) headingError += 360;
 
         return headingError;
+    }
+
+    public double normalizeAngle(double angle){
+        while (angle > 180) angle -= 360;
+        while (angle <= -180) angle += 360;
+        return angle;
     }
 
 
@@ -589,6 +597,10 @@ public class RobotAuto {
 
     public void resetCoordinates() {
         odo.resetPosAndIMU();
+    }
+
+    public void resetPosition(){
+        odo.setPosition(new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES,0));
     }
 
     public void update(){
