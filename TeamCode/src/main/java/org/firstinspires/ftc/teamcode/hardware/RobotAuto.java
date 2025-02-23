@@ -55,6 +55,8 @@ public class RobotAuto {
         configureOtos();
         configureOdo();
         robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
+        telemetry.addLine("READY");
+        telemetry.update();
     }
 
     static final double COUNTS_PER_MOTOR_REV = 560;
@@ -293,15 +295,7 @@ public class RobotAuto {
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.setOffsets(160,80);
-        odo.doInitialize();
-        while (!opMode.opModeIsActive() && odo.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY) {
-            telemetry.addData("Pinpoint Status", odo.getDeviceStatus());
-            telemetry.addData("Message", "Waiting for Pinpoint to initialize...");
-            telemetry.update();
-            odo.update(); // 刷新设备数据
-            sleep(50);
-        };
-        sleep(100);// 等待模式切换完成
+        odo.resetPosAndIMU();
     }
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);

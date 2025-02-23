@@ -150,9 +150,8 @@ public class ManualOpMode extends LinearOpMode {
                 runAutoHanging();
             }
             if(gamepad2.a && !previousGamepad2.a){
-                runAutoHanging();
+                runAutoBack();
             }
-
             if(gamepad2.b){
                 robotAuto.resetPosition();
             }
@@ -412,8 +411,8 @@ public class ManualOpMode extends LinearOpMode {
 
     // *--------------- Auto in Manual ----------------*
     public void runAutoHanging(){
-        robotAuto.resetCoordinates();
-        sleep(500);
+        robotAuto.resetPosition();
+        sleep(200);
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]),
