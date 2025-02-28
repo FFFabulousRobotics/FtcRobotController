@@ -6,30 +6,40 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import com.qualcomm.robotcore.util.Range;
+
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.hardware.GoBildaPinpointDriver;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+
+import com.qualcomm.robotcore.util.Range;//
 
 @SuppressWarnings(value = "unused")
 public class RobotAuto {
     LinearOpMode opMode;
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    RobotChassis robotChassis;
-    RobotTop robotTop;
+    public RobotChassis robotChassis;
+    public RobotTop robotTop;
     private double headingError = 0;
     @SuppressWarnings("FieldCanBeLocal")
     private double targetHeading = 0;
+    private double previousHeading = 0;
+    private double deltaHeading = 0;
     @SuppressWarnings("FieldMayBeFinal")
     private double driveSpeed = 0;
     private double turnSpeed = 0;
+    private DistanceSensor sensorDistance;
 
     IMU imu;
     SparkFunOTOS otos;
+    GoBildaPinpointDriver odo;
     RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
     RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -41,11 +51,12 @@ public class RobotAuto {
         this.robotChassis = new RobotChassis(opMode);
         this.robotTop = new RobotTop(opMode);
         otos = opMode.hardwareMap.get(SparkFunOTOS.class, "otos");
+        odo = opMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         configureOtos();
-        imu = opMode.hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
+        configureOdo();
         robotChassis.setTargetPosition(new int[]{0, 0, 0, 0});
+        telemetry.addLine("READY");
+        telemetry.update();
     }
 
     static final double COUNTS_PER_MOTOR_REV = 560;
@@ -64,8 +75,26 @@ public class RobotAuto {
 
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
-    static final double P_TURN_GAIN = 0.1;     // Larger is more responsive, but also less stable
+    static final double P_TURN_GAIN = 0.05;     // Larger is more responsive, but also less stable
+    static final double D_TURN_GAIN = -0.1;
     static final double HEADING_THRESHOLD = 0.5;
+
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain, double dGain) {
+
+        // Determine the heading current error
+        headingError = desiredHeading - getHeading();
+        deltaHeading = getHeading() - previousHeading;
+        if(Math.abs(deltaHeading) > 45) deltaHeading = 0;
+
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        previousHeading = getHeading();
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain + deltaHeading * dGain, -1, 1);
+    }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
 
@@ -80,28 +109,58 @@ public class RobotAuto {
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
 
-    /**
-     * Read the robot heading directly from the IMU.
-     *
-     * @return The heading of the robot in degrees.
-     */
-    public double getHeading() {
-        return getHeading(AngleUnit.DEGREES);
+    public double getHeadingError(double desiredHeading){
+        headingError = desiredHeading - getHeading();
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        return headingError;
     }
 
-    /**
-     * read the Robot heading directly from the IMU
-     *
-     * @param unit The desired angle unit (degrees or radians)
-     * @return The heading of the robot in desired units.
-     */
-    public double getHeading(AngleUnit unit) {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        telemetry.addData("Yaw/Pitch/Roll", orientation.toString());
-        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-        return orientation.getYaw(unit);
+    public double normalizeAngle(double angle){
+        while (angle > 180) angle -= 360;
+        while (angle <= -180) angle += 360;
+        return angle;
+    }
+
+
+    public double getHeading() {
+        return Math.toDegrees(odo.getHeading());
+    }
+
+
+/*    public double getHeading(AngleUnit unit) {
+        SparkFunOTOS.Pose2D pose = otos.getPosition();  // 获取位置和航向
+        telemetry.addData("Yaw/Pitch/Roll", "Yaw: %.2f, Pitch: %.2f, Roll: %.2f", pose.h, 0.0, 0.0);  // Pitch和Roll暂时设为0
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", pose.h);
+        telemetry.addData("Pitch (X)", "%.2f Deg.", 0.0);
+        telemetry.addData("Roll (Y)", "%.2f Deg.\n", 0.0);
+        telemetry.update();
+        return pose.h;}
+*/
+
+    public void absoluteDriveRobot(double axial, double lateral, double yaw){
+        double botHeading = getHeading();
+        botHeading = Math.toRadians(botHeading);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = axial * Math.cos(-botHeading) - lateral * Math.sin(-botHeading);
+        double rotY = axial * Math.sin(-botHeading) + lateral * Math.cos(-botHeading);
+
+        robotChassis.driveRobot(rotX, rotY, yaw);
+    }
+
+    public double getREVdistance() {
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_distance");
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) sensorDistance;
+        return sensorDistance.getDistance(DistanceUnit.INCH);
+    }
+
+    public RobotAuto stopMotor(){
+        robotChassis.stopMotor();
+        return this;
     }
 
     public RobotAuto driveStraight(double maxDriveSpeed,
@@ -135,16 +194,6 @@ public class RobotAuto {
 
                 // Apply the turning correction to the current driving speed.
                 robotChassis.driveRobot(maxDriveSpeed, 0, -turnSpeed);
-//                telemetry.addData("x", "%4.2f, %4.2f, %4.2f, %4.2f, %4d", maxDriveSpeed, distance, heading, turnSpeed, moveCounts);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[0]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[1]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[2]);
-//                telemetry.addData("target", robotChassis.getTargetPosition()[3]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[0]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[1]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[2]);
-//                telemetry.addData("encoder", robotChassis.getCurrentPosition()[3]);
-//                telemetry.update();
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -224,6 +273,7 @@ public class RobotAuto {
         //绝对值的问题？
         while (opMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
 
+
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
@@ -241,14 +291,20 @@ public class RobotAuto {
         return this;
     }
 
+    private void configureOdo(){
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setOffsets(160,80);
+        odo.resetPosAndIMU();
+    }
     private void configureOtos() {
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.DEGREES);
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0.03, 0.4746, 0);//172  0.03 0.4746
         otos.setOffset(offset);
 
         otos.setLinearScalar(1.0);
-        otos.setAngularScalar(1.0);
+        otos.setAngularScalar(1.0);//0.968
 
         otos.calibrateImu();
 
@@ -262,15 +318,129 @@ public class RobotAuto {
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         otos.getVersionInfo(hwVersion, fwVersion);
 
-        telemetry.addLine("OTOS configured! Press start to get position data!");
-        telemetry.addLine();
-        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
-        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+        telemetry.addLine("");
         telemetry.update();
     }
 
     public SparkFunOTOS.Pose2D getPosition() {
-        return otos.getPosition();
+        update();
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));///25.40
+
+        telemetry.addData("x:",pos.x);
+        telemetry.addData("y:",pos.y);
+        telemetry.addData("h:",pos.h);
+        telemetry.update();
+
+        return pos;
+    }
+
+    public double calcDistance(double x,double y){
+        return Math.sqrt(x * x + y * y);
+    }
+
+
+    PIDController pidControllerForDistance = new PIDController();
+    PIDController pidControllerForHeading = new PIDController();
+
+    public RobotAuto gotoPos(double desiredX, double desiredY, double proportionalGain){
+        double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
+        double kp;
+        SparkFunOTOS.Pose2D pose = getPosition();
+        currentX = pose.x; currentY = pose.y;
+        dx = desiredX-currentX;
+        dy = desiredY-currentY;
+
+        while (calcDistance(dx,dy) > 0.5){
+            // get the position error
+            pose = getPosition();
+            currentX = pose.x; currentY = pose.y;
+            dx = desiredX-currentX;
+            dy = desiredY-currentY;
+
+            // change it into a unit length
+            angle = Math.atan2(dy,dx);
+            unitY = Math.sin(angle);
+            unitX = Math.cos(angle);
+
+            // P control
+            deltaDistance = calcDistance(dx,dy);
+            kp = deltaDistance * proportionalGain;
+            if(kp > 1) kp = 1;
+            absoluteDriveRobot(-unitY * kp,unitX * kp,0);
+        }
+        robotChassis.stopMotor();
+        return this;
+    }
+
+    public RobotAuto gotoPos(double desiredX, double desiredY){
+        return gotoPos(desiredX, desiredY, 0.06);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading, double proportionalGain,boolean but){
+        double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
+        double kp;
+        SparkFunOTOS.Pose2D pose = getPosition();
+        currentX = pose.x; currentY = pose.y;
+        dx = desiredX-currentX;
+        dy = desiredY-currentY;
+
+        pidControllerForDistance.setPIDArguments(proportionalGain,0,0);
+        pidControllerForDistance.reset();
+
+        pidControllerForHeading.setPIDArguments(P_TURN_GAIN,0,0);
+        pidControllerForHeading.reset();
+//        getSteeringCorrection(heading, P_TURN_GAIN);
+
+        while (calcDistance(dx,dy) > 0.5 || Math.abs(headingError) > HEADING_THRESHOLD){
+            pose = getPosition();
+            currentX = pose.x; currentY = pose.y;
+            dx = desiredX-currentX;
+            dy = desiredY-currentY;
+            angle = Math.atan2(dy,dx);
+            unitY = Math.sin(angle);
+            unitX = Math.cos(angle);
+            deltaDistance = calcDistance(dx,dy);
+
+            double rate = pidControllerForDistance.updatePID(deltaDistance);
+            if(rate >= 1) rate = 1;
+
+            double turnSpeed = pidControllerForHeading.updatePID(getHeadingError(heading));
+
+//            kp = deltaDistance * proportionalGain;
+//            if(kp > 1) kp = 1;
+//
+//            // Determine required steering to keep on heading
+//            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -0.8, 0.8);
+
+            absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
+            if(but) {
+                break;//temporary
+            }
+
+            absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
+        }
+        robotChassis.stopMotor();
+        return this;
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading){
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,false);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,boolean but){
+        return gotoPosWithHeading(desiredX,desiredY,heading,0.06,but);
+    }
+
+    public RobotAuto gotoPosWithHeading(double desiredX, double desiredY, double heading,double proportionalGain){
+        return gotoPosWithHeading(desiredX,desiredY,heading,proportionalGain,false);
+    }
+
+
+    public  RobotAuto JustGo(double desiredX, double desiredY, double heading){
+        return  gotoPosWithHeading(desiredX,desiredY,heading,true);
     }
 
     public RobotAuto forward(double d) {
@@ -329,14 +499,7 @@ public class RobotAuto {
         return Displacement;
     }
 
-    /**
-     * Go to the position given (track only include left/right and forward/backward)
-     * Go forward/backward first,then move left/right.
-     *
-     * @param CurrentPos The current position.(position{axial,lateral,heading})
-     * @param DesiredPos The desired position.(position{axial,lateral,heading})
-     * @return RobotHardware class.
-     */
+
     public RobotAuto gotoPosition(double[] CurrentPos, double[] DesiredPos) {
         double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
         double DesiredHeading = DesiredPos[2];
@@ -351,14 +514,7 @@ public class RobotAuto {
         return gotoPosition(new double[]{CurrentPos.x, CurrentPos.y, CurrentPos.h}, DesiredPos);
     }
 
-    /**
-     * Go to the position given (track only include left/right and forward/backward)
-     * Move left/right first,then go forward/backward.
-     *
-     * @param CurrentPos The current position.(position{axial,lateral,heading})
-     * @param DesiredPos The desired position.(position{axial,lateral,heading})
-     * @return RobotHardware class.
-     */
+
     public RobotAuto gotoPosition2(double[] CurrentPos, double[] DesiredPos) {
         double[] Displacement = getDisplacement(CurrentPos, DesiredPos);
         double DesiredHeading = DesiredPos[2];
@@ -384,12 +540,12 @@ public class RobotAuto {
     }
 
     public RobotAuto grab() {
-        robotTop.setLiftServoPosition(0.6);
+        robotTop.setLiftServoPosition(0.7);
         return this;
     }
 
     public RobotAuto release() {
-        robotTop.setLiftServoPosition(0.2);
+        robotTop.setLiftServoPosition(0.1);
         return this;
     }
 
@@ -400,5 +556,54 @@ public class RobotAuto {
     public RobotAuto topBack(){
         robotTop.setTopServoPosition(0.03);
         return this;
+    }
+
+    public RobotAuto armHover(){
+        robotTop.setTurnPosition(0.75);
+        robotTop.setArmLeftSpinPosition(0.315);
+        robotTop.setArmRightSpinPosition(0.635);
+        return this;
+    }
+
+    public RobotAuto armPick(){
+        robotTop.setTurnPosition(0.8);
+        sleep(200);
+        robotTop.setArmGrabPosition(0.92);
+        return this;
+    }
+
+    public RobotAuto armDown(){
+        robotTop.setTurnPosition(0.85);
+        return this;
+    }
+
+    public RobotAuto armGrab(){
+        robotTop.setArmGrabPosition(0.92);
+        return this;
+    }
+
+    public RobotAuto armBack(){
+        robotTop.setTurnPosition(0.5);
+        robotTop.setArmLeftSpinPosition(1);
+        robotTop.setArmRightSpinPosition(0);
+        return this;
+    }
+
+    public RobotAuto armRelease(){
+        robotTop.setArmGrabPosition(0.4);
+        return this;
+    }
+
+    public void resetCoordinates() {
+        odo.resetPosAndIMU();
+    }
+
+    public void resetPosition(){
+        odo.setPosition(new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES,0));
+    }
+
+    public void update(){
+        odo.update();
+
     }
 }
