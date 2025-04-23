@@ -69,7 +69,7 @@ public class HangAuto extends LinearOpMode {
                         new ForwardCommand(robotAuto,-5)
                 ),
                 new SequentialCommandGroup(
-                        new SleepCommand(300),
+                        new SleepCommand(100),
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
                         new SleepCommand(300),
                         new SetLiftPositionCommand(robotAuto,900)
@@ -80,6 +80,7 @@ public class HangAuto extends LinearOpMode {
                 new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
                 new SleepCommand(600),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
+                //new SetLiftPositionCommand(robotAuto,900),
                 new InstantCommand(robotAuto::release),
                 new InstantCommand(() -> robotTop.setTurnPosition(TURN_BACK_POSITION))
         );
@@ -150,7 +151,7 @@ public class HangAuto extends LinearOpMode {
         cmd1.runCommand();
         SequentialCommandGroup cmd2 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(-0.2)),
-                new SleepCommand(600),
+                new SleepCommand(200),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
                 new InstantCommand(robotAuto::release),
                 new InstantCommand(() -> robotTop.setLiftPower(0.2)),

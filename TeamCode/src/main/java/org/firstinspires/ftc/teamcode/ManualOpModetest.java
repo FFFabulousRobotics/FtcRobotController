@@ -6,20 +6,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.auto.Command;
-import org.firstinspires.ftc.teamcode.auto.commands.ForwardCommand;
-import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.auto.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.auto.SequentialCommandGroup;
+import org.firstinspires.ftc.teamcode.auto.commands.ForwardCommand;
+import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SetLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.auto.commands.SleepCommand;
-import org.firstinspires.ftc.teamcode.auto.commands.GotoPosWithHeadingCommand;
-
+import org.firstinspires.ftc.teamcode.hardware.RobotAuto;
 import org.firstinspires.ftc.teamcode.hardware.RobotChassis;
 import org.firstinspires.ftc.teamcode.hardware.RobotTop;
 
 @TeleOp
-public class ManualOpMode extends LinearOpMode {
+public class ManualOpModetest extends LinearOpMode {
     enum ArmState {
         IDLE, WITHDRAWING, TURNING_OUT, TURNED, TURNING_BACK, LOCKED, LOCKING, UNLOCKING
     }
