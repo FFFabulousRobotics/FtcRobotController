@@ -3,7 +3,7 @@
 Welcome!
 
 This module, TeamCode, is the place where you will write/paste the code for your team's
-robot controller App. This module is currently empty (a clean slate板) but the
+robot controller App. This module is currently empty (a clean slate) but the
 process for adding OpModes is straightforward.
 
 ## Creating your own OpModes
@@ -16,10 +16,10 @@ To locate these samples, find the FtcRobotController module in the "Project/Andr
 Expand the following tree elements:
  FtcRobotController/java/org.firstinspires.ftc.robotcontroller/external/samples
 
-### Naming of Samples 
+### Naming of Samples
 
 To gain a better understanding of how the samples are organized, and how to interpret the
-naming system, it will help to understand the conventions公约 that were used during their creation.
+naming system, it will help to understand the conventions that were used during their creation.
 
 These conventions are described (in detail) in the sample_conventions.md file in this folder.
 
@@ -29,29 +29,20 @@ The prefix of the name will be one of the following:
 
 Basic:  	This is a minimally functional OpMode used to illustrate the skeleton/structure
             of a particular style of OpMode.  These are bare bones examples.
-            这是一个功能最少的 OpMode，用于说明特定 OpMode 样式的骨架/结构。这些是基本示例。
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
             It is not intended to drive a functioning robot, it is simply showing the minimal code
             required to read and display the sensor values.
-            这是一个示例 OpMode，展示了如何使用特定的传感器。
-            它并非用于驱动功能齐全的机器人，而只是展示读取和显示传感器值所需的最少代码。
 
 Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) drive base.
             It may be used to provide a common baseline driving OpMode, or
             to demonstrate how a particular sensor or concept can be used to navigate.
-            这是一个示例 OpMode，假设一个简单的双电机（差速）驱动基础。
-            它可用于提供通用基线驱动 OpMode，或演示如何使用特定传感器或概念进行导航。
 
 Concept:	This is a sample OpMode that illustrates performing a specific function or concept.
             These may be complex, but their operation should be explained clearly in the comments,
             or the comments should reference an external doc, guide or tutorial.
             Each OpMode should try to only demonstrate a single concept so they are easy to
             locate based on their name.  These OpModes may not produce a drivable robot.
-            这是演示如何执行特定功能或概念的示例 OpMode。
-            这些可能很复杂，但应在注释中清楚地解释其操作，
-            或者注释应引用外部文档、指南或教程。
-            每个 OpMode 都应尝试仅演示一个概念，以便根据其名称轻松找到它们。这些 OpMode 可能无法生成可驾驶的机器人。
 
 After the prefix, other conventions will apply:
 
