@@ -202,4 +202,11 @@ public class RobotChassis {
         return new int[]{lf, lb, lb, rb};
     }
 
+    public double[] getPower(){
+        double lf = leftFrontDrive.getPower();
+        double rf = rightFrontDrive.getPower();
+        double lb = leftBackDrive.getPower();
+        double rb = rightBackDrive.getPower();
+        return new double[]{lf, lb, lb, rb};
+    }
 }

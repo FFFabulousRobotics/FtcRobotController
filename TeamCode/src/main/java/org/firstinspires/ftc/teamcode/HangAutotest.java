@@ -34,15 +34,18 @@ public class HangAutotest extends LinearOpMode {
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
 
-    final private double[] posHanging = {10.88, -26, 0};//挂的地方
-    final private double[] posHanging2 = {15, -22, 0};//第二次挂的地方(有误差)
-    final private double[] posHanging3 = {18, -22, 0};//第三次挂的地方(有误差)
+    final private double[] posHanging = {10.88, -27, 0};//挂的地方
+    final private double[] posHanging2 = {14.41, -28.06, 0};//第二次挂的地方(有误差)
+    final private double[] posHanging3 = {8.70, -27.56, 0};//第三次挂的地方(有误差)
+    final private double[] posHanging4 = {6.70, -27.56, 0};//第四次挂的地方(有误差)
+    final private double[] PosReadyForPushzhe1 = {-18.2766,-31.5603,0};//推第一下的停靠点
     final private double[] posMiddleStop = {-13.53, -10.84, 0};//中间停靠点
-    final private double[] posReadyForPush = {-25, -51.72, 0};//准备推的位置
-    final private double[] posReadyForPush2 = {-47.46,-47.44,0};//推第二个的位置
-    final private double[] posPushed = {-31.85, -8.17, 0};//推到这个位置
+    final private double[] posReadyForPush = {-27, -51.72, 0};//准备推的位置
+    //final private double[] posReadyForPushzhe2 ={-21.54,-45.08,0};//推第二次的转折点
+    final private double[] posReadyForPush2 = {-39.46,-50.44,0};//推第二个的位置
+    final private double[] posPushed = {-30.85, -8.17, 0};//推到这个位置
     final private double[] posBack = {-25.65, -19.12, 180};//回一点位置
-    final private double[] posGet = {-22,-5,180};//拿方块的地方
+    final private double[] posGet = {-22,-3,180};//拿方块的地方
     //final private double[] parkPosition = {-40.0, 13.0, 270};//停靠
 
     RobotTop robotTop;
@@ -59,10 +62,10 @@ public class HangAutotest extends LinearOpMode {
         hangSample1();
         pushSample();
         hangSample2();
-        getSample();
-        hangSample3();
         pushSample2();
         getSample();
+        hangSample3();
+        getSample2();
         hangsample4();
         //park();
     }
@@ -92,29 +95,43 @@ public class HangAutotest extends LinearOpMode {
     }
     protected void pushSample(){
         SequentialCommandGroup cmd3 = new SequentialCommandGroup(
-                new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
+                //new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
+                new GotoPosWithHeadingCommand(robotAuto,PosReadyForPushzhe1 [0],PosReadyForPushzhe1[1],PosReadyForPushzhe1[2],true),
                 new GotoPosWithHeadingCommand(robotAuto,posReadyForPush[0],posReadyForPush[1],posReadyForPush[2],true),
                 new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
-                new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
+                //new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-10),
+                new ForwardCommand(robotAuto,-9),
                 new InstantCommand(robotAuto::grab),
                 new ForwardCommand(robotAuto,1)//,
                 //new SleepCommand(500)
         );
         cmd3.runCommand();
     }
+    protected void pushSample2(){
+        SequentialCommandGroup cmd3 = new SequentialCommandGroup(
+                //new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
+                new GotoPosWithHeadingCommand(robotAuto,PosReadyForPushzhe1[0],PosReadyForPushzhe1[1],PosReadyForPushzhe1[2],true),
+                new GotoPosWithHeadingCommand(robotAuto,posReadyForPush2[0],posReadyForPush2[1],posReadyForPush2[2],true),
+                new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
+                //new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
+                new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]));
+                //new ForwardCommand(robotAuto,-10));
+
+                //new SleepCommand(500)
+        cmd3.runCommand();
+        }
     protected void hangSample2(){
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2]),
-                        new ForwardCommand(robotAuto,-7.5)
+                        new ForwardCommand(robotAuto,-6.5)
 
                 ),
                 new SequentialCommandGroup(
 //                        new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
 //                        new SleepCommand(300),
-                        new SetLiftPositionCommand(robotAuto,800)
+                        new SetLiftPositionCommand(robotAuto,850)
                 )
         );
         cmd1.runCommand();
@@ -128,28 +145,15 @@ public class HangAutotest extends LinearOpMode {
                 new InstantCommand(() -> robotTop.setLiftPower(0))
                 );
         cmd2.runCommand();
-    }
-    protected void pushSample2(){
-        SequentialCommandGroup cmd3 = new SequentialCommandGroup(
-                new GotoPosCommand(robotAuto,posMiddleStop[0],posMiddleStop[1],true),
-                new GotoPosWithHeadingCommand(robotAuto,posReadyForPush2[0],posReadyForPush2[1],posReadyForPush2[2],true),
-                new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
-                new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
-                new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-10),
-                new InstantCommand(robotAuto::grab),
-                new ForwardCommand(robotAuto,1)//,
-                //new SleepCommand(500)
-        );
-        cmd3.runCommand();
+
     }
     protected void getSample(){
         SequentialCommandGroup cmd5 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-13),
+                new ForwardCommand(robotAuto,-9),
                 new InstantCommand(robotAuto::grab),
-                new ForwardCommand(robotAuto,1)//,
+                new ForwardCommand(robotAuto,1)
                 //new SleepCommand(500)
         );
         cmd5.runCommand();
@@ -158,7 +162,7 @@ public class HangAutotest extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging3[0],posHanging3[1],posHanging3[2]),
-                        new ForwardCommand(robotAuto,-8)
+                        new ForwardCommand(robotAuto,-6.5)
                 ),
                 new SequentialCommandGroup(
 //                        new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
@@ -194,7 +198,7 @@ public class HangAutotest extends LinearOpMode {
         SequentialCommandGroup cmd5 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-13),
+                new ForwardCommand(robotAuto,-9),
                 new InstantCommand(robotAuto::grab),
                 new ForwardCommand(robotAuto,1)//,
                 //new SleepCommand(500)
@@ -204,7 +208,7 @@ public class HangAutotest extends LinearOpMode {
     protected void hangsample4(){
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                        new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2]),
+                        new GotoPosWithHeadingCommand(robotAuto,posHanging4[0],posHanging4[1],posHanging4[2]),
                         new ForwardCommand(robotAuto,-7.5)
 
                 ),

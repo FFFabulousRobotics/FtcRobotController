@@ -13,7 +13,7 @@ public class GotoPosWithHeadingCommand implements Command {
     double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
     double headingError;
     double kp;
-    double threshold = 1;
+    double threshold = 3;//这里原本是1
     double headingThreshold = 0.5;
     double proportionalGain = 0.06;
     double P_TURN_GAIN = 0.05;

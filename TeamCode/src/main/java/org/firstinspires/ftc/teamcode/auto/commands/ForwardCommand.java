@@ -12,7 +12,8 @@ public class ForwardCommand implements Command {
     RobotAuto robotAuto;
     RobotChassis robotChassis;
     double distance;
-    double maxDriveSpeed = 0.6;
+    double maxDriveSpeed = 1;
+
     double heading;
 
     static final double COUNTS_PER_MOTOR_REV = 560;
