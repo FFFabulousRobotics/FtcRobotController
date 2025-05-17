@@ -34,18 +34,20 @@ public class HangAutotest extends LinearOpMode {
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
 
-    final private double[] posHanging = {10.88, -27, 0};//挂的地方
-    final private double[] posHanging2 = {14.41, -28.06, 0};//第二次挂的地方(有误差)
+    final private double[] posHanging = {10.88, -26.5
+            , 0};//挂的地方
+    final private double[] posHanging2 = {14.41, -25.56, 0};//第二次挂的地方(有误差)
     final private double[] posHanging3 = {8.70, -27.56, 0};//第三次挂的地方(有误差)
     final private double[] posHanging4 = {6.70, -27.56, 0};//第四次挂的地方(有误差)
-    final private double[] PosReadyForPushzhe1 = {-18.2766,-31.5603,0};//推第一下的停靠点
+    final private double[] PosReadyForPushzhe1 = {-19.2766,-31.5603,0};//推第一下的停靠点
     final private double[] posMiddleStop = {-13.53, -10.84, 0};//中间停靠点
     final private double[] posReadyForPush = {-27, -51.72, 0};//准备推的位置
     //final private double[] posReadyForPushzhe2 ={-21.54,-45.08,0};//推第二次的转折点
     final private double[] posReadyForPush2 = {-39.46,-50.44,0};//推第二个的位置
-    final private double[] posPushed = {-30.85, -8.17, 0};//推到这个位置
+    final private double[] posPushed = {-30.85, -8.17, -4};//推到这个位置
     final private double[] posBack = {-25.65, -19.12, 180};//回一点位置
-    final private double[] posGet = {-22,-3,180};//拿方块的地方
+    final private double[] posGet = {-18,-3,180};//拿方块的地方
+    final private double[] posGet4 = {-18,-3,180};//拿第四个方块的地方
     //final private double[] parkPosition = {-40.0, 13.0, 270};//停靠
 
     RobotTop robotTop;
@@ -74,6 +76,8 @@ public class HangAutotest extends LinearOpMode {
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]),
                         new ForwardCommand(robotAuto,-5)
+
+
                 ),
                 new SequentialCommandGroup(
 //                        new SleepCommand(100),
@@ -89,7 +93,8 @@ public class HangAutotest extends LinearOpMode {
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
                 //new SetLiftPositionCommand(robotAuto,900),
                 new InstantCommand(robotAuto::release),
-                new InstantCommand(() -> robotTop.setTurnPosition(TURN_BACK_POSITION))
+//                new ForwardCommand(robotAuto,2),
+        new InstantCommand(() -> robotTop.setTurnPosition(TURN_BACK_POSITION))
         );
         cmd2.runCommand();
     }
@@ -125,7 +130,10 @@ public class HangAutotest extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging2[0],posHanging2[1],posHanging2[2]),
-                        new ForwardCommand(robotAuto,-6.5)
+                        new ForwardCommand(robotAuto,-5)
+
+
+
 
                 ),
                 new SequentialCommandGroup(
@@ -142,8 +150,9 @@ public class HangAutotest extends LinearOpMode {
                 new InstantCommand(robotAuto::release),
                 new InstantCommand(() -> robotTop.setLiftPower(0.45)),
                 new SleepCommand(100),
-                new InstantCommand(() -> robotTop.setLiftPower(0))
-                );
+                new InstantCommand(() -> robotTop.setLiftPower(0))//,
+                //new ForwardCommand(robotAuto,2)
+        );
         cmd2.runCommand();
 
     }
@@ -176,8 +185,8 @@ public class HangAutotest extends LinearOpMode {
                 new SleepCommand(150),
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
                 new InstantCommand(robotAuto::release),
-                new InstantCommand(() -> robotTop.setLiftPower(0.45)),
-                new SleepCommand(100),
+                new InstantCommand(() -> robotTop.setLiftPower(0.5)),
+                new SleepCommand(150),
                 new InstantCommand(() -> robotTop.setLiftPower(0))
         );
         cmd2.runCommand();
@@ -197,7 +206,7 @@ public class HangAutotest extends LinearOpMode {
     protected void getSample2(){
         SequentialCommandGroup cmd5 = new SequentialCommandGroup(
                 new InstantCommand(() -> robotTop.setLiftPower(0)),
-                new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
+                new GotoPosWithHeadingCommand(robotAuto,posGet4[0],posGet4[1],posGet4[2]),
                 new ForwardCommand(robotAuto,-9),
                 new InstantCommand(robotAuto::grab),
                 new ForwardCommand(robotAuto,1)//,

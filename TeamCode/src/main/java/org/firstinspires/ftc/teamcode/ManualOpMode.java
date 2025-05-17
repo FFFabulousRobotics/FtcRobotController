@@ -41,13 +41,13 @@ public class ManualOpMode extends LinearOpMode {
     //Constants
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION_L = 0.85;
-    final double SPIN_DEFAULT_POSITION_R = 0.15;
-    final double SPIN_HOVERING_POSITION_L = 0.25;
-    final double SPIN_HOVERING_POSITION_R = 0.78;
+    final double SPIN_DEFAULT_POSITION_L = 0.6411;
+    final double SPIN_DEFAULT_POSITION_R = 0.3572;
+    final double SPIN_HOVERING_POSITION_L = 0.15;
+    final double SPIN_HOVERING_POSITION_R = 0.87;
     final double SPIN_LEAN_RIGHT_L = 0;
-    final double SPIN_LEAN_RIGHT_R = 0.48;
-    final double SPIN_LEAN_LEFT_L = 0.48;
+    final double SPIN_LEAN_RIGHT_R = 0.6933;
+    final double SPIN_LEAN_LEFT_L = 0.35;
     final double SPIN_LEAN_LEFT_R = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
@@ -152,16 +152,16 @@ public class ManualOpMode extends LinearOpMode {
             if(gamepad2.a && !previousGamepad2.a){
                 runAutoBack();
             }
+            telemetry.addData("armPos", robotTop.getTurnPosition());
+            telemetry.addData("armStretchPosition", robotTop.getArmStretchPosition());
+            telemetry.addData("leftSpin", robotTop.getArmLeftSpinPosition());
+            telemetry.addData("rightSpin", robotTop.getArmRightSpinPosition());
             if(gamepad2.b){
                 robotAuto.resetPosition();
             }
 
             telemetry.addData("arm", armState);
             telemetry.addData("lift", liftState);
-            telemetry.addData("armPos", robotTop.getTurnPosition());
-            telemetry.addData("armStretchPosition", robotTop.getArmStretchPosition());
-            telemetry.addData("leftSpin", robotTop.getArmLeftSpinPosition());
-            telemetry.addData("rightSpin", robotTop.getArmRightSpinPosition());
             telemetry.update();
             previousGamepad1.copy(gamepad1);
             previousGamepad2.copy(gamepad2);

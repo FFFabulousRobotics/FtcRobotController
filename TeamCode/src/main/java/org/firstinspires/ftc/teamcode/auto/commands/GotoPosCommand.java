@@ -12,7 +12,7 @@ public class GotoPosCommand implements Command {
     double currentX,currentY,dx,dy,angle,unitX,unitY,deltaDistance;
     double kp;
     double pGain = 0.06;
-    double threshold = 3;//这里本来是0.5
+    double threshold = 10;//这里本来是0.5
     SparkFunOTOS.Pose2D pose;
 
     public GotoPosCommand(RobotAuto robotAuto, double desiredX, double desiredY){
