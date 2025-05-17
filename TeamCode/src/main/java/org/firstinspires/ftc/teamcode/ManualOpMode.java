@@ -41,8 +41,8 @@ public class ManualOpMode extends LinearOpMode {
     //Constants
     final int STRETCH_BACK_POSITION = 70;
     final int STRETCH_OUT_POSITION = 1500;
-    final double SPIN_DEFAULT_POSITION_L = 0.6411;
-    final double SPIN_DEFAULT_POSITION_R = 0.3572;
+    final double SPIN_DEFAULT_POSITION_L = 0.76;
+    final double SPIN_DEFAULT_POSITION_R = 0.23;
     final double SPIN_HOVERING_POSITION_L = 0.15;
     final double SPIN_HOVERING_POSITION_R = 0.87;
     final double SPIN_LEAN_RIGHT_L = 0;

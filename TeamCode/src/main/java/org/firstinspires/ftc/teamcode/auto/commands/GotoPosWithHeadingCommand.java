@@ -39,6 +39,14 @@ public class GotoPosWithHeadingCommand implements Command {
         this.heading = heading;
     }
 
+    public GotoPosWithHeadingCommand(RobotAuto robotAuto, double desiredX, double desiredY, double heading, double threshold){
+        this.threshold = threshold;
+        this.robotAuto = robotAuto;
+        this.desiredX = desiredX;
+        this.desiredY = desiredY;
+        this.heading = heading;
+    }
+
     @Override
     public void iterate() {
         robotAuto.update();
