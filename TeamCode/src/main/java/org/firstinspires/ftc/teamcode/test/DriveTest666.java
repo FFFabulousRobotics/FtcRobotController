@@ -57,32 +57,29 @@ public class DriveTest666 extends LinearOpMode {
         boolean isAbs = false;
         boolean b = false;
 
+
         waitForStart();
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                resetIMU();
-                isAbs = true;
-            } else if (gamepad1.b) {
-                isAbs = false;
-            }
-            if(gamepad1.x) b = false;
-            if(gamepad1.y) b = true;
-            if(b){
-                if(gamepad1.dpad_up)driveRobot(0, -1, 0);
-                else if(gamepad1.dpad_down)driveRobot(0, 1, 0);
-                else if(gamepad1.dpad_left)driveRobot(-1, 0, 0);
-                else if(gamepad1.dpad_right)driveRobot(1, 0, 0);
-                else driveRobot(0,0,0);
+            if(gamepad1.a) {
+                leftFrontDrive.setPower(1);
             }else{
-                if (isAbs) {
-                    absoluteDriveRobot(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                } else {
-                    driveRobot(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                }
+                leftFrontDrive.setPower(0);
             }
-
-            telemetry.addData("isAbs", isAbs);
-            telemetry.update();
+            if(gamepad1.b) {
+                leftBackDrive.setPower(1);
+            }else{
+                leftBackDrive.setPower(0);
+            }
+            if(gamepad1.x) {
+                rightFrontDrive.setPower(1);
+            }else{
+                rightFrontDrive.setPower(0);
+            }
+            if(gamepad1.y) {
+                rightBackDrive.setPower(1);
+            }else{
+                rightBackDrive.setPower(0);
+            }
         }
     }
 
@@ -95,20 +92,20 @@ public class DriveTest666 extends LinearOpMode {
         } else {
             floatWheels();
         }
-        telemetry.addData("FL_rotations=",leftFrontDrive.getCurrentPosition());
-        telemetry.addData("BL_rotations=",leftBackDrive.getCurrentPosition());
-        telemetry.addData("FR_rotations=",rightFrontDrive.getCurrentPosition());
+        telemetry.addData("axial=",axial);
+        telemetry.addData("lateral=",lateral);
+        telemetry.addData("yaw=",yaw);
         telemetry.addData("BR_rotations=",rightBackDrive.getCurrentPosition());
         double denominator = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
-        double frontLeftPower = (axial - lateral + yaw) / denominator;
-        double backLeftPower = (axial + lateral - yaw) / denominator;
-        double frontRightPower = (axial + lateral + yaw) / denominator;
-        double backRightPower = (axial - lateral - yaw) / denominator;
+        double frontLeftPower = (axial - lateral - yaw) / denominator;
+        double backLeftPower = (axial - lateral + yaw) / denominator;
+        double frontRightPower = (-axial - lateral - yaw) / denominator;
+        double backRightPower = (-axial - lateral + yaw) / denominator;
 
-        leftFrontDrive.setPower(frontLeftPower/1.821);
-        leftBackDrive.setPower(backLeftPower/1.583);
-        rightFrontDrive.setPower(frontRightPower/0.385);
-        rightBackDrive.setPower(backRightPower/1.657);
+        leftFrontDrive.setPower(frontLeftPower);
+        leftBackDrive.setPower(backLeftPower);
+        rightFrontDrive.setPower(frontRightPower);
+        rightBackDrive.setPower(backRightPower);
     }
 
     public void absoluteDriveRobot(double axial, double lateral, double yaw) {

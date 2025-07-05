@@ -385,7 +385,7 @@ public class ManualOpMode extends LinearOpMode {
 
     protected void handleRunningState() {
         if (gamepad1.right_trigger != 0 || gamepad2.right_trigger != 0 ) {
-            robotTop.setLiftPower(0.7);
+            robotTop.setLiftPower(0.9);
             robotTop.setTopServoPosition(TOP_BACK);
             robotTop.setLiftTargetPos(robotTop.getLiftPosition());
         } else if (gamepad1.left_trigger!= 0 || gamepad2.left_trigger != 0) {
