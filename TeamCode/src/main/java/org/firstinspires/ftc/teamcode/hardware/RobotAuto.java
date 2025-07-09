@@ -248,9 +248,9 @@ public class RobotAuto {
 
     public void setStraightTargetPosition(int moveCounts) {
         int[] motorPos = robotChassis.getCurrentPosition();
-        motorPos[0] = motorPos[0] + moveCounts;
+        motorPos[0] = motorPos[0] - moveCounts;
         motorPos[1] = motorPos[1] + moveCounts;
-        motorPos[2] = motorPos[2] + moveCounts;
+        motorPos[2] = motorPos[2] - moveCounts;
         motorPos[3] = motorPos[3] + moveCounts;
         robotChassis.setTargetPosition(motorPos);
     }
@@ -293,7 +293,7 @@ public class RobotAuto {
 
     private void configureOdo(){
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.setOffsets(160,80);
         odo.resetPosAndIMU();
     }
@@ -324,12 +324,9 @@ public class RobotAuto {
 
     public SparkFunOTOS.Pose2D getPosition() {
         update();
-        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosX()/25.4, odo.getPosY()/25.4, Math.toDegrees(odo.getHeading()));///25.40
-
-        telemetry.addData("x:",pos.x);
-        telemetry.addData("y:",pos.y);
-        telemetry.addData("h:",pos.h);
-        telemetry.update();
+        //里程计有问题，为解决不得不把x，y，反过来
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosY()/25.4, odo.getPosX()/25.4, Math.toDegrees(odo.getHeading()));///25.40
+        
 
         return pos;
     }
@@ -349,6 +346,8 @@ public class RobotAuto {
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;
         dy = desiredY-currentY;
+        pidControllerForDistance.setPIDArguments(proportionalGain,0,0);
+        pidControllerForDistance.reset();
 
         while (calcDistance(dx,dy) > 0.5){
             // get the position error
@@ -364,7 +363,7 @@ public class RobotAuto {
 
             // P control
             deltaDistance = calcDistance(dx,dy);
-            kp = deltaDistance * proportionalGain;
+            kp = pidControllerForDistance.updatePID(deltaDistance);
             if(kp > 1) kp = 1;
             absoluteDriveRobot(-unitY * kp,unitX * kp,0);
         }
