@@ -37,11 +37,11 @@ public class HangAuto extends LinearOpMode {
     final private double[] posHanging = {10.88, -26, 0};//挂的地方
     final private double[] posHanging2 = {15, -22, 0};//第二次挂的地方(有误差)
     final private double[] posHanging3 = {18, -22, 0};//第三次挂的地方(有误差)
-    final private double[] posMiddleStop = {-13.53, -10.84, 90};//中间停靠点
-    final private double[] posReadyForPush = {-13, -65, 90};//准备推的位置
-    final private double[] posPushed = {-25.65, -20, 90};//推到这个位置
+    final private double[] posMiddleStop = {-19.53, -10.84, 90};//中间停靠点
+    final private double[] posReadyForPush = {-27, -65, 90};//准备推的位置
+    final private double[] posPushed = {-27.65, -20, 90};//推到这个位置
     final private double[] posBack = {-25.65, -35, 90};//回一点位置
-    final private double[] posGet = {-22,-5,180};//拿方块的地方
+    final private double[] posGet = {-22,-10,180};//拿方块的地方
     final private double[] parkPosition = {-40.0, 13.0, 270};//停靠
 
     RobotTop robotTop;
@@ -66,13 +66,13 @@ public class HangAuto extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging[0],posHanging[1],posHanging[2]),
-                        new ForwardCommand(robotAuto,-5)
+                        new ForwardCommand(robotAuto,true,0.5)
                 ),
                 new SequentialCommandGroup(
                         new SleepCommand(100),
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),
                         new SleepCommand(300),
-                        new SetLiftPositionCommand(robotAuto,900)
+                        new SetLiftPositionCommand(robotAuto,800)
                 )
         );
         cmd1.runCommand();
@@ -93,7 +93,7 @@ public class HangAuto extends LinearOpMode {
                 new GotoPosWithHeadingCommand(robotAuto,posPushed[0],posPushed[1],posPushed[2],true),
                 new GotoPosWithHeadingCommand(robotAuto,posBack[0],posBack[1],posBack[2]),
                 new GotoPosWithHeadingCommand(robotAuto,posGet[0],posGet[1],posGet[2]),
-                new ForwardCommand(robotAuto,-10),
+                new ForwardCommand(robotAuto,true,0.5),
                 new InstantCommand(robotAuto::grab),
                 new ForwardCommand(robotAuto,1),
                 new SleepCommand(500)
@@ -140,7 +140,7 @@ public class HangAuto extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging3[0],posHanging3[1],posHanging3[2]),
-                        new ForwardCommand(robotAuto,-8)
+                        new ForwardCommand(robotAuto,true,0.5)
                 ),
                 new SequentialCommandGroup(
                         new InstantCommand(() -> robotTop.setTurnPosition(TURN_LOCK_POSITION)),

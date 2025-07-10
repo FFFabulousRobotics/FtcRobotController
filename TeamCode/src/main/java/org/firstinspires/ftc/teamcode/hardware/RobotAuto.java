@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.Range;//
 
 @SuppressWarnings(value = "unused")
 public class RobotAuto {
-    LinearOpMode opMode;
+    public LinearOpMode opMode;
     HardwareMap hardwareMap;
     Telemetry telemetry;
     public RobotChassis robotChassis;
@@ -40,8 +40,8 @@ public class RobotAuto {
     IMU imu;
     SparkFunOTOS otos;
     GoBildaPinpointDriver odo;
-    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-    RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+    RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
     public RobotAuto(LinearOpMode opMode) {
@@ -75,9 +75,9 @@ public class RobotAuto {
 
     static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
     static final double P_STRAFE_GAIN = 0.03;   // Strafe Speed Control "Gain".
-    static final double P_TURN_GAIN = 0.05;     // Larger is more responsive, but also less stable
+    static final double P_TURN_GAIN = 0.01;     // Larger is more responsive, but also less stable
     static final double D_TURN_GAIN = -0.1;
-    static final double HEADING_THRESHOLD = 0.5;
+    static final double HEADING_THRESHOLD = 10;
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain, double dGain) {
 
@@ -127,6 +127,7 @@ public class RobotAuto {
 
 
     public double getHeading() {
+        update();
         return Math.toDegrees(odo.getHeading());
     }
 
@@ -146,8 +147,8 @@ public class RobotAuto {
         botHeading = Math.toRadians(botHeading);
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotX = axial * Math.cos(-botHeading) - lateral * Math.sin(-botHeading);
-        double rotY = axial * Math.sin(-botHeading) + lateral * Math.cos(-botHeading);
+        double rotX = axial * Math.cos(botHeading) + lateral * Math.sin(botHeading);
+        double rotY = lateral * Math.cos(botHeading) - axial * Math.sin(botHeading);
 
         robotChassis.driveRobot(rotX, rotY, yaw);
     }
@@ -267,22 +268,21 @@ public class RobotAuto {
     public RobotAuto turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
+        getSteeringCorrection(heading,P_TURN_GAIN);
+        pidControllerForHeading.setPIDArguments(P_TURN_GAIN,0,0);
+        pidControllerForHeading.reset();
 
         // keep looping while we are still active, and not on heading.
         //绝对值的问题？
         while (opMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-
-
-            // Determine required steering to keep on heading
-            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+            double turnSpeed = pidControllerForHeading.updatePID(getHeadingError(heading));
 
             // Clip the speed to the maximum permitted value.
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+            turnSpeed = Range.clip(turnSpeed, -0.8, 0.8);
 
             // Pivot in place by applying the turning correction
             robotChassis.driveRobot(0, 0, -turnSpeed);
-            //            telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f",maxTurnSpeed,turnSpeed,heading,getHeading());
+            telemetry.addData("x","%4.2f, %4.2f, %4.2f, %4.2f",maxTurnSpeed,turnSpeed,heading,getHeading());
             telemetry.update();
         }
 
@@ -293,8 +293,8 @@ public class RobotAuto {
 
     private void configureOdo(){
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.setOffsets(160,80);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.setOffsets(6*25.4,0.7*25.4);
         odo.resetPosAndIMU();
     }
     private void configureOtos() {
@@ -324,10 +324,10 @@ public class RobotAuto {
 
     public SparkFunOTOS.Pose2D getPosition() {
         update();
-        //里程计有问题，为解决不得不把x，y，反过来
-        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(odo.getPosY()/25.4, odo.getPosX()/25.4, Math.toDegrees(odo.getHeading()));///25.40
-        
-
+        // The direction of X&Y in the former code is different from the one from Pinpoint.
+        // These changes are made to fit the former location data with new odometer.
+        // Changes: X&Y swapped, Y(current X) reversed
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(-odo.getPosY()/25.4, odo.getPosX()/25.4, Math.toDegrees(odo.getHeading()));///25.40
         return pos;
     }
 
@@ -346,10 +346,11 @@ public class RobotAuto {
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;
         dy = desiredY-currentY;
+
         pidControllerForDistance.setPIDArguments(proportionalGain,0,0);
         pidControllerForDistance.reset();
 
-        while (calcDistance(dx,dy) > 0.5){
+        while (calcDistance(dx,dy) > 2){
             // get the position error
             pose = getPosition();
             currentX = pose.x; currentY = pose.y;
@@ -360,12 +361,19 @@ public class RobotAuto {
             angle = Math.atan2(dy,dx);
             unitY = Math.sin(angle);
             unitX = Math.cos(angle);
-
-            // P control
             deltaDistance = calcDistance(dx,dy);
-            kp = pidControllerForDistance.updatePID(deltaDistance);
-            if(kp > 1) kp = 1;
-            absoluteDriveRobot(-unitY * kp,unitX * kp,0);
+
+            telemetry.addData("x",dx);
+            telemetry.addData("y",dy);
+            telemetry.addData("unitX",unitX);
+            telemetry.addData("unitY",unitY);
+            telemetry.update();
+
+
+            // p control
+            double rate = pidControllerForDistance.updatePID(deltaDistance);
+            if(rate >= 0.3) rate = 0.3;
+            absoluteDriveRobot(-unitY * rate,unitX * rate,0);
         }
         robotChassis.stopMotor();
         return this;
@@ -390,7 +398,7 @@ public class RobotAuto {
         pidControllerForHeading.reset();
 //        getSteeringCorrection(heading, P_TURN_GAIN);
 
-        while (calcDistance(dx,dy) > 0.5 || Math.abs(headingError) > HEADING_THRESHOLD){
+        while (calcDistance(dx,dy) > 2 || Math.abs(getHeadingError(heading)) > HEADING_THRESHOLD){
             pose = getPosition();
             currentX = pose.x; currentY = pose.y;
             dx = desiredX-currentX;
@@ -399,6 +407,10 @@ public class RobotAuto {
             unitY = Math.sin(angle);
             unitX = Math.cos(angle);
             deltaDistance = calcDistance(dx,dy);
+            telemetry.addData("x",currentX);
+            telemetry.addData("y",currentY);
+            telemetry.addData("h",getHeadingError(heading));
+            telemetry.update();
 
             double rate = pidControllerForDistance.updatePID(deltaDistance);
             if(rate >= 1) rate = 1;

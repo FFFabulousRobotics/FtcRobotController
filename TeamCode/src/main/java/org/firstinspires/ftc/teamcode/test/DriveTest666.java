@@ -32,9 +32,9 @@ public class DriveTest666 extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -61,25 +61,18 @@ public class DriveTest666 extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if(gamepad1.a) {
-                leftFrontDrive.setPower(1);
-            }else{
-                leftFrontDrive.setPower(0);
+                isAbs = false;
             }
-            if(gamepad1.b) {
-                leftBackDrive.setPower(1);
-            }else{
-                leftBackDrive.setPower(0);
+            else if(gamepad1.b) {
+                isAbs = true;
             }
-            if(gamepad1.x) {
-                rightFrontDrive.setPower(1);
+            if(isAbs){
+                driveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             }else{
-                rightFrontDrive.setPower(0);
+                absoluteDriveRobot(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             }
-            if(gamepad1.y) {
-                rightBackDrive.setPower(1);
-            }else{
-                rightBackDrive.setPower(0);
-            }
+            telemetry.addData("input","%.2f,%.2f,%.2f,",gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            telemetry.update();
         }
     }
 
@@ -92,15 +85,11 @@ public class DriveTest666 extends LinearOpMode {
         } else {
             floatWheels();
         }
-        telemetry.addData("axial=",axial);
-        telemetry.addData("lateral=",lateral);
-        telemetry.addData("yaw=",yaw);
-        telemetry.addData("BR_rotations=",rightBackDrive.getCurrentPosition());
         double denominator = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
-        double frontLeftPower = (axial - lateral - yaw) / denominator;
-        double backLeftPower = (axial - lateral + yaw) / denominator;
-        double frontRightPower = (-axial - lateral - yaw) / denominator;
-        double backRightPower = (-axial - lateral + yaw) / denominator;
+        double frontLeftPower = (-axial + lateral + yaw) / denominator;
+        double backLeftPower = (-axial - lateral + yaw) / denominator;
+        double frontRightPower = (axial + lateral + yaw) / denominator;
+        double backRightPower = (axial - lateral + yaw) / denominator;
 
         leftFrontDrive.setPower(frontLeftPower);
         leftBackDrive.setPower(backLeftPower);
@@ -121,7 +110,7 @@ public class DriveTest666 extends LinearOpMode {
 
     public void resetIMU() {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();

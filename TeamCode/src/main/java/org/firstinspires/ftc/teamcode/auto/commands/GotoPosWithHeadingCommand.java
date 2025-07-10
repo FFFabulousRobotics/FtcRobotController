@@ -16,7 +16,7 @@ public class GotoPosWithHeadingCommand implements Command {
     double threshold = 3;//这里原本是1
     double headingThreshold = 0.5;
     double proportionalGain = 0.06;
-    double P_TURN_GAIN = 0.05;
+    double P_TURN_GAIN = 0.02;
     SparkFunOTOS.Pose2D pose;
     PIDController pidControllerForDistance = new PIDController();
     PIDController pidControllerForHeading = new PIDController();
@@ -49,7 +49,6 @@ public class GotoPosWithHeadingCommand implements Command {
 
     @Override
     public void iterate() {
-        robotAuto.update();
         pose = robotAuto.getPosition();
         currentX = pose.x; currentY = pose.y;
         dx = desiredX-currentX;
@@ -66,8 +65,6 @@ public class GotoPosWithHeadingCommand implements Command {
 
         // Clip the speed to the maximum permitted value.
         turnSpeed = Range.clip(turnSpeed, -0.6, 0.6);
-
-        robotAuto.absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
 
         robotAuto.absoluteDriveRobot(-unitY * rate,unitX * rate, -turnSpeed);
     }
