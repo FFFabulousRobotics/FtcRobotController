@@ -16,7 +16,7 @@ public class GotoPosWithHeadingCommand implements Command {
     double threshold = 3;//这里原本是1
     double headingThreshold = 0.5;
     double proportionalGain = 0.06;
-    double P_TURN_GAIN = 0.02;
+    double P_TURN_GAIN = 0.01;
     SparkFunOTOS.Pose2D pose;
     PIDController pidControllerForDistance = new PIDController();
     PIDController pidControllerForHeading = new PIDController();
@@ -31,7 +31,7 @@ public class GotoPosWithHeadingCommand implements Command {
         if(isFast){
             this.threshold = 6;
             this.headingThreshold = 5;
-            this.proportionalGain = 1;
+            this.proportionalGain = 2;
         }
         this.robotAuto = robotAuto;
         this.desiredX = desiredX;

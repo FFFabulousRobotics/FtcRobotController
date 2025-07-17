@@ -51,7 +51,7 @@ public class ManualOpMode extends LinearOpMode {
     final double SPIN_LEAN_LEFT_R = 1;
     final double SPIN_DOWN_POSITION = 0;
     final double TURN_BACK_POSITION = 0.5;
-    final double TURN_LOCK_POSITION = 0.68;
+    final double TURN_LOCK_POSITION = 0.3;
     final double TURN_HOVERING_POSITION = 0.75;
     final double TURN_DOWN_POSITION = 0.85;
     final double GRAB_OPEN_POSITION = 0.4;

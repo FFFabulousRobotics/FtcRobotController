@@ -34,8 +34,7 @@ public class HangAutotest extends LinearOpMode {
     final double BACK_CLOSE = 0.7;
     final double BACK_OPEN = 0.1;
 
-    final private double[] posHanging = {10.88, -26.5
-            , 0};//挂的地方
+    final private double[] posHanging = {10.88, -26.5, 0};//挂的地方
     final private double[] posHanging2 = {14.41, -25.56, 0};//第二次挂的地方(有误差)
     final private double[] posHanging3 = {8.70, -27.56, 0};//第三次挂的地方(有误差)
     final private double[] posHanging4 = {6.70, -27.56, 0};//第四次挂的地方(有误差)
@@ -218,7 +217,7 @@ public class HangAutotest extends LinearOpMode {
         ParallelCommandGroup cmd1 = new ParallelCommandGroup(
                 new SequentialCommandGroup(
                         new GotoPosWithHeadingCommand(robotAuto,posHanging4[0],posHanging4[1],posHanging4[2]),
-                        new ForwardCommand(robotAuto,-7.5)
+                        new ForwardCommand(robotAuto,-6.5)
 
                 ),
                 new SequentialCommandGroup(
